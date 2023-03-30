@@ -7,9 +7,17 @@ def main():
     print("Helle Aline :)")
     print("Hello Loulou")
     sleep(3)
-    db = mysql.connector.connect(user='user', passwd='password', host='localhost', database='mysql')
+    db = mysql.connector.connect(user='root', passwd='password', host='mysql', database='mysql')
+    print(db.is_connected())
+
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM *")
+
+    cursor.execute("CREATE TABLE IF NOT EXISTS test(id INTEGER(64) PRIMARY KEY, name VARCHAR(255))")
+
+    cursor.execute("INSERT INTO test VALUES (2, 'bla')")
+    cursor.execute("INSERT INTO test VALUES (3, 'blabla')")
+    cursor.execute("INSERT INTO test VALUES (4, 'blablabla')")
+    cursor.execute("SELECT * FROM test")
 
     for row in cursor.fetchall():
         print(row)
