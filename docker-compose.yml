@@ -15,7 +15,6 @@ services:
       - MYSQL_PASSWORD=password
 
   pythonapp:
-    restart: always
     container_name: "pythonapp"
     build: .
     depends_on:
