@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  mysql:
+    container_name: "mysql"
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: "mysql"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: "password"
+    networks:
+      - app-network
+
+  pythonapp:
+    container_name: "pythonapp"
+    build: .
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

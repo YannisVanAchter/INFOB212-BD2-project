@@ -1,7 +1,6 @@
 FROM python:3.11
 
 RUN apt-get update
-RUN apt-get upgrade
 
 COPY ./requirements.txt ./requirements.txt
 
