@@ -1,18 +1,23 @@
 # INFOB212-BD2-project
 
-How to install the sql requerements ?
+## How to install the sql requerements for python?
 ```bash
-$>python -m venv venv
+$ python -m venv venv
 ...
-$>venv/Scripts/activate
-$>pip install -r requerements.txt
-
+$ venv/Scripts/activate
+$ pip install -r requerements.txt
 ```
 
-To run the app go to src directory and type:
+## To run the app
+In the repertory with the docker-compose and Dockerfile type:
 ```bash
-$src>python main.py
+$ cls && docker-compose build && docker-compose up
+```
+If this isn't the first time you run the app, use:
+```bash
+$ cls && docker-compose down && docker-compose build && docker-compose up
 ```
 
-To open Relationship-Association schema model use [SQL Workbrench](https://dev.mysql.com/downloads/workbench/) the file is stored [here](./schema/BD2-schema-project-adopte-ton-mort.mwb)
+## Open relational schema
+To open Relationship-Association schema model use [DB-Main](https://www.db-main.eu/getit/) the file is stored [here](./schema/conceptual-schema.lun)
 
