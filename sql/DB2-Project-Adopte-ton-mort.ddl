@@ -32,11 +32,10 @@ create table ADRESSE (
      constraint ID_ADRESSE_ID primary key (ID),
      constraint SID_ADRESSE_ID unique (Rue, Numero, Code_postal, Ville, Pays));
 
-
-
-create table INFIRMIER (
-     id numeric(32) not null,
-     constraint ID_INFIR_PERSO_ID primary key (id));
+create table TYPE_LIVRAISON (
+     type_name varchar(16) not null,
+     price numeric(4) not null,
+     constraint ID_TYPE_LIVRAISON_ID primary key (type_name));
 
 create table Livraison (
      ID numeric(32) not null,
@@ -47,7 +46,9 @@ create table Livraison (
      prenom_destinataire varchar(64) not null,
      type_name varchar(16) not null,
      A_ID numeric(32) not null,
-     constraint ID_Livraison_ID primary key (ID));
+     constraint ID_Livraison_ID primary key (ID)
+     foreign key (type_name) references TYPE_LIVRAISON
+     foreign key (A_ID) references ADRESSE);
 
 create table MEDECIN (
      id numeric(32) not null,
@@ -108,6 +109,11 @@ create table PERSONNEL (
      ANESTHESISTE numeric(32),
      RH numeric(32),
      constraint ID_PERSO_PERSO_ID primary key (id));
+
+create table INFIRMIER (
+     id numeric(32) not null,
+     constraint ID_INFIR_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNEL);
 
 create table COMPTABLE (
      id numeric(32) not null,
@@ -179,27 +185,11 @@ create table I_travail_sur (
      foreign key (id_transplantation) references TRANSPLANTATION
      foreign key (id) references INFIRMIER);
 
-create table TYPE_LIVRAISON (
-     type_name varchar(16) not null,
-     price numeric(4) not null,
-     constraint ID_TYPE_LIVRAISON_ID primary key (type_name));
 
 
 -- Constraints Section
 -- ___________________ 
 
-
-alter table INFIRMIER add constraint ID_INFIR_PERSO_FK
-     foreign key (id)
-     references PERSONNEL;
-
-alter table Livraison add constraint REF_Livra_TYPE__FK
-     foreign key (type_name)
-     references TYPE_LIVRAISON;
-
-alter table Livraison add constraint REF_Livra_ADRES_FK
-     foreign key (A_ID)
-     references ADRESSE;
 
 alter table MEDECIN add constraint ID_MEDEC_PERSO_FK
      foreign key (id)
