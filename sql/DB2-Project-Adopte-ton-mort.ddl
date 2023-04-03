@@ -60,7 +60,8 @@ create table PERSONNE (
      Date_naissance date not null,
      MDP varchar(128) not null,
      Hab_ID numeric(32) not null,
-     constraint ID_PERSONNE_ID primary key (id));
+     constraint ID_PERSONNE_ID primary key (id)
+     foreign key (Hab_ID) references ADRESSE);
 
 create table CLIENT (
      id numeric(32) not null,
@@ -87,7 +88,8 @@ create table PERSONNEL (
      COMPTABLE numeric(32),
      ANESTHESISTE numeric(32),
      RH numeric(32),
-     constraint ID_PERSO_PERSO_ID primary key (id));
+     constraint ID_PERSO_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNE);
 
 create table PDG (
      id numeric(32) not null,
@@ -161,7 +163,9 @@ create table Contient (
      id_organe numeric(32),
      constraint ID_Contient_ID primary key (id),
      constraint SID_Conti_SANG_ID unique (R_S_ID),
-     constraint SID_Conti_ORGAN_ID unique (id_organe));
+     constraint SID_Conti_ORGAN_ID unique (id_organe)
+     foreign key (R_S_ID) references SANG
+     foreign key (id_organe) references ORGANE);
 
 create table DETAIL (
      id_commande numeric(32) not null,
@@ -194,11 +198,6 @@ create table I_travail_sur (
 -- Constraints Section
 -- ___________________ 
 
-
-alter table PERSONNE add constraint REF_PERSO_ADRES_FK
-     foreign key (Hab_ID)
-     references ADRESSE;
-
 alter table PERSONNEL add constraint EXCL_PERSONNEL
      check((PDG is not null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)
            or (PDG is null and RH is not null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)
@@ -208,21 +207,9 @@ alter table PERSONNEL add constraint EXCL_PERSONNEL
            or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is not null)
            or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)); 
 
-alter table PERSONNEL add constraint ID_PERSO_PERSO_FK
-     foreign key (id)
-     references PERSONNE;
-
 alter table Contient add constraint ID_Contient_CHK
      check(exists(select * from DETAIL
                   where DETAIL.id = id)); 
-
-alter table Contient add constraint SID_Conti_SANG_FK
-     foreign key (R_S_ID)
-     references SANG;
-
-alter table Contient add constraint SID_Conti_ORGAN_FK
-     foreign key (id_organe)
-     references ORGANE;
 
 alter table Contient add constraint EXCL_Contient
      check((R_S_ID is not null and id_organe is null)
