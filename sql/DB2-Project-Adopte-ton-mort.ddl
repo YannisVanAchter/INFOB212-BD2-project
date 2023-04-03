@@ -32,15 +32,6 @@ create table ADRESSE (
      constraint ID_ADRESSE_ID primary key (ID),
      constraint SID_ADRESSE_ID unique (Rue, Numero, Code_postal, Ville, Pays));
 
-
-
-
-create table DETAIL (
-     id_commande numeric(32) not null,
-     id numeric(32) not null,
-     constraint SID_DETAI_Conti_ID unique (id),
-     constraint ID_DETAIL_ID primary key (id_commande, id));
-
 create table DONNEUR (
      id_donneur numeric(32) not null,
      ID numeric(32) not null,
@@ -107,16 +98,16 @@ create table CLIENT (
      Pseudo varchar(32) not null,
      type_sang varchar(2) not null,
      signe_sang char not null,
-     constraint ID_CLIEN_PERSO_ID primary key (id))
-     foreign key (id) references PERSONNE;
+     constraint ID_CLIEN_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNE);
 
 create table COMMANDE (
      id_commande numeric(32) not null,
      ID numeric(32) not null,
      Ach_id numeric(32) not null,
-     constraint ID_COMMANDE_ID primary key (id_commande))
+     constraint ID_COMMANDE_ID primary key (id_commande)
      foreign key (ID) references Livraison
-     foreign key (Ach_id) references CLIENT;
+     foreign key (Ach_id) references CLIENT);
 
 create table PERSONNEL (
      id numeric(32) not null,
@@ -131,15 +122,15 @@ create table PERSONNEL (
 
 create table COMPTABLE (
      id numeric(32) not null,
-     constraint ID_COMPT_PERSO_ID primary key (id))
-     foreign key (id) references PERSONNEL;
+     constraint ID_COMPT_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNEL);
 
 create table ANESTHESISTE (
      id numeric(32) not null,
      nb_inami char(32) not null,
      constraint ID_ANEST_PERSO_ID primary key (id),
-     constraint SID_ANESTHESISTE_ID unique (nb_inami))
-     foreign key (id) references PERSONNEL;
+     constraint SID_ANESTHESISTE_ID unique (nb_inami)
+     foreign key (id) references PERSONNEL);
 
 
 create table Contient (
@@ -149,6 +140,14 @@ create table Contient (
      constraint ID_Contient_ID primary key (id),
      constraint SID_Conti_SANG_ID unique (R_S_ID),
      constraint SID_Conti_ORGAN_ID unique (id_organe));
+
+create table DETAIL (
+     id_commande numeric(32) not null,
+     id numeric(32) not null,
+     constraint SID_DETAI_Conti_ID unique (id),
+     constraint ID_DETAIL_ID primary key (id_commande, id)
+     foreign key (id) references Contient
+     foreign key (id_commande) references COMMANDE);
 
 create table RH (
      id numeric(32) not null,
@@ -183,14 +182,6 @@ create table TYPE_LIVRAISON (
 
 -- Constraints Section
 -- ___________________ 
-
-alter table DETAIL add constraint SID_DETAI_Conti_FK
-     foreign key (id)
-     references Contient;
-
-alter table DETAIL add constraint REF_DETAI_COMMA
-     foreign key (id_commande)
-     references COMMANDE;
 
 alter table DONNEUR add constraint SID_DONNE_SANG_FK
      foreign key (ID)
