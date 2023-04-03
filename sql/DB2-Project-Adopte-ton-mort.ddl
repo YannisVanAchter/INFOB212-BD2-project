@@ -32,17 +32,6 @@ create table ADRESSE (
      constraint ID_ADRESSE_ID primary key (ID),
      constraint SID_ADRESSE_ID unique (Rue, Numero, Code_postal, Ville, Pays));
 
-create table ANESTHESISTE (
-     id numeric(32) not null,
-     nb_inami char(32) not null,
-     constraint ID_ANEST_PERSO_ID primary key (id),
-     constraint SID_ANESTHESISTE_ID unique (nb_inami));
-
-create table COMMANDE (
-     id_commande numeric(32) not null,
-     ID numeric(32) not null,
-     Ach_id numeric(32) not null,
-     constraint ID_COMMANDE_ID primary key (id_commande));
 
 create table COMPTABLE (
      id numeric(32) not null,
@@ -123,6 +112,13 @@ create table CLIENT (
      constraint ID_CLIEN_PERSO_ID primary key (id))
      foreign key (id) references PERSONNE;
 
+create table COMMANDE (
+     id_commande numeric(32) not null,
+     ID numeric(32) not null,
+     Ach_id numeric(32) not null,
+     constraint ID_COMMANDE_ID primary key (id_commande))
+     foreign key (ID) references Livraison;
+
 create table PERSONNEL (
      id numeric(32) not null,
      salaire numeric(32) not null,
@@ -133,6 +129,14 @@ create table PERSONNEL (
      ANESTHESISTE numeric(32),
      RH numeric(32),
      constraint ID_PERSO_PERSO_ID primary key (id));
+
+create table ANESTHESISTE (
+     id numeric(32) not null,
+     nb_inami char(32) not null,
+     constraint ID_ANEST_PERSO_ID primary key (id),
+     constraint SID_ANESTHESISTE_ID unique (nb_inami))
+     foreign key (id) references PERSONNEL;
+
 
 create table Contient (
      id numeric(32) not null,
@@ -175,15 +179,6 @@ create table TYPE_LIVRAISON (
 
 -- Constraints Section
 -- ___________________ 
-
-alter table ANESTHESISTE add constraint ID_ANEST_PERSO_FK
-     foreign key (id)
-     references PERSONNEL;
-
-
-alter table COMMANDE add constraint REF_COMMA_Livra_FK
-     foreign key (ID)
-     references Livraison;
 
 alter table COMMANDE add constraint REF_COMMA_CLIEN_FK
      foreign key (Ach_id)
