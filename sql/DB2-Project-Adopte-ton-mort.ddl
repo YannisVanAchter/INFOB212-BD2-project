@@ -12,7 +12,7 @@
 -- Database Section
 -- ________________ 
 
-create database Physique V4;
+create database Physique_V4;
 
 
 -- DBSpace Section

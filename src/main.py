@@ -2,7 +2,6 @@
 
 # import
 # native
-pass
 import time
 
 # pip install -r requerements.txt
@@ -15,7 +14,7 @@ from mysql.connector.cursor_cext import CMySQLCursor
 # local modules
 from exception.unconnectederror import UnConnectedError
 
-def db_connect(user: str, password: str, host: str|int, database: str) -> (tuple[MySQLConnection|CMySQLConnection, CMySQLCursor]):
+def db_connect(user: str, password: str, host: str|int, database: str, **kwargs) -> (tuple[MySQLConnection|CMySQLConnection, CMySQLCursor]):
     """Connect to database and place cursor
 
     Args:
@@ -41,7 +40,7 @@ def db_connect(user: str, password: str, host: str|int, database: str) -> (tuple
     -------
         Youlan Collart & Yannis Van Achter
     """
-    db = mysql.connect(user=user, passwd=password, database=database, host=host)
+    db = mysql.connect(user=user, passwd=password, database=database, host=host, **kwargs)
     if not db.is_connected():
         raise UnConnectedError()
     
@@ -69,7 +68,7 @@ def db_disconnect(db: MySQLConnection|CMySQLConnection, cursor: CMySQLCursor) ->
     db.disconnect()
 
 def main():
-    time.sleep(3)
+    # time.sleep(10)
     db, cursor = db_connect(user='user', password='password', host='mysql', database='mysql')
 
     # TODO: create test for db_disconnect() and db_connect() with it
