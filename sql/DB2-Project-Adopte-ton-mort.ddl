@@ -32,18 +32,7 @@ create table ADRESSE (
      constraint ID_ADRESSE_ID primary key (ID),
      constraint SID_ADRESSE_ID unique (Rue, Numero, Code_postal, Ville, Pays));
 
-create table DONNEUR (
-     id_donneur numeric(32) not null,
-     ID numeric(32) not null,
-     genre char not null,
-     tranche_age float(1) not null,
-     constraint ID_DONNEUR_ID primary key (id_donneur),
-     constraint SID_DONNE_SANG_ID unique (ID));
 
-create table I_travail_sur (
-     id numeric(32) not null,
-     id_transplantation char(1) not null,
-     constraint ID_I_travail_sur_ID primary key (id, id_transplantation));
 
 create table INFIRMIER (
      id numeric(32) not null,
@@ -163,6 +152,15 @@ create table SANG (
      id_transplantation char(1),
      constraint ID_SANG_ID primary key (ID));
 
+create table DONNEUR (
+     id_donneur numeric(32) not null,
+     ID numeric(32) not null,
+     genre char not null,
+     tranche_age float(1) not null,
+     constraint ID_DONNEUR_ID primary key (id_donneur),
+     constraint SID_DONNE_SANG_ID unique (ID)
+     foreign key (ID) references SANG);
+
 create table TRANSPLANTATION (
      date date not null,
      id_transplantation char(1) not null,
@@ -174,6 +172,13 @@ create table TRANSPLANTATION (
      constraint ID_TRANSPLANTATION_ID primary key (id_transplantation),
      constraint SID_TRANS_ORGAN_ID unique (id_organe));
 
+create table I_travail_sur (
+     id numeric(32) not null,
+     id_transplantation char(1) not null,
+     constraint ID_I_travail_sur_ID primary key (id, id_transplantation)
+     foreign key (id_transplantation) references TRANSPLANTATION
+     foreign key (id) references INFIRMIER);
+
 create table TYPE_LIVRAISON (
      type_name varchar(16) not null,
      price numeric(4) not null,
@@ -183,17 +188,6 @@ create table TYPE_LIVRAISON (
 -- Constraints Section
 -- ___________________ 
 
-alter table DONNEUR add constraint SID_DONNE_SANG_FK
-     foreign key (ID)
-     references SANG;
-
-alter table I_travail_sur add constraint EQU_I_tra_TRANS_FK
-     foreign key (id_transplantation)
-     references TRANSPLANTATION;
-
-alter table I_travail_sur add constraint REF_I_tra_INFIR
-     foreign key (id)
-     references INFIRMIER;
 
 alter table INFIRMIER add constraint ID_INFIR_PERSO_FK
      foreign key (id)
