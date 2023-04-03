@@ -50,27 +50,6 @@ create table Livraison (
      foreign key (type_name) references TYPE_LIVRAISON
      foreign key (A_ID) references ADRESSE);
 
-create table MEDECIN (
-     id numeric(32) not null,
-     nb_inami char(32) not null,
-     constraint ID_MEDEC_PERSO_ID primary key (id),
-     constraint SID_MEDECIN_ID unique (nb_inami));
-
-create table ORGANE (
-     etat char(32) not null,
-     fonctionnnel char not null,
-     date_peremption date not null,
-     date_peremption_transplantation date,
-     methode_de_conservation varchar(64) not null,
-     type varchar(64) not null,
-     id_organe numeric(32) not null,
-     prix float(64) not null,
-     id_donneur numeric(32) not null,
-     constraint ID_ORGANE_ID primary key (id_organe));
-
-create table PDG (
-     id numeric(32) not null,
-     constraint ID_PDG_PERSO_ID primary key (id));
 
 create table PERSONNE (
      id numeric(32) not null,
@@ -110,6 +89,19 @@ create table PERSONNEL (
      RH numeric(32),
      constraint ID_PERSO_PERSO_ID primary key (id));
 
+create table PDG (
+     id numeric(32) not null,
+     constraint ID_PDG_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNEL);
+
+
+create table MEDECIN (
+     id numeric(32) not null,
+     nb_inami char(32) not null,
+     constraint ID_MEDEC_PERSO_ID primary key (id),
+     constraint SID_MEDECIN_ID unique (nb_inami)
+     foreign key (id) references PERSONNEL);
+
 create table INFIRMIER (
      id numeric(32) not null,
      constraint ID_INFIR_PERSO_ID primary key (id)
@@ -126,23 +118,6 @@ create table ANESTHESISTE (
      constraint ID_ANEST_PERSO_ID primary key (id),
      constraint SID_ANESTHESISTE_ID unique (nb_inami)
      foreign key (id) references PERSONNEL);
-
-
-create table Contient (
-     id numeric(32) not null,
-     R_S_ID numeric(32),
-     id_organe numeric(32),
-     constraint ID_Contient_ID primary key (id),
-     constraint SID_Conti_SANG_ID unique (R_S_ID),
-     constraint SID_Conti_ORGAN_ID unique (id_organe));
-
-create table DETAIL (
-     id_commande numeric(32) not null,
-     id numeric(32) not null,
-     constraint SID_DETAI_Conti_ID unique (id),
-     constraint ID_DETAIL_ID primary key (id_commande, id)
-     foreign key (id) references Contient
-     foreign key (id_commande) references COMMANDE);
 
 create table RH (
      id numeric(32) not null,
@@ -167,6 +142,35 @@ create table DONNEUR (
      constraint SID_DONNE_SANG_ID unique (ID)
      foreign key (ID) references SANG);
 
+create table ORGANE (
+     etat char(32) not null,
+     fonctionnnel char not null,
+     date_peremption date not null,
+     date_peremption_transplantation date,
+     methode_de_conservation varchar(64) not null,
+     type varchar(64) not null,
+     id_organe numeric(32) not null,
+     prix float(64) not null,
+     id_donneur numeric(32) not null,
+     constraint ID_ORGANE_ID primary key (id_organe)
+     foreign key (id_donneur) references DONNEUR);
+     
+create table Contient (
+     id numeric(32) not null,
+     R_S_ID numeric(32),
+     id_organe numeric(32),
+     constraint ID_Contient_ID primary key (id),
+     constraint SID_Conti_SANG_ID unique (R_S_ID),
+     constraint SID_Conti_ORGAN_ID unique (id_organe));
+
+create table DETAIL (
+     id_commande numeric(32) not null,
+     id numeric(32) not null,
+     constraint SID_DETAI_Conti_ID unique (id),
+     constraint ID_DETAIL_ID primary key (id_commande, id)
+     foreign key (id) references Contient
+     foreign key (id_commande) references COMMANDE);
+
 create table TRANSPLANTATION (
      date date not null,
      id_transplantation char(1) not null,
@@ -190,18 +194,6 @@ create table I_travail_sur (
 -- Constraints Section
 -- ___________________ 
 
-
-alter table MEDECIN add constraint ID_MEDEC_PERSO_FK
-     foreign key (id)
-     references PERSONNEL;
-
-alter table ORGANE add constraint REF_ORGAN_DONNE_FK
-     foreign key (id_donneur)
-     references DONNEUR;
-
-alter table PDG add constraint ID_PDG_PERSO_FK
-     foreign key (id)
-     references PERSONNEL;
 
 alter table PERSONNE add constraint REF_PERSO_ADRES_FK
      foreign key (Hab_ID)
