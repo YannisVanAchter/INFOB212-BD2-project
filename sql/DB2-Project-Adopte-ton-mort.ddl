@@ -34,9 +34,9 @@ create table ADRESSE (
 
 create table ANESTHESISTE (
      id numeric(32) not null,
-     n°_inami char(32) not null,
+     nb_inami char(32) not null,
      constraint ID_ANEST_PERSO_ID primary key (id),
-     constraint SID_ANESTHESISTE_ID unique (n°_inami));
+     constraint SID_ANESTHESISTE_ID unique (nb_inami));
 
 create table COMMANDE (
      id_commande numeric(32) not null,
@@ -84,9 +84,9 @@ create table Livraison (
 
 create table MEDECIN (
      id numeric(32) not null,
-     n°_inami char(32) not null,
+     nb_inami char(32) not null,
      constraint ID_MEDEC_PERSO_ID primary key (id),
-     constraint SID_MEDECIN_ID unique (n°_inami));
+     constraint SID_MEDECIN_ID unique (nb_inami));
 
 create table ORGANE (
      etat char(32) not null,
@@ -317,7 +317,7 @@ create unique index ID_ANEST_PERSO_IND
      on ANESTHESISTE (id);
 
 create unique index SID_ANESTHESISTE_IND
-     on ANESTHESISTE (n°_inami);
+     on ANESTHESISTE (nb_inami);
 
 create unique index ID_CLIEN_PERSO_IND
      on CLIENT (id);
@@ -368,7 +368,7 @@ create unique index ID_MEDEC_PERSO_IND
      on MEDECIN (id);
 
 create unique index SID_MEDECIN_IND
-     on MEDECIN (n°_inami);
+     on MEDECIN (nb_inami);
 
 create unique index ID_ORGANE_IND
      on ORGANE (id_organe);
