@@ -32,22 +32,10 @@ create table ADRESSE (
      constraint ID_ADRESSE_ID primary key (ID),
      constraint SID_ADRESSE_ID unique (Rue, Numero, Code_postal, Ville, Pays));
 
-create table DONNEUR (
-     id_donneur numeric(32) not null,
-     ID numeric(32) not null,
-     genre char not null,
-     tranche_age float(1) not null,
-     constraint ID_DONNEUR_ID primary key (id_donneur),
-     constraint SID_DONNE_SANG_ID unique (ID));
-
-create table I_travail_sur (
-     id numeric(32) not null,
-     id_transplantation char(1) not null,
-     constraint ID_I_travail_sur_ID primary key (id, id_transplantation));
-
-create table INFIRMIER (
-     id numeric(32) not null,
-     constraint ID_INFIR_PERSO_ID primary key (id));
+create table TYPE_LIVRAISON (
+     type_name varchar(16) not null,
+     price numeric(4) not null,
+     constraint ID_TYPE_LIVRAISON_ID primary key (type_name));
 
 create table Livraison (
      ID numeric(32) not null,
@@ -58,29 +46,10 @@ create table Livraison (
      prenom_destinataire varchar(64) not null,
      type_name varchar(16) not null,
      A_ID numeric(32) not null,
-     constraint ID_Livraison_ID primary key (ID));
+     constraint ID_Livraison_ID primary key (ID)
+     foreign key (type_name) references TYPE_LIVRAISON
+     foreign key (A_ID) references ADRESSE);
 
-create table MEDECIN (
-     id numeric(32) not null,
-     nb_inami char(32) not null,
-     constraint ID_MEDEC_PERSO_ID primary key (id),
-     constraint SID_MEDECIN_ID unique (nb_inami));
-
-create table ORGANE (
-     etat char(32) not null,
-     fonctionnnel char not null,
-     date_peremption date not null,
-     date_peremption_transplantation date,
-     methode_de_conservation varchar(64) not null,
-     type varchar(64) not null,
-     id_organe numeric(32) not null,
-     prix float(64) not null,
-     id_donneur numeric(32) not null,
-     constraint ID_ORGANE_ID primary key (id_organe));
-
-create table PDG (
-     id numeric(32) not null,
-     constraint ID_PDG_PERSO_ID primary key (id));
 
 create table PERSONNE (
      id numeric(32) not null,
@@ -91,7 +60,8 @@ create table PERSONNE (
      Date_naissance date not null,
      MDP varchar(128) not null,
      Hab_ID numeric(32) not null,
-     constraint ID_PERSONNE_ID primary key (id));
+     constraint ID_PERSONNE_ID primary key (id)
+     foreign key (Hab_ID) references ADRESSE);
 
 create table CLIENT (
      id numeric(32) not null,
@@ -118,7 +88,26 @@ create table PERSONNEL (
      COMPTABLE numeric(32),
      ANESTHESISTE numeric(32),
      RH numeric(32),
-     constraint ID_PERSO_PERSO_ID primary key (id));
+     constraint ID_PERSO_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNE);
+
+create table PDG (
+     id numeric(32) not null,
+     constraint ID_PDG_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNEL);
+
+
+create table MEDECIN (
+     id numeric(32) not null,
+     nb_inami char(32) not null,
+     constraint ID_MEDEC_PERSO_ID primary key (id),
+     constraint SID_MEDECIN_ID unique (nb_inami)
+     foreign key (id) references PERSONNEL);
+
+create table INFIRMIER (
+     id numeric(32) not null,
+     constraint ID_INFIR_PERSO_ID primary key (id)
+     foreign key (id) references PERSONNEL);
 
 create table COMPTABLE (
      id numeric(32) not null,
@@ -131,23 +120,6 @@ create table ANESTHESISTE (
      constraint ID_ANEST_PERSO_ID primary key (id),
      constraint SID_ANESTHESISTE_ID unique (nb_inami)
      foreign key (id) references PERSONNEL);
-
-
-create table Contient (
-     id numeric(32) not null,
-     R_S_ID numeric(32),
-     id_organe numeric(32),
-     constraint ID_Contient_ID primary key (id),
-     constraint SID_Conti_SANG_ID unique (R_S_ID),
-     constraint SID_Conti_ORGAN_ID unique (id_organe));
-
-create table DETAIL (
-     id_commande numeric(32) not null,
-     id numeric(32) not null,
-     constraint SID_DETAI_Conti_ID unique (id),
-     constraint ID_DETAIL_ID primary key (id_commande, id)
-     foreign key (id) references Contient
-     foreign key (id_commande) references COMMANDE);
 
 create table RH (
      id numeric(32) not null,
@@ -163,6 +135,46 @@ create table SANG (
      id_transplantation char(1),
      constraint ID_SANG_ID primary key (ID));
 
+create table DONNEUR (
+     id_donneur numeric(32) not null,
+     ID numeric(32) not null,
+     genre char not null,
+     tranche_age float(1) not null,
+     constraint ID_DONNEUR_ID primary key (id_donneur),
+     constraint SID_DONNE_SANG_ID unique (ID)
+     foreign key (ID) references SANG);
+
+create table ORGANE (
+     etat char(32) not null,
+     fonctionnnel char not null,
+     date_peremption date not null,
+     date_peremption_transplantation date,
+     methode_de_conservation varchar(64) not null,
+     type varchar(64) not null,
+     id_organe numeric(32) not null,
+     prix float(64) not null,
+     id_donneur numeric(32) not null,
+     constraint ID_ORGANE_ID primary key (id_organe)
+     foreign key (id_donneur) references DONNEUR);
+     
+create table Contient (
+     id numeric(32) not null,
+     R_S_ID numeric(32),
+     id_organe numeric(32),
+     constraint ID_Contient_ID primary key (id),
+     constraint SID_Conti_SANG_ID unique (R_S_ID),
+     constraint SID_Conti_ORGAN_ID unique (id_organe)
+     foreign key (R_S_ID) references SANG
+     foreign key (id_organe) references ORGANE);
+
+create table DETAIL (
+     id_commande numeric(32) not null,
+     id numeric(32) not null,
+     constraint SID_DETAI_Conti_ID unique (id),
+     constraint ID_DETAIL_ID primary key (id_commande, id)
+     foreign key (id) references Contient
+     foreign key (id_commande) references COMMANDE);
+
 create table TRANSPLANTATION (
      date date not null,
      id_transplantation char(1) not null,
@@ -174,54 +186,17 @@ create table TRANSPLANTATION (
      constraint ID_TRANSPLANTATION_ID primary key (id_transplantation),
      constraint SID_TRANS_ORGAN_ID unique (id_organe));
 
-create table TYPE_LIVRAISON (
-     type_name varchar(16) not null,
-     price numeric(4) not null,
-     constraint ID_TYPE_LIVRAISON_ID primary key (type_name));
+create table I_travail_sur (
+     id numeric(32) not null,
+     id_transplantation char(1) not null,
+     constraint ID_I_travail_sur_ID primary key (id, id_transplantation)
+     foreign key (id_transplantation) references TRANSPLANTATION
+     foreign key (id) references INFIRMIER);
+
 
 
 -- Constraints Section
 -- ___________________ 
-
-alter table DONNEUR add constraint SID_DONNE_SANG_FK
-     foreign key (ID)
-     references SANG;
-
-alter table I_travail_sur add constraint EQU_I_tra_TRANS_FK
-     foreign key (id_transplantation)
-     references TRANSPLANTATION;
-
-alter table I_travail_sur add constraint REF_I_tra_INFIR
-     foreign key (id)
-     references INFIRMIER;
-
-alter table INFIRMIER add constraint ID_INFIR_PERSO_FK
-     foreign key (id)
-     references PERSONNEL;
-
-alter table Livraison add constraint REF_Livra_TYPE__FK
-     foreign key (type_name)
-     references TYPE_LIVRAISON;
-
-alter table Livraison add constraint REF_Livra_ADRES_FK
-     foreign key (A_ID)
-     references ADRESSE;
-
-alter table MEDECIN add constraint ID_MEDEC_PERSO_FK
-     foreign key (id)
-     references PERSONNEL;
-
-alter table ORGANE add constraint REF_ORGAN_DONNE_FK
-     foreign key (id_donneur)
-     references DONNEUR;
-
-alter table PDG add constraint ID_PDG_PERSO_FK
-     foreign key (id)
-     references PERSONNEL;
-
-alter table PERSONNE add constraint REF_PERSO_ADRES_FK
-     foreign key (Hab_ID)
-     references ADRESSE;
 
 alter table PERSONNEL add constraint EXCL_PERSONNEL
      check((PDG is not null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)
@@ -232,21 +207,9 @@ alter table PERSONNEL add constraint EXCL_PERSONNEL
            or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is not null)
            or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)); 
 
-alter table PERSONNEL add constraint ID_PERSO_PERSO_FK
-     foreign key (id)
-     references PERSONNE;
-
 alter table Contient add constraint ID_Contient_CHK
      check(exists(select * from DETAIL
                   where DETAIL.id = id)); 
-
-alter table Contient add constraint SID_Conti_SANG_FK
-     foreign key (R_S_ID)
-     references SANG;
-
-alter table Contient add constraint SID_Conti_ORGAN_FK
-     foreign key (id_organe)
-     references ORGANE;
 
 alter table Contient add constraint EXCL_Contient
      check((R_S_ID is not null and id_organe is null)
