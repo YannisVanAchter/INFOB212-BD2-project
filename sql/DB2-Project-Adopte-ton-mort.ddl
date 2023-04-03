@@ -38,13 +38,6 @@ create table ANESTHESISTE (
      constraint ID_ANEST_PERSO_ID primary key (id),
      constraint SID_ANESTHESISTE_ID unique (n°_inami));
 
-create table CLIENT (
-     id numeric(32) not null,
-     Pseudo varchar(32) not null,
-     type_sang varchar(2) not null,
-     signe_sang char not null,
-     constraint ID_CLIEN_PERSO_ID primary key (id));
-
 create table COMMANDE (
      id_commande numeric(32) not null,
      ID numeric(32) not null,
@@ -122,6 +115,14 @@ create table PERSONNE (
      Hab_ID numeric(32) not null,
      constraint ID_PERSONNE_ID primary key (id));
 
+create table CLIENT (
+     id numeric(32) not null,
+     Pseudo varchar(32) not null,
+     type_sang varchar(2) not null,
+     signe_sang char not null,
+     constraint ID_CLIEN_PERSO_ID primary key (id))
+     foreign key (id) references PERSONNE;
+
 create table PERSONNEL (
      id numeric(32) not null,
      salaire numeric(32) not null,
@@ -179,9 +180,6 @@ alter table ANESTHESISTE add constraint ID_ANEST_PERSO_FK
      foreign key (id)
      references PERSONNEL;
 
-alter table CLIENT add constraint ID_CLIEN_PERSO_FK
-     foreign key (id)
-     references PERSONNE;
 
 alter table COMMANDE add constraint REF_COMMA_Livra_FK
      foreign key (ID)
