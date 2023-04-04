@@ -7,6 +7,7 @@
 import mysql.connector as mysql
 
 # local modules
+from menupersonnel.menucompta import main_compta_menu
 from module.database import DataBase
 
 # function and class
@@ -26,6 +27,8 @@ def main():
         print(row)
         
     database.disconnect()
+    
+    main_compta_menu(database)
 
 if __name__ == "__main__":
     main()
