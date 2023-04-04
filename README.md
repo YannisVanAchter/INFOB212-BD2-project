@@ -11,11 +11,16 @@ $ pip install -r requerements.txt
 ## To run the app
 In the repertory with the docker-compose and Dockerfile type:
 ```bash
-$ cls && docker-compose build && docker-compose up
+$ cls
+$ docker-compose build
+$ docker-compose up
 ```
 If this isn't the first time you run the app, use:
 ```bash
-$ cls && docker-compose down && docker-compose build && docker-compose up
+$ cls
+$ docker-compose down 
+$ docker-compose build 
+$ docker-compose up
 ```
 
 ## Open relational schema
