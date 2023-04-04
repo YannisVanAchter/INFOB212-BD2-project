@@ -34,7 +34,7 @@ class DataBase:
         self.config = kwargs
         self.__has_one_querry = False
 
-    @property
+    @property  # https://www.geeksforgeeks.org/python-property-decorator-property/
     def table(self) -> (list[tuple]):
         """represent the list of raws fetch from SELECT SQL command"""
         if self.__has_one_querry == False:
