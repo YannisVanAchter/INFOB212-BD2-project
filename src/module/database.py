@@ -56,6 +56,14 @@ class DataBase:
     def db(self):
         return self.__db
 
+    # https://stackoverflow.com/questions/1984325/explaining-pythons-enter-and-exit
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc_value, trace):
+        self.disconnect()
+
     def connect(self) -> (tuple[MySQLConnection | CMySQLConnection, CMySQLCursor]):
         """Connect to database and place cursor
 
@@ -132,3 +140,31 @@ class DataBase:
         """
         self.__cursor.close()
         self.__db.disconnect()
+
+
+def __init_database__():
+    # with key word: https://www.geeksforgeeks.org/with-statement-in-python/
+    with DataBase("user", "password", "mysql", "mysql") as db:
+        # check line 60 why didn't I connect the DataBase object
+        db.execute(
+            """create table if not exists TYPE_LIVRAISON (
+                    type_name varchar(16) not null,
+                    price numeric(4) not null,
+                    constraint ID_TYPE_LIVRAISON_ID primary key (type_name)); """
+        )
+
+        db.execute("""insert into TYPE_LIVRAISON values ('normal', 5); """)
+        db.execute("""insert into TYPE_LIVRAISON values ('express', 10); """)
+        db.execute("""insert into TYPE_LIVRAISON values ('internationnal', 15); """)
+        db.execute("""insert into TYPE_LIVRAISON values ('main propre', 3);""")
+
+        # for test
+        # db.execute("SELECT * FROM TYPE_LIVRAISON;")
+
+        # for row in db.table:
+        #     print(row)
+
+
+if __name__ == "module.database":
+    # execute only if we use run file as module
+    __init_database__()
