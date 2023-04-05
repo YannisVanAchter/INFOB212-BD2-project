@@ -1,7 +1,7 @@
 # encoding uft-8
 
-
-## PARTIE FINIE 
+## Permet de se co à la BD, d'exec les requêtes et de se déco de la BD 
+## PARTIE FINIE & FONCTIONNELLE 
 
 
 import time
@@ -84,9 +84,9 @@ class DataBase:
         --------
             1.0.0
 
-        Author:
+        Authors:
         -------
-            Youlan Collart & Yannis Van Achter
+            Youlan Collard & Yannis Van Achter
         """
         count_tentative = 0
         while count_tentative < 1000:
@@ -140,7 +140,7 @@ class DataBase:
 
         Author:
         -------
-            Youlan Collart & Yannis Van Achter
+            Youlan Collard & Yannis Van Achter
         """
         self.__cursor.close()
         self.__db.disconnect()
