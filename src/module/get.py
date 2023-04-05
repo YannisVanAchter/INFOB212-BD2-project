@@ -1,7 +1,7 @@
 # encoding uft-8
 # we could use cs50 module for it but we would need to import Falsk and other package that we won't use
 """
-module that provide use full function for input of user
+module that provide useful function for input of user
 """
 __version__ = "1.0.0"
 __author__ = "yannis van achter <discord:Yannis Van Achter#1444"
