@@ -1,5 +1,9 @@
 # encoding uft-8
 
+
+## PARTIE FINIE 
+
+
 import time
 
 import mysql.connector as mysql
