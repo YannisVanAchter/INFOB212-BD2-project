@@ -1,8 +1,11 @@
 # encoding uft-8
+"""
+Allow user of DataBase object to connect to MySQL database and execute sql inside 
 
-## Permet de se co à la BD, d'exec les requêtes et de se déco de la BD 
-## PARTIE FINIE & FONCTIONNELLE 
-
+Done and functionnal, check DataBase object documentation to get use example
+"""
+__version__ = '1.0.0'
+__author__ = "Yannis Van Achter <discord:Yannis Van Achter#1444>"
 
 import time
 
@@ -16,7 +19,32 @@ from exception.unconnectederror import UnConnectedError
 
 
 class DataBase:
-    """DataBase object is a collection of usefull function for database management with mysql.connector"""
+    """DataBase object is a collection of usefull function for database management with mysql.connector
+    
+    use case example:
+        config = {
+            "user": "user",
+            "password": "password",
+            "host": "mysql",
+            "database": "mysql", # other config parameters
+        } \n
+        db = DataBase(**config) # or db = DataBase("user", "password", "mysql", "mysql")\n
+        db.connect()\n
+        db.execute(my_sql_querry)\n
+        for row in db.table:\n
+            print(row)\n
+        db.disconnect()\n
+    
+    You can also use the with statement as follow:\n
+        with DataBase(**config) as db:\n
+            db.execute(my_sql_querry)\n
+            for row in db.table:\n
+                print(row)\n
+            
+    You can also use this object as parameter for execute sql querry in other functions\n
+    
+    For more detail about this object use print(help(DataBase))
+    """
 
     def __init__(
         self, user: str, password: str, host: str | int, database: str, **kwargs
@@ -37,27 +65,53 @@ class DataBase:
         self.database = database
         self.config = kwargs
         self.__has_one_querry = False
+        self.__is_connected = False
+        
+    def __dict__(self):
+        """contain connection config 
+
+        Returns:
+            dict: config
+        """
+        dic = {
+            "user": self.user,
+            "password": self.password,
+            "host": self.host,
+            "database": self.database,
+            "config": self.config,
+        }
+        return dic
 
     @property  # https://www.geeksforgeeks.org/python-property-decorator-property/
     def table(self) -> (list[tuple]):
-        """represent the list of raws fetch from SELECT SQL command"""
+        """represent the list of raws fetch from SELECT SQL command
+        
+        Note:
+        ----- 
+            replace self._DataBase__cursor.fetchall()
+        """
         if self.__has_one_querry == False:
             return []
         return self.__cursor.fetchall()
 
-    @table.setter
-    def table(self, *value) -> (Exception()):
-        """represent the list of raws fetch from SELECT SQL command"""
-        raise ValueError(
-            "You can not set value in database table like it, use self.execute(...) to run sql command for insert, delete, create or update."
-        )
-
     @property
-    def cursor(self):
+    def cursor(self) -> (CMySQLCursor):
+        """Get mysql.connector cursor (once connected)
+
+        Return:
+        -------
+            CMySQLCursor: cursor in sql database
+        """
         return self.__cursor
 
     @property
-    def db(self):
+    def db(self) -> (MySQLConnection | CMySQLConnection):
+        """get mysqle.connector connection object
+
+        Return:
+        -------
+            MySQLConnection | CMySQLConnection: connection object
+        """
         return self.__db
 
     # https://stackoverflow.com/questions/1984325/explaining-pythons-enter-and-exit
@@ -102,13 +156,15 @@ class DataBase:
                     raise UnConnectedError()
 
                 self.__cursor = self.__db.cursor()
+                
+                self.__is_connected = True
 
                 return self.__db, self.__cursor
-            except DatabaseError as e:
+            except DatabaseError:
                 time.sleep(0.01)
                 count_tentative += 1
 
-        raise e
+        raise UnConnectedError("Fail to connect to data base, please check sql container started correctly")
 
     def execute(self, querry: str):
         """execute SQL querry in database
@@ -125,9 +181,17 @@ class DataBase:
         ------
             Use self.table to get the return of the querry
         """
+        origninaly_connected = True
+        if not self.__is_connected:
+            self.connect()
+            origninaly_connected = False
+            
         try:
             self.__cursor.execute(querry)
             self.__has_one_querry = True
+            
+            if not origninaly_connected:
+                self.disconnect()
         except ProgrammingError as e:
             raise e
 
@@ -144,12 +208,14 @@ class DataBase:
         """
         self.__cursor.close()
         self.__db.disconnect()
+        self.__is_connected = False
 
 
 def __init_database__():
+    """Init database by insert values"""
     # with key word: https://www.geeksforgeeks.org/with-statement-in-python/
     with DataBase("user", "password", "mysql", "mysql") as db:
-        # check line 60 why didn't I connect the DataBase object
+        # check DataBase.__enter__() method to understand why didn't I connect to database
         db.execute(
             """create table if not exists TYPE_LIVRAISON (
                     type_name varchar(16) not null,
