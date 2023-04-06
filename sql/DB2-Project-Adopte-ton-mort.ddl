@@ -193,7 +193,10 @@ create table I_travail_sur (
      foreign key (id_transplantation) references TRANSPLANTATION
      foreign key (id) references INFIRMIER);
 
-
+create view VUE_MEDECIN(organe, client, sang, anesthesiste, infirmier, medecin)
+as select type.ORGANE, id.TRANSPLANTATION, type_sang.CLIENT, id.ANESTHESISTE, id.INFIRMIER, id.MEDECIN
+from ORGANE O, TRANSPLANTATION T, CLIENT C, ANESTHESISTE A, INFIRMIER I, MEDECIN M, 
+where T.id = C.id and T.id_organe = O.id_organe and 
 
 -- Constraints Section
 -- ___________________ 
