@@ -195,8 +195,8 @@ create table I_travail_sur (
 
 create view VUE_MEDECIN(organe, client, sang, anesthesiste, infirmier, medecin)
 as select type.ORGANE, id.TRANSPLANTATION, type_sang.CLIENT, id.ANESTHESISTE, id.INFIRMIER, id.MEDECIN
-from ORGANE O, TRANSPLANTATION T, CLIENT C, ANESTHESISTE A, INFIRMIER I, MEDECIN M, 
-where T.id = C.id and T.id_organe = O.id_organe and 
+from ORGANE O, TRANSPLANTATION T, CLIENT C, ANESTHESISTE A, INFIRMIER I, MEDECIN M, I_travail_sur S
+where T.id = C.id and T.id_organe = O.id_organe and T.A_t_id = A.id and T.id = M.id and S.id = I.id and I.id_transplantation = T.id_transplantation;
 
 -- Constraints Section
 -- ___________________ 
