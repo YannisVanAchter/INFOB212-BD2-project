@@ -1,1 +1,1 @@
-from mainRHmenu import *
+from .mainRHmenu import *
