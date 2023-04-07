@@ -4,6 +4,9 @@ from module.get import get_string, get_float, get_int, get_sql_user_querry
 from module.database import DataBase
 from module.utils import clear_terminal as cls
 
+from .view import ask_product_price, ask_product_type
+from .controler import set_product_price
+
 def main_accounting_menu(database: DataBase):
     """Accountent menu
 
