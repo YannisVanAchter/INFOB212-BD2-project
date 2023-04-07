@@ -122,13 +122,17 @@ class DataBase:
     def __exit__(self, exc_type, exc_value, trace):
         self.disconnect()
 
+    def __del__(self):
+        """On delete of object disconnect from data base"""
+        self.disconnect()
+
     def connect(self) -> (tuple[MySQLConnection | CMySQLConnection, CMySQLCursor]):
         """Connect to database and place cursor
 
         Raises:
         ------
             UnConnectedError: If database is not connected
-            DataBaseError: If fail to connect (with more than 300 tentative)
+            DataBaseError: If fail to connect (with more than 1000 tentative)
 
         Returns:
         --------
