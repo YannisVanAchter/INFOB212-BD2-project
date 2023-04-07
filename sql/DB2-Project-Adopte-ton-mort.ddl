@@ -3,16 +3,16 @@
 -- *--------------------------------------------
 -- * DB-MAIN version: 11.0.2              
 -- * Generator date: Sep 14 2021              
--- * Generation date: Mon Apr  3 15:41:35 2023 
+-- * Generation date: Fri Apr  7 14:07:35 2023 
 -- * LUN file: C:\Users\yanni\OneDrive\Documents\GitHub\INFOB212-BD2-project\schema\conceptual-schema.lun 
--- * Schema: Physique V4/SQL 
+-- * Schema: physical v4/SQL1 
 -- ********************************************* 
 
 
 -- Database Section
 -- ________________ 
 
-create database Physique_V4;
+create database physical v4;
 
 
 -- DBSpace Section
@@ -22,356 +22,393 @@ create database Physique_V4;
 -- Tables Section
 -- _____________ 
 
-create table ADRESSE (
-     Rue varchar(128) not null,
-     Numero varchar(8) not null,
-     Code_postal numeric(16) not null,
-     Ville varchar(128) not null,
-     Pays varchar(128) not null,
-     ID numeric(32) not null,
-     constraint ID_ADRESSE_ID primary key (ID),
-     constraint SID_ADRESSE_ID unique (Rue, Numero, Code_postal, Ville, Pays));
-
-create table TYPE_LIVRAISON (
-     type_name varchar(16) not null,
-     price numeric(4) not null,
-     constraint ID_TYPE_LIVRAISON_ID primary key (type_name));
-
-create table Livraison (
-     ID numeric(32) not null,
-     date_depart date not null,
-     date_arrive date not null,
-     date_arrive_eff date not null,
-     nom_destinataire varchar(64) not null,
-     prenom_destinataire varchar(64) not null,
-     type_name varchar(16) not null,
-     A_ID numeric(32) not null,
-     constraint ID_Livraison_ID primary key (ID)
-     foreign key (type_name) references TYPE_LIVRAISON
-     foreign key (A_ID) references ADRESSE);
-
-
-create table PERSONNE (
+create table ADDRESS (
+     street varchar(128) not null,
+     number numeric(8) not null,
+     postal_code numeric(16) not null,
+     city varchar(128) not null,
+     land varchar(128) not null,
      id numeric(32) not null,
-     Nom varchar(64),
-     Prenom varchar(64),
-     email varchar(128) not null,
-     telephone varchar(32),
-     Date_naissance date not null,
-     MDP varchar(128) not null,
-     Hab_ID numeric(32) not null,
-     constraint ID_PERSONNE_ID primary key (id)
-     foreign key (Hab_ID) references ADRESSE);
+     constraint ID_ADDRESS_ID primary key (id),
+     constraint SID_ADDRESS_ID unique (street, number, postal_code, city, land));
 
-create table CLIENT (
+create table ANAESTHETIST (
      id numeric(32) not null,
-     Pseudo varchar(32) not null,
-     type_sang varchar(2) not null,
-     signe_sang char not null,
-     constraint ID_CLIEN_PERSO_ID primary key (id)
-     foreign key (id) references PERSONNE);
+     inami_number char(32) not null,
+     constraint ID_ANAES_STAFF_ID primary key (id));
 
-create table COMMANDE (
-     id_commande numeric(32) not null,
-     ID numeric(32) not null,
-     Ach_id numeric(32) not null,
-     constraint ID_COMMANDE_ID primary key (id_commande)
-     foreign key (ID) references Livraison
-     foreign key (Ach_id) references CLIENT);
-
-create table PERSONNEL (
+create table CUSTOMER (
      id numeric(32) not null,
-     salaire numeric(32) not null,
-     PDG numeric(32),
-     MEDECIN numeric(32),
-     INFIRMIER numeric(32),
-     COMPTABLE numeric(32),
-     ANESTHESISTE numeric(32),
-     RH numeric(32),
-     constraint ID_PERSO_PERSO_ID primary key (id)
-     foreign key (id) references PERSONNE);
+     pseudo varchar(32) not null,
+     blood_type varchar(2) not null,
+     blood_sign char not null,
+     constraint ID_CUSTO_PERSO_ID primary key (id));
 
-create table PDG (
+create table ORDER (
      id numeric(32) not null,
-     constraint ID_PDG_PERSO_ID primary key (id)
-     foreign key (id) references PERSONNEL);
+     Typ_id numeric(32) not null,
+     Buy_id numeric(32) not null,
+     constraint ID_ORDER_ID primary key (id));
 
-
-create table MEDECIN (
+create table ACCOUNTANT (
      id numeric(32) not null,
-     nb_inami char(32) not null,
-     constraint ID_MEDEC_PERSO_ID primary key (id),
-     constraint SID_MEDECIN_ID unique (nb_inami)
-     foreign key (id) references PERSONNEL);
-
-create table INFIRMIER (
-     id numeric(32) not null,
-     constraint ID_INFIR_PERSO_ID primary key (id)
-     foreign key (id) references PERSONNEL);
-
-create table COMPTABLE (
-     id numeric(32) not null,
-     constraint ID_COMPT_PERSO_ID primary key (id)
-     foreign key (id) references PERSONNEL);
-
-create table ANESTHESISTE (
-     id numeric(32) not null,
-     nb_inami char(32) not null,
-     constraint ID_ANEST_PERSO_ID primary key (id),
-     constraint SID_ANESTHESISTE_ID unique (nb_inami)
-     foreign key (id) references PERSONNEL);
-
-create table RH (
-     id numeric(32) not null,
-     constraint ID_RH_PERSO_ID primary key (id));
-
-create table SANG (
-     ID numeric(32) not null,
-     type varchar(2) not null,
-     signe char not null,
-     date_peremption_ date not null,
-     quantite float(1) not null,
-     Don_id numeric(32),
-     id_transplantation char(1),
-     constraint ID_SANG_ID primary key (ID));
-
-create table DONNEUR (
-     id_donneur numeric(32) not null,
-     ID numeric(32) not null,
-     genre char not null,
-     tranche_age float(1) not null,
-     constraint ID_DONNEUR_ID primary key (id_donneur),
-     constraint SID_DONNE_SANG_ID unique (ID)
-     foreign key (ID) references SANG);
-
-create table ORGANE (
-     etat char(32) not null,
-     fonctionnnel char not null,
-     date_peremption date not null,
-     date_peremption_transplantation date,
-     methode_de_conservation varchar(64) not null,
-     type varchar(64) not null,
-     id_organe numeric(32) not null,
-     prix float(64) not null,
-     id_donneur numeric(32) not null,
-     constraint ID_ORGANE_ID primary key (id_organe)
-     foreign key (id_donneur) references DONNEUR);
-     
-create table Contient (
-     id numeric(32) not null,
-     R_S_ID numeric(32),
-     id_organe numeric(32),
-     constraint ID_Contient_ID primary key (id),
-     constraint SID_Conti_SANG_ID unique (R_S_ID),
-     constraint SID_Conti_ORGAN_ID unique (id_organe)
-     foreign key (R_S_ID) references SANG
-     foreign key (id_organe) references ORGANE);
+     constraint ID_ACCOU_STAFF_ID primary key (id));
 
 create table DETAIL (
-     id_commande numeric(32) not null,
+     BLOOD numeric(32),
+     ORGANE numeric(32),
      id numeric(32) not null,
-     constraint SID_DETAI_Conti_ID unique (id),
-     constraint ID_DETAIL_ID primary key (id_commande, id)
-     foreign key (id) references Contient
-     foreign key (id_commande) references COMMANDE);
+     constraint SID_DETAIL_ID unique (BLOOD, ORGANE, id));
+
+create table DONATOR (
+     id numeric(32) not null,
+     Giv_id numeric(32) not null,
+     gender char not null,
+     age_range float(8) not null,
+     constraint ID_DONATOR_ID primary key (id),
+     constraint SID_DONAT_BLOOD_ID unique (Giv_id));
+
+create table NURSE (
+     id numeric(32) not null,
+     constraint ID_NURSE_STAFF_ID primary key (id));
+
+create table DELIVERY (
+     id numeric(32) not null,
+     departure_date date not null,
+     arrival_date date not null,
+     effective_arrival_date date not null,
+     recipent_last_name varchar(64) not null,
+     recipent_first_name varchar(64) not null,
+     Typ_id varchar(16) not null,
+     At_id numeric(32) not null,
+     constraint ID_DELIVERY_ID primary key (id));
+
+create table DOCTOR (
+     id numeric(32) not null,
+     inami_number char(32) not null,
+     constraint ID_DOCTO_STAFF_ID primary key (id));
+
+create table ORGANE (
+     state char(32) not null,
+     functionnal char not null,
+     expiration_date date not null,
+     expiration_date_transplatation date,
+     method_of_preservation varchar(64) not null,
+     type varchar(64) not null,
+     id numeric(32) not null,
+     price float(32) not null,
+     Com_id numeric(32) not null,
+     constraint ID_ORGANE_ID primary key (id));
+
+create table CEO (
+     id numeric(32) not null,
+     constraint ID_CEO_STAFF_ID primary key (id));
+
+create table PERSON (
+     id numeric(32) not null,
+     last_name varchar(64),
+     first_name varchar(64),
+     email varchar(128) not null,
+     phone_number varchar(32),
+     born_date date not null,
+     password varchar(128) not null,
+     Liv_id numeric(32) not null,
+     constraint ID_PERSON_ID primary key (id));
+
+create table STAFF (
+     id numeric(32) not null,
+     salary numeric(32) not null,
+     NURSE numeric(32),
+     HR numeric(32),
+     DOCTOR numeric(32),
+     CEO numeric(32),
+     ANAESTHETIST numeric(32),
+     ACCOUNTANT numeric(32),
+     constraint ID_STAFF_PERSO_ID primary key (id));
+
+create table HR (
+     id numeric(32) not null,
+     constraint ID_HR_STAFF_ID primary key (id));
+
+create table BLOOD (
+     id numeric(32) not null,
+     type varchar(2) not null,
+     signe char not null,
+     expiration_date date not null,
+     quantity float(4) not null,
+     Giv_id numeric(32),
+     Nee_id numeric(32),
+     constraint ID_BLOOD_ID primary key (id));
 
 create table TRANSPLANTATION (
      date date not null,
-     id_transplantation char(1) not null,
-     id_organe numeric(32) not null,
-     prix_operation float(1) not null,
      id numeric(32) not null,
-     A_t_id numeric(32) not null,
+     Con_id numeric(32) not null,
+     price float(32) not null,
      Rec_id numeric(32) not null,
-     constraint ID_TRANSPLANTATION_ID primary key (id_transplantation),
-     constraint SID_TRANS_ORGAN_ID unique (id_organe));
+     D_w_id numeric(32) not null,
+     A_w_id numeric(32) not null,
+     constraint ID_TRANSPLANTATION_ID primary key (id),
+     constraint SID_TRANS_ORGAN_ID unique (Con_id));
 
-create table I_travail_sur (
+create table TYPE_DELIVERY (
+     id varchar(16) not null,
+     price numeric(4) not null,
+     constraint ID_TYPE_DELIVERY_ID primary key (id));
+
+create table N_work_on (
+     N_N_id numeric(32) not null,
      id numeric(32) not null,
-     id_transplantation char(1) not null,
-     constraint ID_I_travail_sur_ID primary key (id, id_transplantation)
-     foreign key (id_transplantation) references TRANSPLANTATION
-     foreign key (id) references INFIRMIER);
+     constraint ID_N_work_on_ID primary key (N_N_id, id));
 
-create view VUE_MEDECIN(organe, client, sang, anesthesiste, infirmier, medecin)
-as select type.ORGANE, id.TRANSPLANTATION, type_sang.CLIENT, id.ANESTHESISTE, id.INFIRMIER, id.MEDECIN
-from ORGANE O, TRANSPLANTATION T, CLIENT C, ANESTHESISTE A, INFIRMIER I, MEDECIN M, I_travail_sur S
-where T.id = C.id and T.id_organe = O.id_organe and T.A_t_id = A.id and T.id = M.id and S.id = I.id and I.id_transplantation = T.id_transplantation;
 
 -- Constraints Section
 -- ___________________ 
 
-alter table PERSONNEL add constraint EXCL_PERSONNEL
-     check((PDG is not null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)
-           or (PDG is null and RH is not null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)
-           or (PDG is null and RH is null and COMPTABLE is not null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)
-           or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is not null and INFIRMIER is null and MEDECIN is null)
-           or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is not null and MEDECIN is null)
-           or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is not null)
-           or (PDG is null and RH is null and COMPTABLE is null and ANESTHESISTE is null and INFIRMIER is null and MEDECIN is null)); 
-
-alter table Contient add constraint ID_Contient_CHK
-     check(exists(select * from DETAIL
-                  where DETAIL.id = id)); 
-
-alter table Contient add constraint EXCL_Contient
-     check((R_S_ID is not null and id_organe is null)
-           or (R_S_ID is null and id_organe is not null)
-           or (R_S_ID is null and id_organe is null)); 
-
-alter table RH add constraint ID_RH_PERSO_FK
+alter table ANAESTHETIST add constraint ID_ANAES_STAFF_FK
      foreign key (id)
-     references PERSONNEL;
+     references STAFF;
 
-alter table SANG add constraint REF_SANG_PERSO_FK
-     foreign key (Don_id)
-     references PERSONNE;
+alter table CUSTOMER add constraint ID_CUSTO_PERSO_FK
+     foreign key (id)
+     references PERSON;
 
-alter table SANG add constraint REF_SANG_TRANS_FK
-     foreign key (id_transplantation)
+alter table ORDER add constraint REF_ORDER_DELIV_FK
+     foreign key (Typ_id)
+     references DELIVERY;
+
+alter table ORDER add constraint REF_ORDER_CUSTO_FK
+     foreign key (Buy_id)
+     references CUSTOMER;
+
+alter table ACCOUNTANT add constraint ID_ACCOU_STAFF_FK
+     foreign key (id)
+     references STAFF;
+
+alter table DETAIL add constraint EXTONE_DETAIL
+     check((ORGANE is not null and BLOOD is null)
+           or (ORGANE is null and BLOOD is not null)); 
+
+alter table DETAIL add constraint EQU_DETAI_BLOOD
+     foreign key (BLOOD)
+     references BLOOD;
+
+alter table DETAIL add constraint EQU_DETAI_ORGAN_FK
+     foreign key (ORGANE)
+     references ORGANE;
+
+alter table DETAIL add constraint REF_DETAI_ORDER_FK
+     foreign key (id)
+     references ORDER;
+
+alter table DONATOR add constraint SID_DONAT_BLOOD_FK
+     foreign key (Giv_id)
+     references BLOOD;
+
+alter table NURSE add constraint ID_NURSE_STAFF_FK
+     foreign key (id)
+     references STAFF;
+
+alter table DELIVERY add constraint REF_DELIV_TYPE__FK
+     foreign key (Typ_id)
+     references TYPE_DELIVERY;
+
+alter table DELIVERY add constraint REF_DELIV_ADDRE_FK
+     foreign key (At_id)
+     references ADDRESS;
+
+alter table DOCTOR add constraint ID_DOCTO_STAFF_FK
+     foreign key (id)
+     references STAFF;
+
+alter table ORGANE add constraint ID_ORGANE_CHK
+     check(exists(select * from DETAIL
+                  where DETAIL.ORGANE = id)); 
+
+alter table ORGANE add constraint REF_ORGAN_DONAT_FK
+     foreign key (Com_id)
+     references DONATOR;
+
+alter table CEO add constraint ID_CEO_STAFF_FK
+     foreign key (id)
+     references STAFF;
+
+alter table PERSON add constraint REF_PERSO_ADDRE_FK
+     foreign key (Liv_id)
+     references ADDRESS;
+
+alter table STAFF add constraint EXCL_STAFF
+     check((CEO is not null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is null)
+           or (CEO is null and HR is not null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is null)
+           or (CEO is null and HR is null and ACCOUNTANT is not null and ANAESTHETIST is null and NURSE is null and DOCTOR is null)
+           or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is not null and NURSE is null and DOCTOR is null)
+           or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is not null and DOCTOR is null)
+           or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is not null)
+           or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is null)); 
+
+alter table STAFF add constraint ID_STAFF_PERSO_FK
+     foreign key (id)
+     references PERSON;
+
+alter table HR add constraint ID_HR_STAFF_FK
+     foreign key (id)
+     references STAFF;
+
+alter table BLOOD add constraint ID_BLOOD_CHK
+     check(exists(select * from DETAIL
+                  where DETAIL.BLOOD = id)); 
+
+alter table BLOOD add constraint REF_BLOOD_PERSO_FK
+     foreign key (Giv_id)
+     references PERSON;
+
+alter table BLOOD add constraint REF_BLOOD_TRANS_FK
+     foreign key (Nee_id)
      references TRANSPLANTATION;
 
 alter table TRANSPLANTATION add constraint ID_TRANSPLANTATION_CHK
-     check(exists(select * from I_travail_sur
-                  where I_travail_sur.id_transplantation = id_transplantation)); 
+     check(exists(select * from N_work_on
+                  where N_work_on.id = id)); 
 
-alter table TRANSPLANTATION add constraint REF_TRANS_MEDEC_FK
-     foreign key (id)
-     references MEDECIN;
+alter table TRANSPLANTATION add constraint REF_TRANS_CUSTO_FK
+     foreign key (Rec_id)
+     references CUSTOMER;
 
 alter table TRANSPLANTATION add constraint SID_TRANS_ORGAN_FK
-     foreign key (id_organe)
+     foreign key (Con_id)
      references ORGANE;
 
-alter table TRANSPLANTATION add constraint REF_TRANS_ANEST_FK
-     foreign key (A_t_id)
-     references ANESTHESISTE;
+alter table TRANSPLANTATION add constraint REF_TRANS_DOCTO_FK
+     foreign key (D_w_id)
+     references DOCTOR;
 
-alter table TRANSPLANTATION add constraint REF_TRANS_CLIEN_FK
-     foreign key (Rec_id)
-     references CLIENT;
+alter table TRANSPLANTATION add constraint REF_TRANS_ANAES_FK
+     foreign key (A_w_id)
+     references ANAESTHETIST;
+
+alter table N_work_on add constraint EQU_N_wor_TRANS_FK
+     foreign key (id)
+     references TRANSPLANTATION;
+
+alter table N_work_on add constraint REF_N_wor_NURSE
+     foreign key (N_N_id)
+     references NURSE;
 
 
 -- Index Section
 -- _____________ 
 
-create unique index ID_ADRESSE_IND
-     on ADRESSE (ID);
+create unique index ID_ADDRESS_IND
+     on ADDRESS (id);
 
-create unique index SID_ADRESSE_IND
-     on ADRESSE (Rue, Numero, Code_postal, Ville, Pays);
+create unique index SID_ADDRESS_IND
+     on ADDRESS (street, number, postal_code, city, land);
 
-create unique index ID_ANEST_PERSO_IND
-     on ANESTHESISTE (id);
+create unique index ID_ANAES_STAFF_IND
+     on ANAESTHETIST (id);
 
-create unique index SID_ANESTHESISTE_IND
-     on ANESTHESISTE (nb_inami);
+create unique index ID_CUSTO_PERSO_IND
+     on CUSTOMER (id);
 
-create unique index ID_CLIEN_PERSO_IND
-     on CLIENT (id);
+create unique index ID_ORDER_IND
+     on ORDER (id);
 
-create unique index ID_COMMANDE_IND
-     on COMMANDE (id_commande);
+create index REF_ORDER_DELIV_IND
+     on ORDER (Typ_id);
 
-create index REF_COMMA_Livra_IND
-     on COMMANDE (ID);
+create index REF_ORDER_CUSTO_IND
+     on ORDER (Buy_id);
 
-create index REF_COMMA_CLIEN_IND
-     on COMMANDE (Ach_id);
+create unique index ID_ACCOU_STAFF_IND
+     on ACCOUNTANT (id);
 
-create unique index ID_COMPT_PERSO_IND
-     on COMPTABLE (id);
+create index EQU_DETAI_ORGAN_IND
+     on DETAIL (ORGANE);
 
-create unique index SID_DETAI_Conti_IND
+create index REF_DETAI_ORDER_IND
      on DETAIL (id);
 
-create unique index ID_DETAIL_IND
-     on DETAIL (id_commande, id);
+create unique index SID_DETAIL_IND
+     on DETAIL (BLOOD, ORGANE, id);
 
-create unique index ID_DONNEUR_IND
-     on DONNEUR (id_donneur);
+create unique index ID_DONATOR_IND
+     on DONATOR (id);
 
-create unique index SID_DONNE_SANG_IND
-     on DONNEUR (ID);
+create unique index SID_DONAT_BLOOD_IND
+     on DONATOR (Giv_id);
 
-create unique index ID_I_travail_sur_IND
-     on I_travail_sur (id, id_transplantation);
+create unique index ID_NURSE_STAFF_IND
+     on NURSE (id);
 
-create index EQU_I_tra_TRANS_IND
-     on I_travail_sur (id_transplantation);
+create unique index ID_DELIVERY_IND
+     on DELIVERY (id);
 
-create unique index ID_INFIR_PERSO_IND
-     on INFIRMIER (id);
+create index REF_DELIV_TYPE__IND
+     on DELIVERY (Typ_id);
 
-create unique index ID_Livraison_IND
-     on Livraison (ID);
+create index REF_DELIV_ADDRE_IND
+     on DELIVERY (At_id);
 
-create index REF_Livra_TYPE__IND
-     on Livraison (type_name);
-
-create index REF_Livra_ADRES_IND
-     on Livraison (A_ID);
-
-create unique index ID_MEDEC_PERSO_IND
-     on MEDECIN (id);
-
-create unique index SID_MEDECIN_IND
-     on MEDECIN (nb_inami);
+create unique index ID_DOCTO_STAFF_IND
+     on DOCTOR (id);
 
 create unique index ID_ORGANE_IND
-     on ORGANE (id_organe);
+     on ORGANE (id);
 
-create index REF_ORGAN_DONNE_IND
-     on ORGANE (id_donneur);
+create index REF_ORGAN_DONAT_IND
+     on ORGANE (Com_id);
 
-create unique index ID_PDG_PERSO_IND
-     on PDG (id);
+create unique index ID_CEO_STAFF_IND
+     on CEO (id);
 
-create unique index ID_PERSONNE_IND
-     on PERSONNE (id);
+create unique index ID_PERSON_IND
+     on PERSON (id);
 
-create index REF_PERSO_ADRES_IND
-     on PERSONNE (Hab_ID);
+create index REF_PERSO_ADDRE_IND
+     on PERSON (Liv_id);
 
-create unique index ID_PERSO_PERSO_IND
-     on PERSONNEL (id);
+create unique index ID_STAFF_PERSO_IND
+     on STAFF (id);
 
-create unique index ID_Contient_IND
-     on Contient (id);
+create unique index ID_HR_STAFF_IND
+     on HR (id);
 
-create unique index SID_Conti_SANG_IND
-     on Contient (R_S_ID);
+create unique index ID_BLOOD_IND
+     on BLOOD (id);
 
-create unique index SID_Conti_ORGAN_IND
-     on Contient (id_organe);
+create index REF_BLOOD_PERSO_IND
+     on BLOOD (Giv_id);
 
-create unique index ID_RH_PERSO_IND
-     on RH (id);
-
-create unique index ID_SANG_IND
-     on SANG (ID);
-
-create index REF_SANG_PERSO_IND
-     on SANG (Don_id);
-
-create index REF_SANG_TRANS_IND
-     on SANG (id_transplantation);
+create index REF_BLOOD_TRANS_IND
+     on BLOOD (Nee_id);
 
 create unique index ID_TRANSPLANTATION_IND
-     on TRANSPLANTATION (id_transplantation);
-
-create index REF_TRANS_MEDEC_IND
      on TRANSPLANTATION (id);
 
-create unique index SID_TRANS_ORGAN_IND
-     on TRANSPLANTATION (id_organe);
-
-create index REF_TRANS_ANEST_IND
-     on TRANSPLANTATION (A_t_id);
-
-create index REF_TRANS_CLIEN_IND
+create index REF_TRANS_CUSTO_IND
      on TRANSPLANTATION (Rec_id);
 
-create unique index ID_TYPE_LIVRAISON_IND
-     on TYPE_LIVRAISON (type_name);
+create unique index SID_TRANS_ORGAN_IND
+     on TRANSPLANTATION (Con_id);
 
+create index REF_TRANS_DOCTO_IND
+     on TRANSPLANTATION (D_w_id);
+
+create index REF_TRANS_ANAES_IND
+     on TRANSPLANTATION (A_w_id);
+
+create unique index ID_TYPE_DELIVERY_IND
+     on TYPE_DELIVERY (id);
+
+create unique index ID_N_work_on_IND
+     on N_work_on (N_N_id, id);
+
+create index EQU_N_wor_TRANS_IND
+     on N_work_on (id);
+
+-- Vue Section
+-- _____________ 
+
+
+-- Trigger Section
+-- _____________ 
