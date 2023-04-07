@@ -52,7 +52,7 @@ def get_float(prompt: str = "") -> (float):
     while True:
         try:
             return float(get_string(prompt))
-        except ValueError:
+        except (TypeError, ValueError):
             pass
         
 def get_int(prompt: str = "") -> (int):
@@ -77,7 +77,7 @@ def get_int(prompt: str = "") -> (int):
     while True:
         try:
             return int(get_string(prompt))
-        except ValueError:
+        except (TypeError, ValueError):
             pass
         
 def get_sql_user_querry(prompt: str = "") -> (str):
