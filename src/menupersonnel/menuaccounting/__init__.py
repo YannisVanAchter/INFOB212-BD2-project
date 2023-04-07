@@ -1,2 +1,2 @@
 
-from .mainaccountingmenu import *
+from .mainaccountingmenu import main_accounting_menu
