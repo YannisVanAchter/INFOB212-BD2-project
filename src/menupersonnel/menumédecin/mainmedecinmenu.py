@@ -20,16 +20,8 @@ def main_medecin_menu(database: DataBase):
     numero = int(input("choix:"))
 
     if numero == 1:
-<<<<<<< HEAD
         
         database.connect()
-=======
-        # you imported "mysql.connector as mysql" use "mysql" key word to acces to connector
-        # you can also replace those line by call "database.connect()" and use "database.execute(YOUR_QUERRY)"
-        cnx = mysql.connect(user='UserMedecin', database= DataBase ) #jsp comment faire cette partie, HELP
-        cursor = cnx.cursor()
-
->>>>>>> db70af610b5b913c0f2a5ea8439a6f296732629b
 
         print("Quelle est la date de l'opération dont vous voulez voir les personnes avec qui vous allez travailler ? ")
         annee = int(input("Donnez moi l'année de l'opération"))
@@ -42,30 +34,15 @@ def main_medecin_menu(database: DataBase):
         #cherche les anésthésistes qui travaillent avec le médecin à la date donnée et selon l'id du médecin
         anesthésiste = ("SELECT id FROM ANESTHESISTE WHERE num in (SELECT A_t_id from TRANSPLANTATION WHERE date = %s AND id = %s)")
 
-<<<<<<< HEAD
         database.execute(anesthésiste, (date_operation, id))
 
         print("Voici les personnes avec lesquelles vous allez travailler")
 
         for (id) in database.table:
-=======
-        # you can use database.execute(...)
-        cursor.execute(anesthésiste, (date_operation, id))
-
-        print("Voici les personnes avec lesquelles vous allez travailler")
-        # to get result use cursor.fetchall()
-        # you can also use "database.table" 
-        for (id) in cursor:
->>>>>>> db70af610b5b913c0f2a5ea8439a6f296732629b
             print("Vous travaillez avec cet anésthésiste:", id)
         database.disconnect()
         
-<<<<<<< HEAD
         database.connect()
-=======
-        cnx = mysql.connect(user='UserMedecin', database= DataBase ) #jsp comment faire cette partie, HELP
-        cursor = cnx.cursor()
->>>>>>> db70af610b5b913c0f2a5ea8439a6f296732629b
 
         #cherche les infirmiers qui travaillent avec le médecin à la date donnée et selon l'id du médecin 
         infirmier = ("SELECT num FROM INFIRMIER WHERE num in (SELECT num FROM I_travail_sur WHERE id_transplantation in"
@@ -79,12 +56,7 @@ def main_medecin_menu(database: DataBase):
         database.disconnect()
     
     elif numero == 2:
-<<<<<<< HEAD
         database.connect()
-=======
-        cnx = mysql.connect(user='UserMedecin', database= DataBase ) #jsp comment faire cette partie, HELP
-        cursor = cnx.cursor()
->>>>>>> db70af610b5b913c0f2a5ea8439a6f296732629b
 
         dates = ("SELECT date FROM TRANSPLANTATION WHERE id = %s ")
         database.execute(dates, (id))
@@ -95,12 +67,7 @@ def main_medecin_menu(database: DataBase):
         database.disconnect()
 
     elif numero == 3:
-<<<<<<< HEAD
         database.connect()
-=======
-        cnx = mysql.connect(user='UserMedecin', database= DataBase ) #jsp comment faire cette partie, HELP
-        cursor = cnx.cursor()
->>>>>>> db70af610b5b913c0f2a5ea8439a6f296732629b
 
         id_transplantation = input("Pouvez vous me donner l'identifiant de la transplantation dont vous souhaitez voir les organes?")
 
@@ -124,13 +91,7 @@ def main_medecin_menu(database: DataBase):
 
     elif numero == 4:
         client = input("Quel est l'identifiant du client dont vous souhaitez avoir les informations ? ")
-<<<<<<< HEAD
         database.connect()
-=======
-        cnx = mysql.connect(user='UserMedecin', database= DataBase ) #jsp comment faire cette partie, HELP
-        cursor = cnx.cursor()
-
->>>>>>> db70af610b5b913c0f2a5ea8439a6f296732629b
         clients = ("SELECT Pseudo, type_sang, signe_sang FROM CLIENT WHERE id in "
         "(SELECT Rec_id FROM TRANSPLANTATION WHERE Rec_id = %s")
 
