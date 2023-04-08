@@ -12,7 +12,7 @@ from module.database import DataBase
 
 # function and class
 def main():
-    database = DataBase(user='user', password='password', host='mysql', database='mysql')
+    database = DataBase(user='user', password='password', host='localhost', database='mysql')
     db, cursor = database.connect()
 
     # TODO: create test for db_disconnect() and db_connect() with it
