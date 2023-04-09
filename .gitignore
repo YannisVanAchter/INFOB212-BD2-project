@@ -130,3 +130,10 @@ dmypy.json
 
 # DB-Main ignore file
 *.lun#
+
+# IDE ignore settings
+.idea/
+.vscode/
+
+# test file for python
+.test.py
