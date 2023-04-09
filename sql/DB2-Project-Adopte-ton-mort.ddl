@@ -412,3 +412,25 @@ create index EQU_N_wor_TRANS_IND
 
 -- Trigger Section
 -- _____________ 
+
+create Trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
+     -- Trigger goal: Check if the date of delivery is after the date expiration of the organe
+     -- Author: Yannis Van Achter
+     before insert or update on DELIVERY
+     for each row
+     begin
+          SELECT expiration_date INTO expiration 
+               FROM ORGANE 
+               WHERE ORGANE.id IN (SELECT DETAIL.organe 
+                                   FROM DETAIL 
+                                   WHERE DETAIL.id in (SELECT ORDER.id 
+                                                       FROM ORDER 
+                                                       WHERE ORDER.Typ_id = new.id)
+                                   );
+          
+          if (new.arrival_date < expiration) then
+               signal sqlstate '45000'
+               set message_text = 'The date of delivery must be after the date expiration of the organe';
+          end if;
+     end;
+
