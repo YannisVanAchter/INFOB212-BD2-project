@@ -434,3 +434,10 @@ create Trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
           end if;
      end;
 
+-- Init Section
+-- _____________
+
+insert into TYPE_LIVRAISON values ('normal', 5);
+insert into TYPE_LIVRAISON values ('express', 10);
+insert into TYPE_LIVRAISON values ('internationnal', 15);
+insert into TYPE_LIVRAISON values ('main propre', 3);
