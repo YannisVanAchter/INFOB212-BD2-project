@@ -3,11 +3,9 @@
 import os
 
 
-def clear_terminal(command="clear"):
-    """clear terminal
-    
-    args:
-    -----
-        command (str): Bash command set for Linux/MacOS operating system by default. Set string to "cls" for windows
-    """
+def clear_terminal():
+    """clear terminal"""
+    command = 'clear'
+    if os.name in ('nt', 'dos'): # Windows
+        command = 'cls'
     os.system(command)
