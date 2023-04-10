@@ -23,6 +23,12 @@ $ docker-compose build
 $ docker-compose up
 ```
 
+Into another terminal use (please wait till the docker container has been created and started):
+```bash	
+$ cd src
+$ python main.py
+```
+
 ## Open relational schema
 To open Relationship-Association schema model use [DB-Main](https://www.db-main.eu/getit/) the file is stored [here](./schema/conceptual-schema.lun)
 
