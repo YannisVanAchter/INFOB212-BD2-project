@@ -7,43 +7,36 @@
 import mysql.connector as mysql
 
 # # local modules
-# from menupersonnel.menuaccounting import main_accounting_menu
-# from menupersonnel.menumédecin import main_medecin_menu
-# from menupersonnel.RH import main_RH_menu
-# from module.database import DataBase
+from menupersonnel.menuaccounting import main_accounting_menu
+from menupersonnel.menumédecin import main_medecin_menu
+from menupersonnel.RH import main_RH_menu
+from module.database import DataBase
 
 # function and class
 def main():
-    # database = DataBase(user='user', password='password', host='localhost:3306', database='mysql')
-    # database.connect()
-    cnx = mysql.connect(
-        host='127.0.0.1', 
-        username='user', 
-        passwd='password', 
-        database='mysql',
-        port=3306
-    )
-    cursor = cnx.cursor()
+    with DataBase(
+                host='127.0.0.1', 
+                user='root', 
+                password='password', 
+                database='mysql',
+                port=3306,
+                auto_connect=True,
+                auto_commit=True,
+        ) as database:
 
-    # TODO: create test for db_disconnect() and db_connect() with it
-    cursor.execute("CREATE TABLE IF NOT EXISTS test(id INTEGER(64) PRIMARY KEY, name VARCHAR(255))")
+        # TODO: create test with it
+        database.execute(
+            "CREATE TABLE IF NOT EXISTS test(id INTEGER(64) unsigned AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))"
+            )
 
-    cursor.execute("INSERT INTO test VALUES (2, 'bla')")
-    cursor.execute("INSERT INTO test VALUES (3, 'blabla')")
-    cursor.execute("INSERT INTO test VALUES (4, 'blablabla')")
-    cursor.execute("SELECT * FROM test")
+        database.execute_many(
+            "INSERT INTO test (name) VALUES ( 'bla')",
+            "INSERT INTO test (name) VALUES ( 'blabla')",
+            "INSERT INTO test (name) VALUES ( 'blablabla')")
+        database.execute("SELECT * FROM test")
 
-    for row in cursor.fetchall():
-        print(row)
-        
-    # database.disconnect()
-    
-    # main_accounting_menu(database)
-    # main_medecin_menu(database)
-    # main_RH_menu(database)
-    
-    cursor.close()
-    cnx.disconnect()
+        for row in database.table:
+            print(row)
 
 if __name__ == "__main__":
     main()
