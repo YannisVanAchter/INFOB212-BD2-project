@@ -1,7 +1,7 @@
 # encoding uft-8
 
 # import
-# native
+import logging, sys
 
 # pip install -r requerements.txt
 import mysql.connector as mysql
@@ -33,10 +33,24 @@ def main():
             "INSERT INTO test (name) VALUES ( 'bla')",
             "INSERT INTO test (name) VALUES ( 'blabla')",
             "INSERT INTO test (name) VALUES ( 'blablabla')")
-        database.execute("SELECT * FROM test")
+        database.execute("SELECT * FROM TYPE_DELIVERY")
 
         for row in database.table:
             print(row)
 
 if __name__ == "__main__":
+    if '-d' in sys.argv:
+        logging.basicConfig(
+            level=logging.DEBUG
+        )
+    elif '-i' in sys.argv:
+        logging.basicConfig(
+            level=logging.INFO
+        )
+    else:
+        logging.basicConfig(
+            level=logging.WARNING,
+            filename='./app.log',
+            format='%(asctime)s %(levelname)s: %(message)s'
+        )
     main()

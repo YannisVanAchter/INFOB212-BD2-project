@@ -12,8 +12,7 @@
 -- Database Section
 -- ________________ 
 
-create database physical v4;
-
+create database physical_v4;
 
 -- DBSpace Section
 -- _______________
