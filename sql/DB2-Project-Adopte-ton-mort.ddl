@@ -433,10 +433,11 @@ create Trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
           end if;
      end;
 
---create Trigger 
-     -- Trigger goal: 
+create trigger TRG_CHECK_AVAILABILITY_TO_SELL
+     -- Trigger goal: Checks if the organ is available before accept to sell it 
      -- Author: Aurélie Genot 
-     -- Trigger nul 
+     before insert or update on DETAIL
+     for each row 
 
 -- Init Section
 -- _____________
