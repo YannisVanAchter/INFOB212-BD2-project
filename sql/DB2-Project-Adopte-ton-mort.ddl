@@ -433,6 +433,11 @@ create Trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
           end if;
      end;
 
+--create Trigger 
+     -- Trigger goal: 
+     -- Author: Aurélie Genot 
+     -- Trigger nul 
+
 -- Init Section
 -- _____________
 
