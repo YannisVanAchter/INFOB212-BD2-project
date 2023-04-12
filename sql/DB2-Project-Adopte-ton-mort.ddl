@@ -31,23 +31,8 @@ create table ADDRESS (
      constraint ID_ADDRESS_ID primary key (id),
      constraint SID_ADDRESS_ID unique (street, number, postal_code, city, land));
 
-create table ANAESTHETIST (
-     id numeric(32) not null,
-     inami_number char(32) not null,
-     constraint ID_ANAES_STAFF_ID primary key (id));
 
-create table CUSTOMER (
-     id numeric(32) not null,
-     pseudo varchar(32) not null,
-     blood_type varchar(2) not null,
-     blood_sign char not null,
-     constraint ID_CUSTO_PERSO_ID primary key (id));
 
-create table ORDER (
-     id numeric(32) not null,
-     Typ_id numeric(32) not null,
-     Buy_id numeric(32) not null,
-     constraint ID_ORDER_ID primary key (id));
 
 create table ACCOUNTANT (
      id numeric(32) not null,
@@ -114,6 +99,22 @@ create table PERSON (
      Liv_id numeric(32) not null,
      constraint ID_PERSON_ID primary key (id));
 
+create table CUSTOMER (
+     id numeric(32) not null,
+     pseudo varchar(32) not null,
+     blood_type varchar(2) not null,
+     blood_sign char not null,
+     constraint ID_CUSTO_PERSO_ID primary key (id)
+     foreign key (id) references PERSON);
+
+create table ORDER (
+     id numeric(32) not null,
+     Typ_id numeric(32) not null,
+     Buy_id numeric(32) not null,
+     constraint ID_ORDER_ID primary key (id)
+     foreign key (Typ_id) references DELIVERY
+     foreign key (Buy_id) references CUSTOMER);
+
 create table STAFF (
      id numeric(32) not null,
      salary numeric(32) not null,
@@ -124,6 +125,12 @@ create table STAFF (
      ANAESTHETIST numeric(32),
      ACCOUNTANT numeric(32),
      constraint ID_STAFF_PERSO_ID primary key (id));
+
+create table ANAESTHETIST (
+     id numeric(32) not null,
+     inami_number char(32) not null,
+     constraint ID_ANAES_STAFF_ID primary key (id)
+     foreign key (id) references STAFF);
 
 create table HR (
      id numeric(32) not null,
@@ -164,21 +171,6 @@ create table N_work_on (
 -- Constraints Section
 -- ___________________ 
 
-alter table ANAESTHETIST add constraint ID_ANAES_STAFF_FK
-     foreign key (id)
-     references STAFF;
-
-alter table CUSTOMER add constraint ID_CUSTO_PERSO_FK
-     foreign key (id)
-     references PERSON;
-
-alter table ORDER add constraint REF_ORDER_DELIV_FK
-     foreign key (Typ_id)
-     references DELIVERY;
-
-alter table ORDER add constraint REF_ORDER_CUSTO_FK
-     foreign key (Buy_id)
-     references CUSTOMER;
 
 alter table ACCOUNTANT add constraint ID_ACCOU_STAFF_FK
      foreign key (id)
