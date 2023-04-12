@@ -409,6 +409,41 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT
           end if; 
      end; 
 
+
+create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL
+     -- Trigger goal: Checks if the blood is available before accept to sell it 
+     -- Author: Aurélie Genot 
+     before insert or update on DETAIL
+     for each row 
+     begin 
+          if new.BLOOD not exists ( SELECT *
+                                        FROM BLOOD
+                                        WHERE NOT EXISTS (SELECT null
+                                                       FROM TRANSPLANTATION
+                                                       WHERE TANSPLANTATION.id = BLOOD.id);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The blood that you want to sell is not available anymore";
+          end if; 
+     end; 
+   
+create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_TRANSPLANT
+     -- Trigger goal: Checks if the blood is available before accept to transplant it 
+     -- Author: Aurélie Genot 
+     before insert or update on TRANSPLANTATION
+     for each row 
+     begin 
+          if new.BLOOD not exists ( SELECT *
+                                        FROM BLOOD 
+                                        WHERE NOT EXISTS (SELECT null
+                                                       FROM DETAIL
+                                                       WHERE DETAIL.id = BLOOD.id);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The blood that you want to transplant is not available anymore";
+          end if; 
+     end; 
+
 -- Init Section
 -- _____________
 
