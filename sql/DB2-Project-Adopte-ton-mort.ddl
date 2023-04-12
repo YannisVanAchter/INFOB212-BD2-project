@@ -345,8 +345,17 @@ create unique index PERSON_email
 create index ORGANES_Types
      on ORGANE (type);
 
--- Vue Section
+-- View Section
 -- _____________ 
+create view ACCOUNTABLE(PRICE, SALARY, TYPE)
+     -- View goal : view accountable, to view the price of the articles, the wages
+     -- Author: Aline Boulanger (ft. Loulou)
+  as  select O.PRICE, TD.PRICE, S.SALARY, T.PRICE, O.TYPE
+      from   ORGANE O, TYPE_DELIVERY TD, BLOOD B, STAFF S, TRANSPLANTATION T
+      where  
+      and   
+      and    
+      group by 
 
 
 

@@ -101,7 +101,7 @@ def main_medecin_menu(database: DataBase):
             print("voici les informations sur le client")
             print("Voici son pseudo:", Pseudo)
             print("voici son type de sang:", type_sang)
-            print("Voici son signe de dans", signe_sang)
+            print("Voici son signe de sang", signe_sang)
 
     else:
         print("Error")
