@@ -27,7 +27,7 @@ create table ADDRESS (
      postal_code numeric(16) not null,
      city varchar(128) not null,
      land varchar(128) not null,
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      constraint ID_ADDRESS_ID primary key (id),
      constraint SID_ADDRESS_ID unique (street, number, postal_code, city, land));
 

@@ -82,6 +82,7 @@ class DataBase:
         self.__is_connected = False
         self.auto_commit_ = auto_commit
         self.auto_connect = auto_connect
+        self.__fetched = []
 
         if auto_connect:
             self.connect()
@@ -111,9 +112,7 @@ class DataBase:
         -----
             replace self._DataBase__cursor.fetchall()
         """
-        if self.__has_one_querry == False:
-            return []
-        return self.__cursor.fetchall()
+        return self.__fetched
 
     @property
     def cursor(self) -> (MySQLCursor):
@@ -138,6 +137,11 @@ class DataBase:
         if self.auto_connect:
             self.connect()
         return self.__db
+
+    @property
+    def last_row_id(self):
+        """Returns id of the last row inserted"""
+        return self.__cursor.lastrowid
 
     # https://stackoverflow.com/questions/1984325/explaining-pythons-enter-and-exit
     def __enter__(self):
@@ -208,7 +212,7 @@ class DataBase:
             + f"Original error: DatabaseError {e}"
         )
 
-    def execute(self, querry: str):
+    def execute(self, querry: str, **kwargs):
         """execute SQL querry in database
 
         Args:
@@ -224,24 +228,28 @@ class DataBase:
             Make sure to be connected to the database before execute querry
             Use self.table to get the return of the querry
         """
-        if self.auto_connect:
+        if self.auto_connect and not self.__is_connected:
             self.connect()
             
         if not self.__is_connected:
             raise UnConnectedError(
                 "you must be connected to database before execute querry"
             )
+            
+        querry = querry.strip()
         
         try:
-            self.__cursor.execute(querry)
-            self.__has_one_querry = True
+            self.__cursor.execute(querry, **kwargs)
+            
+            if querry.startswith("SELECT"):
+                self.__fetched = self.__cursor.fetchall()
             
             if self.auto_commit_:
                 self.commit()
         except ProgrammingError as e:
             raise e
         finally:
-            if self.auto_connect:
+            if self.auto_connect and not self.__is_connected:
                 if not self.auto_commit_:
                     self.commit()
                 
@@ -302,5 +310,5 @@ class DataBase:
             Youlan Collard & Yannis Van Achter
         """
         self.__cursor.close()
-        self.__db.disconnect()
+        self.__db.close()
         self.__is_connected = False
