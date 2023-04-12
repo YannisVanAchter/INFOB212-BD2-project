@@ -188,8 +188,11 @@ create table N_work_on (
      foreign key (N_N_id) references NURSE);
 
 
--- Constraints Section
--- ___________________ 
+-- Constraints Section - Checks
+-- ____________________________ 
+
+alter table PERSON add constraint MAJEUR
+     check((DATE.NOW - PERSON.born_date =< 18));
 
 alter table DETAIL add constraint EXTONE_DETAIL
      check((ORGANE is not null and BLOOD is null)
@@ -329,10 +332,11 @@ create index EQU_N_wor_TRANS_IND
 
 create unique index PERSON.email
      on PERSON (email);
-     
+
 
 -- Vue Section
 -- _____________ 
+
 
 
 -- Trigger Section
