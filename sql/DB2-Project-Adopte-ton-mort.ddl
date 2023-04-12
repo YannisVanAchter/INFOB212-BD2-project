@@ -191,7 +191,7 @@ create table N_work_on (
 -- Constraints Section - Checks
 -- ____________________________ 
 
-alter table PERSON add constraint MAJEUR
+alter table PERSON add constraint MAJOR
      check((DATE.NOW - PERSON.born_date =< 18));
 
 alter table DETAIL add constraint EXTONE_DETAIL
@@ -217,7 +217,16 @@ alter table BLOOD add constraint ID_BLOOD_CHK
 
 alter table TRANSPLANTATION add constraint ID_TRANSPLANTATION_CHK
      check(exists(select * from N_work_on
-                  where N_work_on.id = id)); 
+                  where N_work_on.id = id));
+
+alter table TRANSPLANTATION TYPE_DELIVERY ORGANE add constraint PRICE_POSITIF 
+     check((TRANSPLANTATION.price > 0 and TYPE_DELIVERY.price > 0 and ORGANE.price > 0));
+
+alter table ORGANE add constraint LIST_ORGANES
+     check((ORGANE.type ))
+
+alter table BLOOD add constraint TYPE_BLOOD
+     check((BLOOD.type is A) or (BLOOD.type is B) or (BLOOD.type is AB) or (BLOOD.type is O))
 
 -- Index Section
 -- _____________ 
@@ -330,9 +339,11 @@ create unique index ID_N_work_on_IND
 create index EQU_N_wor_TRANS_IND
      on N_work_on (id);
 
-create unique index PERSON.email
+create unique index PERSON_email
      on PERSON (email);
 
+create index ORGANES_Types
+     on ORGANE (type);
 
 -- Vue Section
 -- _____________ 
