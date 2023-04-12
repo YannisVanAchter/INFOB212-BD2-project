@@ -32,7 +32,7 @@ create table ADDRESS (
      constraint SID_ADDRESS_ID unique (street, number, postal_code, city, land));
 
 create table PERSON (
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      last_name varchar(64),
      first_name varchar(64),
      email varchar(128) not null,
@@ -40,7 +40,7 @@ create table PERSON (
      born_date date not null,
      password varchar(128) not null,
      Liv_id numeric(32) not null,
-     constraint ID_PERSON_ID primary key (id)
+     constraint ID_PERSON_ID primary key (id),
      foreign key (Liv_id) references ADDRESS);
 
 create table CUSTOMER (
@@ -48,15 +48,15 @@ create table CUSTOMER (
      pseudo varchar(32) not null,
      blood_type varchar(2) not null,
      blood_sign char not null,
-     constraint ID_CUSTO_PERSO_ID primary key (id)
+     constraint ID_CUSTO_PERSO_ID primary key (id),
      foreign key (id) references PERSON);
 
 create table ORDER (
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      Typ_id numeric(32) not null,
      Buy_id numeric(32) not null,
-     constraint ID_ORDER_ID primary key (id)
-     foreign key (Typ_id) references DELIVERY
+     constraint ID_ORDER_ID primary key (id),
+     foreign key (Typ_id) references DELIVERY,
      foreign key (Buy_id) references CUSTOMER);
 
 create table STAFF (
@@ -68,76 +68,75 @@ create table STAFF (
      CEO numeric(32),
      ANAESTHETIST numeric(32),
      ACCOUNTANT numeric(32),
-     constraint ID_STAFF_PERSO_ID primary key (id)
+     constraint ID_STAFF_PERSO_ID primary key (id),
      foreign key (id) references PERSON);
-
 
 create table CEO (
      id numeric(32) not null,
-     constraint ID_CEO_STAFF_ID primary key (id)
+     constraint ID_CEO_STAFF_ID primary key (id),
      foreign key (id) references STAFF);
 
 create table DOCTOR (
      id numeric(32) not null,
      inami_number char(32) not null,
-     constraint ID_DOCTO_STAFF_ID primary key (id)
+     constraint ID_DOCTO_STAFF_ID primary key (id),
      foreign key (id) references STAFF);
 
 create table NURSE (
      id numeric(32) not null,
-     constraint ID_NURSE_STAFF_ID primary key (id)
+     constraint ID_NURSE_STAFF_ID primary key (id),
      foreign key (id) references STAFF);
 
 create table ACCOUNTANT (
      id numeric(32) not null,
-     constraint ID_ACCOU_STAFF_ID primary key (id)
+     constraint ID_ACCOU_STAFF_ID primary key (id),
      foreign key (id) references STAFF);
 
 create table ANAESTHETIST (
      id numeric(32) not null,
      inami_number char(32) not null,
-     constraint ID_ANAES_STAFF_ID primary key (id)
+     constraint ID_ANAES_STAFF_ID primary key (id),
      foreign key (id) references STAFF);
 
 create table HR (
      id numeric(32) not null,
-     constraint ID_HR_STAFF_ID primary key (id)
+     constraint ID_HR_STAFF_ID primary key (id),
      foreign key (id) references STAFF);
 
 create table TRANSPLANTATION (
      date date not null,
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      Con_id numeric(32) not null,
      price float(32) not null,
      Rec_id numeric(32) not null,
      D_w_id numeric(32) not null,
      A_w_id numeric(32) not null,
      constraint ID_TRANSPLANTATION_ID primary key (id),
-     constraint SID_TRANS_ORGAN_ID unique (Con_id)
-     foreign key (Rec_id) references CUSTOMER
-     foreign key (Con_id) references ORGANE
-     foreign key (D_w_id) references DOCTOR
+     constraint SID_TRANS_ORGAN_ID unique (Con_id),
+     foreign key (Rec_id) references CUSTOMER,
+     foreign key (Con_id) references ORGANE,
+     foreign key (D_w_id) references DOCTOR,
      foreign key (A_w_id) references ANAESTHETIST);
 
 create table BLOOD (
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      type varchar(2) not null,
      signe char not null,
      expiration_date date not null,
      quantity float(4) not null,
      Giv_id numeric(32),
      Nee_id numeric(32),
-     constraint ID_BLOOD_ID primary key (id)
-     foreign key (Giv_id) references PERSON
+     constraint ID_BLOOD_ID primary key (id),
+     foreign key (Giv_id) references PERSON,
      foreign key (Nee_id) references TRANSPLANTATION);
      
 create table DONATOR (
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      Giv_id numeric(32) not null,
      gender char not null,
      age_range float(8) not null,
      constraint ID_DONATOR_ID primary key (id),
-     constraint SID_DONAT_BLOOD_ID unique (Giv_id)
+     constraint SID_DONAT_BLOOD_ID unique (Giv_id),
      foreign key (Giv_id) references BLOOD);
 
 create table ORGANE (
@@ -147,28 +146,29 @@ create table ORGANE (
      expiration_date_transplatation date,
      method_of_preservation varchar(64) not null,
      type varchar(64) not null,
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      price float(32) not null,
      Com_id numeric(32) not null,
-     constraint ID_ORGANE_ID primary key (id)
-     foreign key (Com_id) references DONATOR);
+     constraint ID_ORGANE_ID primary key (id),
+     foreign key (Com_id) references DONATOR,
+     foreign key (TRANSPLANTATION.id) references TRANSPLANTATION);
 
 create table DETAIL (
      BLOOD numeric(32),
      ORGANE numeric(32),
-     id numeric(32) not null,
-     constraint SID_DETAIL_ID unique (BLOOD, ORGANE, id)
-     foreign key (BLOOD) references BLOOD
-     foreign key (ORGANE) references ORGANE
+     id numeric(32) unsigned not null AUTO_INCREMENT,
+     constraint SID_DETAIL_ID unique (BLOOD, ORGANE, id),
+     foreign key (BLOOD) references BLOOD,
+     foreign key (ORGANE) references ORGANE,
      foreign key (id) references ORDER);
 
 create table TYPE_DELIVERY (
-     id varchar(16) not null,
+     id varchar(16) unsigned not null AUTO_INCREMENT,
      price numeric(4) not null,
      constraint ID_TYPE_DELIVERY_ID primary key (id));
 
 create table DELIVERY (
-     id numeric(32) not null,
+     id numeric(32) unsigned not null AUTO_INCREMENT,
      departure_date date not null,
      arrival_date date not null,
      effective_arrival_date date not null,
@@ -176,29 +176,28 @@ create table DELIVERY (
      recipent_first_name varchar(64) not null,
      Typ_id varchar(16) not null,
      At_id numeric(32) not null,
-     constraint ID_DELIVERY_ID primary key (id)
-     foreign key (Typ_id) references TYPE_DELIVERY
+     constraint ID_DELIVERY_ID primary key (id),
+     foreign key (Typ_id) references TYPE_DELIVERY,
      foreign key (At_id) references ADDRESS);
 
 create table N_work_on (
      N_N_id numeric(32) not null,
-     id numeric(32) not null,
-     constraint ID_N_work_on_ID primary key (N_N_id, id));
+     id numeric(32) unsigned not null AUTO_INCREMENT,
+     constraint ID_N_work_on_ID primary key (N_N_id, id),
+     foreign key (id) references TRANSPLANTATION, 
+     foreign key (N_N_id) references NURSE);
 
 
 -- Constraints Section
 -- ___________________ 
 
-
 alter table DETAIL add constraint EXTONE_DETAIL
      check((ORGANE is not null and BLOOD is null)
            or (ORGANE is null and BLOOD is not null)); 
 
-
 alter table ORGANE add constraint ID_ORGANE_CHK
      check(exists(select * from DETAIL
                   where DETAIL.ORGANE = id)); 
-
 
 alter table STAFF add constraint EXCL_STAFF
      check((CEO is not null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is null)
@@ -209,8 +208,6 @@ alter table STAFF add constraint EXCL_STAFF
            or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is not null)
            or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is null)); 
 
-
-
 alter table BLOOD add constraint ID_BLOOD_CHK
      check(exists(select * from DETAIL
                   where DETAIL.BLOOD = id)); 
@@ -218,17 +215,6 @@ alter table BLOOD add constraint ID_BLOOD_CHK
 alter table TRANSPLANTATION add constraint ID_TRANSPLANTATION_CHK
      check(exists(select * from N_work_on
                   where N_work_on.id = id)); 
-
-
-
-alter table N_work_on add constraint EQU_N_wor_TRANS_FK
-     foreign key (id)
-     references TRANSPLANTATION;
-
-alter table N_work_on add constraint REF_N_wor_NURSE
-     foreign key (N_N_id)
-     references NURSE;
-
 
 -- Index Section
 -- _____________ 
