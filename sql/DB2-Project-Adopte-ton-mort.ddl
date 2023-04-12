@@ -353,7 +353,7 @@ create index ORGANES_Types
 -- Trigger Section
 -- _____________ 
 
-create Trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
+create trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
      -- Trigger goal: Check if the date of delivery is after the date expiration of the organe
      -- Author: Yannis Van Achter
      before insert or update on DELIVERY
@@ -374,11 +374,40 @@ create Trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
           end if;
      end;
 
-create trigger TRG_CHECK_AVAILABILITY_TO_SELL
+create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_SELL
      -- Trigger goal: Checks if the organ is available before accept to sell it 
      -- Author: Aurélie Genot 
      before insert or update on DETAIL
      for each row 
+     begin 
+          if new.ORGANE not exists ( SELECT *
+                                        FROM ORGANE 
+                                        WHERE NOT EXISTS (SELECT null
+                                                       FROM TRANSPLANTATION
+                                                       WHERE TANSPLANTATION.id = ORGANE.id);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The organ that you want to sell is not available anymore";
+          end if; 
+     end; 
+
+     
+create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT
+     -- Trigger goal: Checks if the organ is available before accept to transplant it 
+     -- Author: Aurélie Genot 
+     before insert or update on TRANSPLANTATION
+     for each row 
+     begin 
+          if new.ORGANE not exists ( SELECT *
+                                        FROM ORGANE 
+                                        WHERE NOT EXISTS (SELECT null
+                                                       FROM DETAIL
+                                                       WHERE DETAIL.id = ORGANE.id);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The organ that you want to transplant is not available anymore";
+          end if; 
+     end; 
 
 -- Init Section
 -- _____________
