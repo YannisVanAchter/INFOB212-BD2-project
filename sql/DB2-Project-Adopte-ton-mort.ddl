@@ -34,23 +34,8 @@ create table ADDRESS (
 
 
 
-create table ACCOUNTANT (
-     id numeric(32) not null,
-     constraint ID_ACCOU_STAFF_ID primary key (id));
 
-create table DETAIL (
-     BLOOD numeric(32),
-     ORGANE numeric(32),
-     id numeric(32) not null,
-     constraint SID_DETAIL_ID unique (BLOOD, ORGANE, id));
 
-create table DONATOR (
-     id numeric(32) not null,
-     Giv_id numeric(32) not null,
-     gender char not null,
-     age_range float(8) not null,
-     constraint ID_DONATOR_ID primary key (id),
-     constraint SID_DONAT_BLOOD_ID unique (Giv_id));
 
 create table NURSE (
      id numeric(32) not null,
@@ -126,6 +111,11 @@ create table STAFF (
      ACCOUNTANT numeric(32),
      constraint ID_STAFF_PERSO_ID primary key (id));
 
+create table ACCOUNTANT (
+     id numeric(32) not null,
+     constraint ID_ACCOU_STAFF_ID primary key (id)
+     foreign key (id) references STAFF);
+
 create table ANAESTHETIST (
      id numeric(32) not null,
      inami_number char(32) not null,
@@ -145,6 +135,24 @@ create table BLOOD (
      Giv_id numeric(32),
      Nee_id numeric(32),
      constraint ID_BLOOD_ID primary key (id));
+
+create table DONATOR (
+     id numeric(32) not null,
+     Giv_id numeric(32) not null,
+     gender char not null,
+     age_range float(8) not null,
+     constraint ID_DONATOR_ID primary key (id),
+     constraint SID_DONAT_BLOOD_ID unique (Giv_id)
+     foreign key (Giv_id) references BLOOD);
+
+create table DETAIL (
+     BLOOD numeric(32),
+     ORGANE numeric(32),
+     id numeric(32) not null,
+     constraint SID_DETAIL_ID unique (BLOOD, ORGANE, id)
+     foreign key (BLOOD) references BLOOD
+     foreign key (ORGANE) references ORGANE
+     foreign key (id) references ORDER);
 
 create table TRANSPLANTATION (
      date date not null,
@@ -172,29 +180,12 @@ create table N_work_on (
 -- ___________________ 
 
 
-alter table ACCOUNTANT add constraint ID_ACCOU_STAFF_FK
-     foreign key (id)
-     references STAFF;
 
 alter table DETAIL add constraint EXTONE_DETAIL
      check((ORGANE is not null and BLOOD is null)
            or (ORGANE is null and BLOOD is not null)); 
 
-alter table DETAIL add constraint EQU_DETAI_BLOOD
-     foreign key (BLOOD)
-     references BLOOD;
 
-alter table DETAIL add constraint EQU_DETAI_ORGAN_FK
-     foreign key (ORGANE)
-     references ORGANE;
-
-alter table DETAIL add constraint REF_DETAI_ORDER_FK
-     foreign key (id)
-     references ORDER;
-
-alter table DONATOR add constraint SID_DONAT_BLOOD_FK
-     foreign key (Giv_id)
-     references BLOOD;
 
 alter table NURSE add constraint ID_NURSE_STAFF_FK
      foreign key (id)
