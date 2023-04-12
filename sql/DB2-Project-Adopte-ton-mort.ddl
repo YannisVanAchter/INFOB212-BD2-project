@@ -327,6 +327,10 @@ create unique index ID_N_work_on_IND
 create index EQU_N_wor_TRANS_IND
      on N_work_on (id);
 
+create unique index PERSON.email
+     on PERSON (email);
+     
+
 -- Vue Section
 -- _____________ 
 
