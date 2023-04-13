@@ -37,7 +37,7 @@ create table PERSON (
      first_name varchar(64),
      email varchar(128) not null,
      phone_number varchar(32),
-     born_date date not null,
+     born_date date not null check((DATE.NOW - PERSON.born_date =< 18),
      password varchar(128) not null,
      Liv_id numeric(32) not null,
      constraint ID_PERSON_ID primary key (id),
@@ -107,7 +107,7 @@ create table TRANSPLANTATION (
      date date not null,
      id numeric(32) unsigned not null AUTO_INCREMENT,
      Con_id numeric(32) not null,
-     price float(32) not null,
+     price float(32) not null check(price > 0),
      Rec_id numeric(32) not null,
      D_w_id numeric(32) not null,
      A_w_id numeric(32) not null,
@@ -120,7 +120,7 @@ create table TRANSPLANTATION (
 
 create table BLOOD (
      id numeric(32) unsigned not null AUTO_INCREMENT,
-     type varchar(2) not null,
+     type varchar(2) not null check(type = "A" or type = "B" or type = "O" or type = "AB"),
      signe char not null,
      expiration_date date not null,
      quantity float(4) not null,
@@ -147,7 +147,7 @@ create table ORGANE (
      method_of_preservation varchar(64) not null,
      type varchar(64) not null,
      id numeric(32) unsigned not null AUTO_INCREMENT,
-     price float(32) not null,
+     price float(32) not null check(price > 0),
      Com_id numeric(32) not null,
      constraint ID_ORGANE_ID primary key (id),
      foreign key (Com_id) references DONATOR,
@@ -160,11 +160,15 @@ create table DETAIL (
      constraint SID_DETAIL_ID unique (BLOOD, ORGANE, id),
      foreign key (BLOOD) references BLOOD,
      foreign key (ORGANE) references ORGANE,
-     foreign key (id) references ORDER);
+     foreign key (id) references ORDER
+     constraint EXTONE_DETAIL check(
+          (ORGANE is not null and BLOOD is null)
+          or (ORGANE is null and BLOOD is not null))
+     );
 
 create table TYPE_DELIVERY (
      id varchar(16) unsigned not null AUTO_INCREMENT,
-     price numeric(4) not null,
+     price numeric(4) not null check(price > 0),
      constraint ID_TYPE_DELIVERY_ID primary key (id));
 
 create table DELIVERY (
@@ -182,7 +186,7 @@ create table DELIVERY (
 
 create table N_work_on (
      N_N_id numeric(32) not null,
-     id numeric(32) unsigned not null AUTO_INCREMENT,
+     id numeric(32) not null,
      constraint ID_N_work_on_ID primary key (N_N_id, id),
      foreign key (id) references TRANSPLANTATION, 
      foreign key (N_N_id) references NURSE);
@@ -190,13 +194,6 @@ create table N_work_on (
 
 -- Constraints Section - Checks
 -- ____________________________ 
-
-alter table PERSON add constraint MAJOR
-     check((DATE.NOW - PERSON.born_date =< 18));
-
-alter table DETAIL add constraint EXTONE_DETAIL
-     check((ORGANE is not null and BLOOD is null)
-           or (ORGANE is null and BLOOD is not null)); 
 
 alter table ORGANE add constraint ID_ORGANE_CHK
      check(exists(select * from DETAIL
@@ -219,14 +216,8 @@ alter table TRANSPLANTATION add constraint ID_TRANSPLANTATION_CHK
      check(exists(select * from N_work_on
                   where N_work_on.id = id));
 
-alter table TRANSPLANTATION TYPE_DELIVERY ORGANE add constraint PRICE_POSITIF 
-     check((TRANSPLANTATION.price > 0 and TYPE_DELIVERY.price > 0 and ORGANE.price > 0));
-
 alter table ORGANE add constraint LIST_ORGANES
-     check((ORGANE.type ))
-
-alter table BLOOD add constraint TYPE_BLOOD
-     check((BLOOD.type is A) or (BLOOD.type is B) or (BLOOD.type is AB) or (BLOOD.type is O))
+     check((ORGANE.type));
 
 -- Index Section
 -- _____________ 
@@ -339,6 +330,7 @@ create unique index ID_N_work_on_IND
 create index EQU_N_wor_TRANS_IND
      on N_work_on (id);
 
+-- create personnal index
 create unique index PERSON_email
      on PERSON (email);
 
@@ -350,6 +342,7 @@ create index ORGANES_Types
 create view ACCOUNTABLE(PRICE, SALARY, TYPE)
      -- View goal : view accountable, to view the price of the articles, the wages
      -- Author: Aline Boulanger (ft. Loulou)
+     -- Create 2 view one for products and one for the salary (but salary is include in HR view) (Com: Yannis)
   as  select O.PRICE, TD.PRICE, S.SALARY, T.PRICE, O.TYPE
       from   ORGANE O, TYPE_DELIVERY TD, BLOOD B, STAFF S, TRANSPLANTATION T
       where  
@@ -396,7 +389,7 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_SELL
                                                        WHERE TANSPLANTATION.id = ORGANE.id);)
           then 
                signal sqlstate '45000'
-               set message_text = 'The organ that you want to sell is not available anymore";
+               set message_text = 'The organ that you want to sell is not available anymore';
           end if; 
      end; 
 
@@ -414,7 +407,7 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT
                                                        WHERE DETAIL.id = ORGANE.id);)
           then 
                signal sqlstate '45000'
-               set message_text = 'The organ that you want to transplant is not available anymore";
+               set message_text = 'The organ that you want to transplant is not available anymore';
           end if; 
      end; 
 
@@ -432,7 +425,7 @@ create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL
                                                        WHERE TANSPLANTATION.id = BLOOD.id);)
           then 
                signal sqlstate '45000'
-               set message_text = 'The blood that you want to sell is not available anymore";
+               set message_text = 'The blood that you want to sell is not available anymore';
           end if; 
      end; 
    
@@ -449,7 +442,7 @@ create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_TRANSPLANT
                                                        WHERE DETAIL.id = BLOOD.id);)
           then 
                signal sqlstate '45000'
-               set message_text = 'The blood that you want to transplant is not available anymore";
+               set message_text = 'The blood that you want to transplant is not available anymore';
           end if; 
      end; 
 
