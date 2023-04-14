@@ -136,4 +136,4 @@ dmypy.json
 .vscode/
 
 # test file for python
-.test.py
+*.test.py
