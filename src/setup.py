@@ -4,7 +4,6 @@
 __author__ = "Yannis Van Achter <discord:Yannis Van Achter#1444"
 __version__ = "INCOMPLETE AND TO FIX"
 
-import os
 import logging
 import sys
 import time
@@ -18,21 +17,21 @@ CONFIG = {
     'password': 'password', 
     'database': 'mysql', 
     'port': 3306,
-    'auto_commit': True, 
+    # 'auto_commit': True, 
     'auto_connect': True,
 }
 
 def __init_database__():
     """Init database by insert values"""
     # define constants for main function
-    temp_sql_file = './temp.sql'
     database_sql_file = "../sql/DB2-Project-Adopte-ton-mort.ddl"
     
     db = DataBase(**CONFIG)
     
     with open(database_sql_file, 'r') as f:
         db.execute(f.read(), multi=True)
-        time.sleep(10) # make sure MySQL executes all statements to generate the database
+        logging.debug(f"Executed {database_sql_file} file")
+        # time.sleep(10) # make sure MySQL executes all statements to generate the database
         
     # db.commit()
     
@@ -48,7 +47,6 @@ def __init_database__():
         
     # db.commit()
     db.disconnect()
-    del db
     logging.info('Database successfully created')
             
 if __name__ == "__main__":

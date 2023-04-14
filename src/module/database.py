@@ -56,7 +56,7 @@ class DataBase:
         database: str,
         port: int,
         auto_connect: bool = False,
-        auto_commit: bool = False,
+        # auto_commit: bool = False,
         **kwargs
     ):
         """data base object initialisation
@@ -80,9 +80,11 @@ class DataBase:
         self.config = kwargs
         self.__has_one_querry = False
         self.__is_connected = False
-        self.auto_commit_ = auto_commit
+        # self.auto_commit_ = auto_commit
         self.auto_connect = auto_connect
         self.__fetched = []
+        self.__cursor = None
+        self.__db = None
 
         if auto_connect:
             self.connect()
@@ -149,8 +151,8 @@ class DataBase:
         return self
 
     def __exit__(self, exc_type, exc_value, trace):
-        if self.auto_commit_:
-            self.commit()
+        # if self.auto_commit_:
+        #     self.commit()
         self.disconnect()
 
     def __del__(self):
@@ -244,14 +246,14 @@ class DataBase:
             if querry.startswith("SELECT"):
                 self.__fetched = self.__cursor.fetchall()
             
-            if self.auto_commit_:
-                self.commit()
+            # if self.auto_commit_:
+            #     self.commit()
         except ProgrammingError as e:
             raise e
         finally:
             if self.auto_connect and not self.__is_connected:
-                if not self.auto_commit_:
-                    self.commit()
+                # if not self.auto_commit_:
+                #     self.commit()
                 
                 self.disconnect()
 
@@ -274,29 +276,29 @@ class DataBase:
         for q in querry:
             self.execute(q)
 
-    def commit(self):
-        """commit changes in database"""
-        self.__db.commit()
+    # def commit(self):
+    #     """commit changes in database"""
+    #     self.__db.commit()
 
-    def auto_commit(self, querry: str):
-        """execute querry and commit changes in database
+    # def auto_commit(self, querry: str):
+    #     """execute querry and commit changes in database
         
-        Args:
-        -----
-            querry (str): querry formated in SQL
-        """
-        self.execute(querry)
-        self.commit()
+    #     Args:
+    #     -----
+    #         querry (str): querry formated in SQL
+    #     """
+    #     self.execute(querry)
+    #     self.commit()
 
-    def auto_commit_many(self, *querry: str):
-        """execute many querry and commit changes in database
+    # def auto_commit_many(self, *querry: str):
+    #     """execute many querry and commit changes in database
         
-        Args:
-        -----
-            querry (str): querry formated in SQL
-        """
-        self.execute_many(*querry)
-        self.commit()
+    #     Args:
+    #     -----
+    #         querry (str): querry formated in SQL
+    #     """
+    #     self.execute_many(*querry)
+    #     self.commit()
 
     def disconnect(self) -> (None):
         """Disconnect to database and close cursor
