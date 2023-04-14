@@ -125,7 +125,7 @@ def get_sql_user_querry(prompt: str = "") -> (str):
         Yannis Van Achter
     """
     querry = ""
-    print(prompt)
+    print(prompt, end="")
     while not querry.strip().endswith(";"):
         querry += get_string()
         
