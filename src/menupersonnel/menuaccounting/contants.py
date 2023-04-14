@@ -19,6 +19,13 @@ PRODUCT_LIST = (
     "Nose",
 )
 
+BLOOD_TYPE = (
+    "A", 
+    "B", 
+    "AB", 
+    "O",
+)
+
 TABLE_FOR_PRICE_UPDATES = (
     "ORGANE",
     "BLOOD",
