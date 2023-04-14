@@ -15,8 +15,8 @@ from module.database import DataBase
 # function and class
 def main():
     with DataBase(
-                host='127.0.0.1', 
-                user='root', 
+                host='localhost', 
+                user='user', 
                 password='password', 
                 database='mysql',
                 port=3306,
@@ -33,7 +33,7 @@ def main():
             "INSERT INTO test (name) VALUES ( 'bla')",
             "INSERT INTO test (name) VALUES ( 'blabla')",
             "INSERT INTO test (name) VALUES ( 'blablabla')")
-        database.execute("SELECT * FROM TYPE_DELIVERY")
+        database.execute("SELECT * FROM test")
 
         for row in database.table:
             print(row)

@@ -34,7 +34,7 @@ def __init_database__():
         db.execute(f.read(), multi=True)
         time.sleep(10) # make sure MySQL executes all statements to generate the database
         
-    db.commit()
+    # db.commit()
     
     # Test that the database has been created
     query = "SELECT * FROM TYPE_DELIVERY;"
@@ -46,7 +46,7 @@ def __init_database__():
     for row in db.table:
         logging.debug(f"Fetched row: {row}")
         
-    db.commit()
+    # db.commit()
     db.disconnect()
     del db
     logging.info('Database successfully created')

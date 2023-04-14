@@ -155,8 +155,8 @@ class DataBase:
 
     def __del__(self):
         """On delete of object disconnect from data base"""
-        if self.auto_commit_:
-            self.commit()
+        # if self.auto_commit_:
+        #     self.commit()
         
         if self.__is_connected:
             self.disconnect()
