@@ -4,7 +4,7 @@ from datetime import datetime
 
 from module.database import DataBase
 
-def create_new_organe(
+def create_new_organe_row(
         database: DataBase, 
         state: str, 
         functionnal: bool, 
