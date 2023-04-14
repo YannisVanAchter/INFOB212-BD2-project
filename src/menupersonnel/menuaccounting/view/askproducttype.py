@@ -6,9 +6,9 @@ __version__ = "1.0.0"
 
 from module.get import  get_string
 
-from menupersonnel.menuaccounting.contants import PRODUCT_LIST
+from menupersonnel.menuaccounting.contants import PRODUCT_LIST, BLOOD_TYPE
 
-def ask_product_type() -> (str):
+def ask_product_type(is_organe: bool = False) -> (str):
     """ask user to enter the product type
 
     loop since user did not enter an correct product type
@@ -19,7 +19,11 @@ def ask_product_type() -> (str):
     """
     product_type = ""
     
-    while product_type not in PRODUCT_LIST:
-        product_type = get_string("Enter the product type: ")
-        
+    if is_organe:
+        while product_type not in PRODUCT_LIST:
+            product_type = get_string("Enter the product type: ")
+    else:
+        while product_type not in BLOOD_TYPE:
+            product_type = get_string("Enter the product type: ")
+    
     return product_type

@@ -62,6 +62,7 @@ create table ORDER (
 create table STAFF (
      id numeric(32) not null,
      salary numeric(32) not null,
+     function varchar(64),
      NURSE numeric(32),
      HR numeric(32),
      DOCTOR numeric(32),
