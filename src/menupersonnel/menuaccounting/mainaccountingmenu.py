@@ -31,7 +31,22 @@ def update_organe(database: DataBase):
     set_product_price(database, new_organe_price, product_id, "ORGANE")
 
 def update_type_delivery(database: DataBase):
-    """Update type delivery price for a specific type delivery"""
+    """Update/insert type delivery price for a specific type delivery"""
+    is_insert = get_string("Do you want to insert a new type of delivery (y/n): ").strip().lower().startswith("y")
+    
+    if is_insert:
+        new_type_delivery_price = ask_product_price()
+        with database as db:
+            db.execute("SELECT id FROM TYPE_DELIVERY")
+            used_id = db.table
+            new_type_delivery_name = "normal"
+            while new_type_delivery_name in used_id:
+                new_type_delivery_name = get_string("Enter the type of delivery: ")
+            
+            db.execute(f"INSERT INTO TYPE_DELIVERY (id, price) VALUES ({new_type_delivery_name}, {new_type_delivery_price})",)
+        
+        return 
+    
     print("You are only allow to update price of product (you are currently updating TYPE_DELIVERY)")
     
     # on TYPE_DELIVERY the id is a string
