@@ -17,7 +17,7 @@ def main_RH_menu(database: DataBase):
         database (DataBase): Data base connected for HR 
     """
    
-    print("In RH menu")
+    print("You are now in HR menu")
     validity = False
 
     while (validity == False): 
@@ -32,8 +32,7 @@ def main_RH_menu(database: DataBase):
         else: 
             validity = True 
     
-    # According to the number choosen, will display the good choice
-    
+    # According to the number choosen, will redirect to the good function
     if choice == 0:
         add_employee()
     
@@ -50,9 +49,36 @@ def add_employee():
     """
     DataBase.connect()
     print("You have choosen to add a new employee")
-    existence = get_bool("Does this new employee is already register in our system ? Enter 0 if no and 1 if yes ")
+    existence = get_bool("Does this new employee is already register in our system ? Enter False if no and True if yes ")
+    if existence == True: 
+        create_person() 
     
+    else : 
+        id_person = get_int("Please enter the id of the person: ")
+        if id_person not in (SELECT id FROM PERSON): ## A revoir
+            print("This person doesn't exist")
+        else: 
+            create_employee(id)
+        
     DataBase.disconnect()
+    
+def create_person(): 
+    """
+    To add a new employee who hasn't already created an account in the company. 
+    Create a new account and call the function create_employee(id) with the id created
+    """
+    ## Appelle la fonction de Youlan pr la création d'un compte 
+    
+    create_employee(id)
+
+
+def create_employee(id): 
+    """
+    To add to a person who has already created an account in the company the role of employee 
+    
+    Args: 
+    id : the id of the person that has already had an account in the company 
+    """
     
 def modify_employee(): 
     """_
