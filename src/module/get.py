@@ -80,6 +80,31 @@ def get_int(prompt: str = "") -> (int):
         except (TypeError, ValueError):
             pass
         
+def get_bool(prompt: str = "") -> (bool):
+    """ask user a request and get input of answer
+
+    Args:
+    -----
+        prompt (str, optional): request show to user. Defaults to ""
+
+    Return:
+    -------
+        bool: response of user
+        
+    Version:
+    --------
+        1.0.0
+        
+    Author:
+    -------
+        Yannis Van Achter
+    """
+    while True:
+        try:
+            return bool(get_string(prompt))
+        except (TypeError, ValueError):
+            pass
+        
 def get_sql_user_querry(prompt: str = "") -> (str):
     """Ask user for personnal sql querry
 
