@@ -12,6 +12,7 @@ class User:
 
     def login(self):
         """Try to login with the password and email provided."""
+        pass
 
     @property
     def logged(self):
