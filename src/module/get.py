@@ -7,6 +7,9 @@ __version__ = "1.0.0"
 __author__ = "yannis van achter <discord:Yannis Van Achter#1444"
 
 from datetime import date as Date
+from typing import Type
+
+from .database import DataBase
 
 def get_string(prompt: str = "") -> (str):
     """ask user a request and get input of answer
@@ -161,3 +164,48 @@ def get_sql_user_querry(prompt: str = "") -> (str):
         querry += get_string()
         
     return querry
+
+def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type = int) -> (int):
+    """Ask user for valid id in database
+
+    Args:
+    -----
+        database (DataBase): database to check id, 
+            connect with user that have SELECT grant permission on table_name
+        prompt (str): Request to user.
+        table_name (str): Name of table to check id.
+        id_type (Type, optional): type of id to check (int or str). Defaults to 'integer'
+        
+    Raises:
+    -------
+        TypeError: if id_type is not int or str
+
+    Return:
+    -------
+        id_type(): valid id
+        
+    Version:
+    --------
+        1.0.0
+        
+    Author:
+    -------
+        Yannis Van Achter
+    """
+    if id_type not in (int, str):
+        raise TypeError("id_type must be int or str")
+    
+    id_list = []
+    with database as db:
+        db.execute(f"SELECT id FROM {table_name};")
+        id_list = db.table
+        
+    while True:
+        try:
+            id = id_type(get_string(prompt))
+            if id not in id_list:
+                raise ValueError
+            return id
+        except (TypeError, ValueError):
+            pass
+    
