@@ -45,7 +45,6 @@ def main_RH_menu(db: DataBase):
         delete_employee()
     db.disconnect()
 
-
 def add_employee(db : DataBase):
     """ 
     To add a new employee
@@ -78,7 +77,6 @@ def create_person():
     id_person = get_int("Please enter the id of the person: ")
     create_employee(id_person)
 
-
 def create_employee(id, db: DataBase): 
     """
     To add to a person who has already created an account in the company the role of employee 
@@ -91,8 +89,9 @@ def create_employee(id, db: DataBase):
     
     print("Now you will give the job of the user with this id")
     
-    people = ("SELECT id from PERSON")
-    
+    db.execute("SELECT id FROM PERSON")
+    people = db.table
+
     if id not in people: 
         print('The id that you entered is not valid')
     
@@ -141,7 +140,10 @@ def modify_employee(db : DataBase):
     """
     db.connect()
     id_employee = get_int("Enter the id of the employee")
-    if id_employee not in ("SELECT id FROM STAFF"):
+    
+    db.execute("SELECT id FROM STAFF")
+    staff = db.table
+    if id_employee not in staff:
         print("The id of the person is not valid")
     else: 
         print("What do you want to do?")
@@ -168,22 +170,36 @@ def delete_employee(db: DataBase):
     db.connect()
     id_employee = get_int("Enter the id of the employee")
     
-    if id_employee not in ("SELECT id FROM STAFF"):
+    db.execute("SELECT id FROM STAFF")
+    staff = db.table
+    if id_employee not in staff:
         print("The id of the person is not valid")
     else: 
        print("Are you sure to delete this employee? After that you cannot go back ")
        confirmation = get_string("Type yes if you want to delete this person or no otherwise")
        if confirmation == "yes": 
            #Verifier si la personne n'est pas medecin, infirmiere ou anesthésiste 
-            if id_employee not in ("SELECT id FROM MEDECIN" and "SELECT id FROM NURSE" and "SELECT id FROM ANAESTHETIST"):
-               if id_employee not in ("SELECT id FROM CEO"):
-                   db.execute("DELETE id FROM STAFF WHERE id = id_employee ") # La personne devra supprimer son compte personne elle-même 
-               else:
+            db.execute("SELECT id FROM MEDECIN")
+            medecins = db.table
+            db.execute("SELECT id FROM NURSE")
+            medecins += db.table 
+            db.execute("SELECT id FROM ANAESTHETIST")
+            medecins += db.table
+            
+            if id_employee not in medecins:
+                db.execute("SELECT id FROM CEO")
+                ceo = db.table
+                if id_employee not in ceo:
+                   db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") # La personne devra supprimer son compte personne elle-même 
+                else:
                    print("You don't have the permission to delete the CEO")  
-            else: 
-               if id_employee not in ("SELECT id FROM TRANSPLANTATION"):
-                   db.execute("DELETE id FROM STAFF WHERE id = id_employee")
-               else: 
+            else:
+                db.execute("SELECT id FROM TRANSPLANTATION")
+                transplantation_medecins = db.table 
+                
+                if id_employee not in transplantation_medecins:
+                   db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee}")
+                else: 
                    print('This person can not be actually deleted because she works on a transplantation')       
        else: 
            print('This person will not be delete')
