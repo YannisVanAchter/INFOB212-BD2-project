@@ -171,7 +171,19 @@ def delete_employee(db: DataBase):
     if id_employee not in ("SELECT id FROM STAFF"):
         print("The id of the person is not valid")
     else: 
-       print("Are you sure to delete this employee?")
-       
-       
-    ## LOOK HOW TO DELETE THE EMPLOYEE IN THE DB
+       print("Are you sure to delete this employee? After that you cannot go back ")
+       confirmation = get_string("Type yes if you want to delete this person or no otherwise")
+       if confirmation == "yes": 
+           #Verifier si la personne n'est pas medecin, infirmiere ou anesthésiste 
+            if id_employee not in ("SELECT id FROM MEDECIN" and "SELECT id FROM NURSE" and "SELECT id FROM ANAESTHETIST"):
+               if id_employee not in ("SELECT id FROM CEO"):
+                   db.execute("DELETE id FROM STAFF WHERE id = id_employee ") # La personne devra supprimer son compte personne elle-même 
+               else:
+                   print("You don't have the permission to delete the CEO")  
+            else: 
+               if id_employee not in ("SELECT id FROM TRANSPLANTATION"):
+                   db.execute("DELETE id FROM STAFF WHERE id = id_employee")
+               else: 
+                   print('This person can not be actually deleted because she works on a transplantation')       
+       else: 
+           print('This person will not be delete')
