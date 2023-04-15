@@ -6,6 +6,8 @@ module that provide useful function for input of user
 __version__ = "1.0.0"
 __author__ = "yannis van achter <discord:Yannis Van Achter#1444"
 
+from datetime import date as Date
+
 def get_string(prompt: str = "") -> (str):
     """ask user a request and get input of answer
 
@@ -29,6 +31,35 @@ def get_string(prompt: str = "") -> (str):
         return input(prompt)
     except EOFError:
         return None
+    
+def get_date(prompt: str = "", before: Date = None, after: Date = None) -> (Date):
+    """ask user a request and get input of answer
+
+    Args:
+    -----
+        prompt (str, optional): request show to user. Defaults to ""
+        before (Date, optional): date before. Defaults to None
+        after (Date, optional): date after. Defaults to None
+
+    Return:
+    -------
+        Date: response of user
+        
+    Version:
+    --------
+        1.0.0
+    
+    Author:
+    -------
+        Yannis Van Achter
+    """
+    date_input = None
+    while date_input == None or (before != None and date_input < before) or (after != None and date_input > after):
+        try:
+            date_input = Date.fromisoformat(get_string(prompt))
+        except (TypeError, ValueError):
+            pass
+    
     
 def get_float(prompt: str = "") -> (float):
     """ask user a request and get input of answer
