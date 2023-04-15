@@ -2,6 +2,7 @@ from module.database import DataBase
 from module.get import get_int 
 from module.get import get_bool
 from module.get import get_string 
+from menuconnexion.menu import main_login_menu
 
 def main_RH_menu(database: DataBase):
     """
@@ -67,9 +68,10 @@ def create_person():
     To add a new employee who hasn't already created an account in the company. 
     Create a new account and call the function create_employee(id) with the id created
     """
-    ## Appelle la fonction de Youlan pr la création d'un compte 
-    
-    create_employee(id)
+    main_login_menu(database: DataBase) ## Appelle la fonction de Youlan pr la création d'un compte 
+    ## On crée nous-même un compte employée mais du coup en théorie on génère ici un mdp temporaire que la personne devra changer 
+    id_person = get_int("Please enter the id of the person: ")
+    create_employee(id_person)
 
 
 def create_employee(id): 
@@ -79,6 +81,18 @@ def create_employee(id):
     Args: 
     id : the id of the person that has already had an account in the company 
     """
+    print("Now you will give the job of the user with this id")
+    
+            id_transplantation = input("Pouvez vous me donner l'identifiant de la transplantation dont vous souhaitez voir les organes?")
+
+        # use 3*" your querry 3*", that will provide only one string
+        #
+        # Example:
+        # organes = ("""SELECT etat, methode_de_conservation, type FROM ORGANE WHERE id_organe in
+        # (SELECT id_organe FROM TRANSPLANTATION WHERE id_transplantation = %s)""")
+        organes = ("SELECT etat, methode_de_conservation, type FROM ORGANE WHERE id_organe in"
+        "(SELECT id_organe FROM TRANSPLANTATION WHERE id_transplantation = %s)")
+        database.execute(organes, (id_transplantation))
     
 def modify_employee(): 
     """_
