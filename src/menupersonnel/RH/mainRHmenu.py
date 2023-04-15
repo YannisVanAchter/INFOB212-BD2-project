@@ -151,10 +151,10 @@ def modify_employee(db : DataBase):
         else: 
             if choice == 1: 
                 new_salary = get_int("Enter the new salary: ")
-                db.execute("UPDATE salary FROM STAFF WHERE ID = id_employee and salary = new_salary") ##A revoir 
+                db.execute(f"UPDATE salary = {new_salary} FROM STAFF WHERE ID = id_employee") ##A revoir 
             if choice == 2: 
                 new_function = get_string("Enter the new function: ")
-                db.execute("UPDATE function FROM STAFF WHERE ID = id_employee and function = new_function ")
+                db.execute(f"UPDATE function = {new_function} FROM STAFF WHERE ID = id_employee")
         
     db.disconnect()
     
