@@ -350,17 +350,24 @@ create view ACCOUNTABLE(PRICE, SALARY, TYPE)
      and   
      and    
 
-create view RH (SALARY)
+create view RH (SALARY, JOBS, NAME, FIRST_NAME, EMAIL, PHONE)
      -- View goal : view RH, to view the personnel, the wages, jobs
      -- Author: Louise DELPIERRE (ft. Alinette)
      as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHETIST, S.CEO, S.ACCOUNTABLE, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
      from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHETIST A, CEO C, ACCOUNTABLE AC, HR H
-     where  S.DOCTOR = D.DOCTOR
-     and   S.NURSE = N.NURSE
-     and   S.ANAESTHETIST = A.ANAESTHETIST
-     and   S.CEO = C.CEO
-     and   S.ACCOUNTABLE = AC.ACCOUNTABLE
-     and   S.HR = H.HR
+     where id.STAFF = id.PERSON
+     and S.NURSE = N.NURSE
+     and S.ANAESTHETIST = A.ANAESTHETIST
+     and S.CEO = C.CEO
+     and S.ACCOUNTABLE = AC.ACCOUNTABLE
+     and S.HR = H.HR
+     and S.DOCTOR = D.DOCTOR
+     group by S.DOCTOR
+     group by S.NURSE
+     group by S.ANAESTHETIST
+     group by S.CEO
+     group by S.ACCOUNTABLE
+     group by S.HR
 
 
 
