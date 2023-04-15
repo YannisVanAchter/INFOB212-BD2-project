@@ -340,15 +340,23 @@ create index ORGANES_Types
 
 -- View Section
 -- _____________ 
-create view ACCOUNTABLEORGABLO(PRICE, TYPE)
+create view ACCOUNTABLEORGABLO(O.type, O.price, B.type, B.signe)
      -- View goal : view accountable to view the price of the articles 
      -- Author: Aline Boulanger (ft. Loulou)
-     -- Create 2 view one for products and one for the salary (but salary is include in HR view) (Com: Yannis)
      as  select O.type, B.type, B.signe, O.price
      from ORGANE O, BLOOD B
      where O.type = O.price
      and B.type = B.signe 
      group by O.type and  B.type
+
+create view ACCOUNTABLETRANPLANLIVRAI(PRICE, TYPE)
+     -- View goal : view accountable to view the price of the transplantation and the livraison
+     -- Author: Aline Boulanger (ft. Loulou)
+     as  select TD.price
+     from TRANSPLANTATION T, DELIVERY D, TYPE_DELIVERY TD, CUSTOMER C, ADDRESS A
+     where D.Typ_id = TD.id
+     and C.id = A.id
+   
 
 create view RH (SALARY, S.DOCTOR, S.NURSE, S.ANAESTHETIST, S.CEO, S.ACCOUNTABLE, S.HR, NAME, FIRST_NAME, EMAIL, PHONE)
      -- View goal : view RH, to view the personnel, the wages, jobs
