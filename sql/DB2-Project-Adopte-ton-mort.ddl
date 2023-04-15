@@ -340,21 +340,21 @@ create index ORGANES_Types
 
 -- View Section
 -- _____________ 
-create view ACCOUNTABLE(PRICE, SALARY, TYPE)
-     -- View goal : view accountable, to view the price of the articles, the wages
+create view ACCOUNTABLE1(PRICE, TYPE)
+     -- View goal : view accountable to view the price of the articles 
      -- Author: Aline Boulanger (ft. Loulou)
      -- Create 2 view one for products and one for the salary (but salary is include in HR view) (Com: Yannis)
-     as  select O.PRICE, TD.PRICE, S.SALARY, T.PRICE, O.TYPE
-     from   ORGANE O, TYPE_DELIVERY TD, BLOOD B, STAFF S, TRANSPLANTATION T
+     as  select O.type, B.type, B.signe, O.price
+     from ORGANE O, BLOOD B
      where  
      and   
      and    
 
-create view RH (SALARY, JOBS, NAME, FIRST_NAME, EMAIL, PHONE)
+create view RH (SALARY, S.DOCTOR, S.NURSE, S.ANAESTHETIST, S.CEO, S.ACCOUNTABLE, S.HR, NAME, FIRST_NAME, EMAIL, PHONE)
      -- View goal : view RH, to view the personnel, the wages, jobs
      -- Author: Louise DELPIERRE (ft. Alinette)
      as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHETIST, S.CEO, S.ACCOUNTABLE, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
-     from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHETIST A, CEO C, ACCOUNTABLE AC, HR H
+     from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHETIST A, CEO C, ACCOUNTABLE AC, HR H, ADDRESS AD
      where id.STAFF = id.PERSON
      and S.NURSE = N.NURSE
      and S.ANAESTHETIST = A.ANAESTHETIST
@@ -362,6 +362,7 @@ create view RH (SALARY, JOBS, NAME, FIRST_NAME, EMAIL, PHONE)
      and S.ACCOUNTABLE = AC.ACCOUNTABLE
      and S.HR = H.HR
      and S.DOCTOR = D.DOCTOR
+     and id.PERSON = id.ADDRESS
      group by S.DOCTOR
      group by S.NURSE
      group by S.ANAESTHETIST
