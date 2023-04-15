@@ -187,3 +187,5 @@ def delete_employee(db: DataBase):
                    print('This person can not be actually deleted because she works on a transplantation')       
        else: 
            print('This person will not be delete')
+           
+    db.disconnect()
