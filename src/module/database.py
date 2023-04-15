@@ -193,6 +193,7 @@ class DataBase:
                     database=self.database,
                     host=self.host,
                     port=self.port,
+                    connect_timeout=999999,
                     **self.config
                 )
                 if not self.__db.is_connected():
@@ -214,7 +215,7 @@ class DataBase:
             + f"Original error: DatabaseError {e}"
         )
 
-    def execute(self, querry: str, **kwargs):
+    def execute(self, querry: str, multi: bool = False):
         """execute SQL querry in database
 
         Args:
@@ -239,23 +240,38 @@ class DataBase:
             )
             
         querry = querry.strip()
-        
         try:
-            self.__cursor.execute(querry, **kwargs)
-            
-            if querry.startswith("SELECT"):
-                self.__fetched = self.__cursor.fetchall()
-            
+            if multi:
+                for _ in self.__cursor.execute(querry, multi=multi):
+                    pass
+                if not self._db.is_connected():
+                    self.__db.reconnect()
+                self.__cursor.close()
+                self.__cursor = self.__db.cursor()
+
+            else:
+                self.__cursor.execute(querry, multi=multi)
+                if querry.startswith("SELECT") or querry.startswith("SHOW"):
+                    self.__fetched = self.__cursor.fetchall()
+                    if (not self.__db.is_connected()):
+                        self.__db.reconnect()
+                    self.__cursor.nextset()
+                else:
+                    if (not self.__db.is_connected()):
+                        self.__db.reconnect()
+                    self.__cursor.close()
+                    self.__cursor = self.__db.cursor()
             # if self.auto_commit_:
             #     self.commit()
         except ProgrammingError as e:
             raise e
         finally:
             if self.auto_connect and not self.__is_connected:
+                pass
                 # if not self.auto_commit_:
                 #     self.commit()
                 
-                self.disconnect()
+                # self.disconnect()
 
     def execute_many(self, *querry: str):
         """execute many SQL querry in database

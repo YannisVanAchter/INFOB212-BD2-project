@@ -31,12 +31,12 @@ def __init_database__():
     with open(database_sql_file, 'r') as f:
         db.execute(f.read(), multi=True)
         logging.debug(f"Executed {database_sql_file} file")
-        # time.sleep(10) # make sure MySQL executes all statements to generate the database
+    time.sleep(5) # make sure MySQL executes all statements to generate the database
         
     # db.commit()
     
     # Test that the database has been created
-    query = "SELECT * FROM TYPE_DELIVERY;"
+    query = "SHOW tables;"
     
     logging.debug(f"Try: {query}")
     db.execute(query)
@@ -46,7 +46,7 @@ def __init_database__():
         logging.debug(f"Fetched row: {row}")
         
     # db.commit()
-    db.disconnect()
+    # db.disconnect()
     logging.info('Database successfully created')
             
 if __name__ == "__main__":
@@ -71,8 +71,8 @@ if __name__ == "__main__":
     )
     __init_database__()
     
-    if set_level in [0, logging.INFO]:
-        clear_terminal()
+    # if set_level in [0, logging.INFO]:
+    #     clear_terminal()
         
     # automatically start application
     if 'launch' in sys.argv:
