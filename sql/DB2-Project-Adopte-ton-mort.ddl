@@ -59,7 +59,7 @@ create table ORDER (
      foreign key (Typ_id) references DELIVERY,
      foreign key (Buy_id) references CUSTOMER);
 
-create table STAFF (
+create table STAFF ( 
      id numeric(32) not null,
      salary numeric(32) not null,
      function varchar(64),
@@ -209,7 +209,7 @@ alter table STAFF add constraint EXCL_STAFF
            or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is not null)
            or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHETIST is null and NURSE is null and DOCTOR is null)); 
 
-alter table BLOOD add constraint ID_BLOOD_CHK
+alter table BLOOD add constraint ID_BLOOD_CHK 
      check(exists(select * from DETAIL
                   where DETAIL.BLOOD = id)); 
 
@@ -340,16 +340,28 @@ create index ORGANES_Types
 
 -- View Section
 -- _____________ 
--- create view ACCOUNTABLE(PRICE, SALARY, TYPE)
+create view ACCOUNTABLE(PRICE, SALARY, TYPE)
      -- View goal : view accountable, to view the price of the articles, the wages
      -- Author: Aline Boulanger (ft. Loulou)
      -- Create 2 view one for products and one for the salary (but salary is include in HR view) (Com: Yannis)
---   as  select O.PRICE, TD.PRICE, S.SALARY, T.PRICE, O.TYPE
-     --  from   ORGANE O, TYPE_DELIVERY TD, BLOOD B, STAFF S, TRANSPLANTATION T
-     --  where  
-     --  and   
-     --  and    
-     --  group by 
+     as  select O.PRICE, TD.PRICE, S.SALARY, T.PRICE, O.TYPE
+     from   ORGANE O, TYPE_DELIVERY TD, BLOOD B, STAFF S, TRANSPLANTATION T
+     where  
+     and   
+     and    
+
+create view RH (SALARY)
+     -- View goal : view RH, to view the personnel, the wages, jobs
+     -- Author: Louise DELPIERRE (ft. Alinette)
+     as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHETIST, S.CEO, S.ACCOUNTABLE, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
+     from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHETIST A, CEO C, ACCOUNTABLE AC, HR H
+     where  S.DOCTOR = D.DOCTOR
+     and   S.NURSE = N.NURSE
+     and   S.ANAESTHETIST = A.ANAESTHETIST
+     and   S.CEO = C.CEO
+     and   S.ACCOUNTABLE = AC.ACCOUNTABLE
+     and   S.HR = H.HR
+
 
 
 
