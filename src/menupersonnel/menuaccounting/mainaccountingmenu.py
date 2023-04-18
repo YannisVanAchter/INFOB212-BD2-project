@@ -1,36 +1,110 @@
 # encoding uft-8
 
-from datetime import date as Date, timedelta
+from datetime import date as Date
 import time
 
-from module.get import get_string, get_float, get_int, get_sql_user_querry, get_bool
+from module.get import get_string, get_float, get_sql_user_querry, get_bool, get_date
 from module.database import DataBase, ProgrammingError
 from module.utils import clear_terminal as cls
+from constants import BLOOD_TYPE, ORGAN_LIST, ORGAN_STATE_LIST, BLOOD_PRICE_FACTOR
 
-from .view import ask_product_price, ask_product_type, ask_product_id
-from .controler import set_product_price
-from ...contants import BLOOD_TYPE, ORGAN_LIST, ORGAN_STATE_LIST, BLOOD_PRICE_FACTOR
+from .view import *
+from .controler import *
+
+
+def main_accounting_menu(database: DataBase) -> (int):
+    """Accountent menu
+
+    allow user to:
+    --------------
+        - set product price
+        - update price
+        - insert new product
+        - research for accounting stuff
+            - selling quantity
+            - where are the clients
+            - get price of each command
+            - get/set price of delivery
+
+    Args:
+    -----
+        database (DataBase): Data base connected for this user (the accountent)
+
+    Return:
+    -------
+        int: 0 for normal exit status and 1 for exit program (ctrl + c)
+    """
+
+    def print_menu():
+        print("You are in the accounting menu")
+        print("Type the number of the action you want to do")
+        print("1: Update a existing product")
+        print("2: Insert a new product")
+        print("3: Research for accounting stuff")
+        print("4: personnal querry (sql)")
+        print("5: Exit")
+
+    while True:
+        try:
+            print_menu()
+            choice = get_string("Enter you choice: ").strip()
+
+            match choice:
+                case "1":
+                    update_menu(database)
+                    break
+                case "2":
+                    insert_menu(database)
+                    break
+                case "3":
+                    resarch_menu(database)
+                    break
+                case "4":
+                    personnal_querry(database)
+                    break
+                case "5":
+                    cls()
+                    return 0
+                case other:
+                    case_other()
+
+        except KeyboardInterrupt:
+            cls()
+            return 1
+        time.sleep(1)
 
 
 def case_other():
+    """Print error message when user did not enter correct option."""
     print("You did not enter a correct choice")
     print("Please try again")
+    
 
+def update_menu(database):
+    """Menu to update the product price (price because this is the only that can be update by accuntant)"""
 
-def get_begin_date():
-    date = Date.today()
-    while date >= Date.today():
-        date = get_string("Enter the begin date (dd/mm/yyyy): ").strip().lower()
-        date = Date.fromisoformat(date)
-    return date
+    def print_menu():
+        print("What do you want to update ?")
+        print("1: BLOOD\n2: ORGANE\n3: TYPE_DELIVERY (allow insert)\n4: EXIT")
 
+    while True:
+        print_menu()
+        choice = get_string().strip().lower()
 
-def get_end_date(begin: Date = None):
-    date = None
-    while date == None or not (date >= begin):
-        date = get_string("Enter the end date (dd/mm/yyyy): ").strip().lower()
-        date = Date.fromisoformat(date)
-    return date
+        match choice:
+            case "1":
+                update_blood(database)
+                return
+            case "2":
+                update_organe(database)
+                return
+            case "3":
+                update_type_delivery(database)
+                return
+            case "4":
+                return
+            case _:
+                case_other()
 
 
 def update_blood(database: DataBase):
@@ -108,187 +182,26 @@ def update_type_delivery(database: DataBase):
     print("Product type delivery updated")
 
 
-def update_menu(database):
-    """Menu to update the product price (price because this is the only that can be update by accuntant)"""
-
-    def print_menu():
-        print("What do you want to update ?")
-        print("1: BLOOD\n2: ORGANE\n3: TYPE_DELIVERY (allow insert)\n4: EXIT")
-
-    while True:
-        print_menu()
-        choice = get_string().strip().lower()
-
-        match choice:
-            case "1":
-                update_blood(database)
-                return
-            case "2":
-                update_organe(database)
-                return
-            case "3":
-                update_type_delivery(database)
-                return
-            case "4":
-                return
-            case _:
-                case_other()
-
-
-def get_expiration(not_before: Date = Date.today()):
-    expiration = Date(0, 0, 0)
-    while expiration <= not_before:
-        expiration = get_string("Enter the blood expiration date (YYYY-MM-DD): ")
-        expiration = Date.fromisoformat(expiration)
-    return expiration
-
-
-def insert_blood(database: DataBase):
-    """Insert blood in the database
+def insert_menu(database: DataBase):
+    """Menu to insert new product in the database
 
     Args:
-    -----
-        database (DataBase): database to insert blood in, connected as accuntant user
-
-    Return:
-    -------
-        int: id of the blood inserted
+        database (DataBase): database to insert product in, connected as accuntant user
     """
-
-    def get_blood_type():
-        type = None
-        while type not in BLOOD_TYPE:
-            type = get_string("Enter the blood type: ").strip().upper()
-        return type
-
-    def get_blood_quantity():
-        quantity = 0
-        while not (0 < quantity <= 6):
-            quantity = get_float("Enter the blood quantity: ")
-        return quantity
-
-    type: str = get_blood_type()
-    signe: bool = get_bool("Enter the blood signe: ")
-    expiration: Date = get_expiration()
-    quantity: float | int = get_blood_quantity()
-
-    id = -1
-    with database as db:
-        db.execute(
-            f"INSERT INTO BLOOD (signe, type, expiration, quantity) VALUES ({signe}, {type}, {expiration}, {quantity});"
-        )
-        id = db.cursor.lastrowid
-
-    print("Blood inserted")
-    return id
-
-
-def insert_organ(database: DataBase, donator_id: int = None):
-    def get_organ_type():
-        type = None
-        while type not in ORGAN_LIST:
-            type = get_string("Enter the organ type: ").strip().lower()
-        return type
-
-    def get_organ_state():
-        state = None
-        while state not in ORGAN_STATE_LIST:
-            state = get_string("Enter the organ state: ").strip().lower()
-        return state
-
-    def get_organ_conservation_method():
-        temp = "not null"
-        method = ""
-        while temp != "":
-            temp = get_string("Enter the organ conservation method: ").strip()
-            method += temp + "\n"
-        if len(method) > 64:
-            print("Method must be 64 characters or less")
-            return get_organ_conservation_method()
-        return method
-
-    def get_organ_selling_price():
-        price = -1
-        while price <= 0:
-            price = get_float("Enter the organ selling price: ")
-        return price
-
-    state = get_organ_state()
-    funcitonnal = (
-        get_string("Get the organ is functional (y/n): ")
-        .strip()
-        .lower()
-        .startswith("y")
-    )
-    expiration_date_transplantation = get_expiration()
-    expiration_date = get_expiration(expiration_date_transplantation)
-    method_of_conservation = get_organ_conservation_method()
-    type = get_organ_type()
-    price = get_organ_selling_price()
-
-    if donator_id is None or donator_id < 0:
-        print("To insert an organ, you need to insert a donator first")
-        donator_id = insert_donator(database)
-        print("Back to organ insertion")
-
-    querry = ""
-    querry += f"INSERT INTO ORGANE "
-    querry += f"(state, functional, type, price, method_of_preservation, expiration_date, expiration_date_transplatation, Com_id)"
-    querry += f" VALUES "
-    querry += f"({state}, {funcitonnal}, {type}, {price}, {method_of_conservation}, {expiration_date}, {expiration_date_transplantation}, {donator_id})"
-
-    with database as db:
-        db.execute(querry)
-
-
-def insert_donator(database: DataBase, blood_id: int = None):
-    """Insert donator in the database
-
-    Args:
-        database (DataBase): database to insert donator in, connected as accuntant user
-
-    Returns:
-        int: id of the donator inserted
-    """
-
-    def get_age_of_death():
-        age = -1
-        while not (0 < age < 150):
-            age = get_float("Enter the age of death: ")
-        return age
-
-    if blood_id is None or blood_id < 0:
-        print("You havo to insert a blood first")
-        blood_id = insert_blood(database)
-        print("Back in insert donator")
-
-    gender = get_string("Gender of the donator (m/f): ").strip().lower().startswith("f")
-    age_of_death = get_age_of_death()
-
-    donator_id = -1
-    with database as db:
-        db.execute(
-            f"INSERT INTO DONATOR (Giv_id, gender, age_range) VALUES ({blood_id}, {gender}, {age_of_death})"
-        )
-        donator_id = db.cursor.lastrowid
-
-    print("Donator inserted")
-
-    return donator_id
-
-
-def insert_menu(database):
     donator_id = None
     blood_id = None
     while True:
         table = (
-            get_string("Insert of 'BLOOD' or 'ORGANE' 'DONATOR' or 'EXIT': ")
+            get_string("Insert of 'BLOOD', 'ORGANE', 'DONATOR' or 'EXIT': ")
             .strip()
             .upper()
         )
 
         new_donator = (
-            get_string("Is this a new donator (y/n): ").strip().lower().startswith("y")
+            get_string("Is this a new donator (y/n): ")
+            .strip()
+            .lower()
+            .startswith("y")
         )
         if new_donator:
             insert_donator(database)
@@ -309,6 +222,144 @@ def insert_menu(database):
                 case_other()
 
 
+def insert_blood(database: DataBase):
+    """Insert blood in the database
+
+    Args:
+    -----
+        database (DataBase): database to insert blood in, connected as accuntant user
+
+    Return:
+    -------
+        int: id of the blood inserted
+    """
+    type: str = ask_product_type()
+    signe: bool = get_bool("Enter the blood signe: ")
+    expiration: Date = get_date("Enter the expiration date (YYYY-MM-DD): ", before=Date.today())
+    quantity: float | int = ask_blood_quantity()
+
+    id = insert_into(
+                    database=database, 
+                    table="blood", 
+                    attributes=("type", "signe", "expiration", "quantity"), 
+                    values=(type, signe, expiration, quantity)
+    )
+
+    print("Blood inserted")
+    return id
+
+
+def insert_organ(database: DataBase, donator_id: int = None):
+    """Create new organ in the database
+
+    Ask to user and call insert_into function to insert in the database
+
+    Args:
+    -----
+        database (DataBase): database to insert organ in, connected as accuntant user
+        donator_id (int, optional): Id of the donator. Defaults to None.
+    """
+    if donator_id is None or donator_id < 0:
+        print("To insert an organ, you need to insert a donator first")
+        donator_id = insert_donator(database)
+        print("Back to organ insertion")
+    
+    state = ask_organ_state()
+    funcitonnal = (
+        get_string("Get the organ is functional (y/n): ")
+        .strip()
+        .lower()
+        .startswith("y")
+    )
+    expiration_date_transplantation = get_date(
+        "Enter the expiration date for transplantation (YYYY-MM-DD): ", before=Date.today()
+    )
+    expiration_date = get_date(
+        "Enter the expiration date (YYYY-MM-DD): ", before=Date.today(), end=expiration_date_transplantation
+    )
+    method_of_conservation = ask_organ_conservation_method()
+    type = ask_product_type(True)
+    price = ask_price("Enter the organ selling price: ")
+
+    # does not keep the id of row inserted because accountant does not need it
+    insert_into(
+        database=database,
+        table="ORGANE",
+        attributes=("state", "expiration_date", "expiration_date_transplantation", "type", "price", "method_of_preservation", "functional", "Com_id"),
+        values=(state, expiration_date, expiration_date_transplantation, type, price, method_of_conservation, funcitonnal, donator_id)
+    )
+
+
+def insert_donator(database: DataBase, blood_id: int = None):
+    """Insert donator in the database
+
+    Args:
+        database (DataBase): database to insert donator in, connected as accuntant user
+
+    Returns:
+        int: id of the donator inserted
+    """
+
+    if blood_id is None or blood_id < 0:
+        print("You have to insert a blood first")
+        blood_id = insert_blood(database)
+        print("Back in insert donator")
+
+    gender = get_string("Gender of the donator (m/f): ").strip().lower().startswith("f")
+    age_of_death = ask_age_of_death()
+
+    donator_id =insert_into(
+        database=database,
+        table="DONATOR",
+        attributes=("Giv_id", "gender", "age_range"),
+        values=(blood_id, gender, age_of_death),
+    )
+
+    print("Donator inserted")
+
+    return donator_id
+
+
+def resarch_menu(database: DataBase):
+    """Allow user to do research for accounting stuff
+
+    Args:
+    -----
+        database (DataBase): database object connected for this user
+
+    """
+
+    def print_menu():
+        print("What do you want to do search ?")
+        print("1: Selling quantity")
+        print("2: Product quantity (not selling)")
+        print("3: where are the clients")
+        print("4: get selling price of each command/client")
+        print("5: Back")
+
+    while True:
+        print_menu()
+        search = get_string("Enter you choice: ").strip()
+
+        match search:
+            case "1":
+                select_selling_quantity(database)
+                return
+            case "2":
+                select_product_not_sell(database)
+                return
+            case "3":
+                find_where_are_the_clients(database)
+                return
+            case "4":
+                get_selling_price_of_each_command(database)
+                return
+            case "5":
+                return
+            case other:
+                case_other()
+
+
 def select_selling_quantity(database: DataBase):
     """Select the quantity of selling
 
@@ -316,6 +367,9 @@ def select_selling_quantity(database: DataBase):
     ----
         database (DataBase): database to select from, connected as accuntant user
     """
+    start_date = None
+    end_date = None
+    
     include_start_date = (
         get_string("Enter a start date (y/n) (if no, start from begin): ")
         .strip()
@@ -323,7 +377,9 @@ def select_selling_quantity(database: DataBase):
         .startswith("y")
     )
     if include_start_date:
-        start_date = get_begin_date()
+        start_date = get_date(
+            "Enter a start date (YYYY-MM-DD): ", end=Date.today()
+        )
 
     include_end_date = (
         get_string("Enter a end date (y/n) (if no, end at today): ")
@@ -332,7 +388,9 @@ def select_selling_quantity(database: DataBase):
         .startswith("y")
     )
     if include_end_date:
-        end_date = get_end_date()
+        end_date = get_date(
+            "Enter a end date (YYYY-MM-DD): ", start=start_date, end=Date.today()
+        )
 
     print("Here is the total of selling for transplantation:")
     querry = "SELECT COUNT(*) as 'Transplantation quantity', SUM(price) as 'Total price for those operation'"
@@ -449,6 +507,9 @@ def get_selling_price_of_each_command(database: DataBase):
     ----
         database (DataBase): database object connected for this user
     """
+    start_date = None
+    end_date = None
+    
     include_start_date = (
         get_string("Enter a start date (y/n) (if no, start from begin): ")
         .strip()
@@ -456,7 +517,9 @@ def get_selling_price_of_each_command(database: DataBase):
         .startswith("y")
     )
     if include_start_date:
-        start_date = get_begin_date()
+        start_date = get_date(
+            "Enter a start date (format: YYYY-MM-DD): ", end=Date.today()
+        )
 
     include_end_date = (
         get_string("Enter a end date (y/n) (if no, end at today): ")
@@ -465,7 +528,9 @@ def get_selling_price_of_each_command(database: DataBase):
         .startswith("y")
     )
     if include_end_date:
-        end_date = get_end_date()
+        end_date = get_date(
+            "Enter a end date (format: YYYY-MM-DD): ", before=start_date, end=Date.today()
+        )
 
     print("Here is the client that buy something:")
     querry = f"SELECT ORDER.id AS 'COMMANDE', SUM(ORGAN.price) AS 'Price organ', SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Price blood', SUM(ORGAN.price) + SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Total price'"
@@ -489,43 +554,6 @@ def get_selling_price_of_each_command(database: DataBase):
             print(operations)
 
 
-def resarch_menu(database: DataBase):
-    """Allow user to do research for accounting stuff
-
-    Args:
-    -----
-        database (DataBase): database object connected for this user
-
-    """
-
-    def print_menu():
-        print("What do you want to do search ?")
-        print("1: Selling quantity")
-        print("2: Product quantity (not selling)")
-        print("3: where are the clients")
-        print("4: get selling price of each command/client")
-
-    while True:
-        print_menu()
-        search = get_string("Enter you choice: ").strip()
-
-        match search:
-            case "1":
-                select_selling_quantity(database)
-                return
-            case "2":
-                select_product_not_sell(database)
-                return
-            case "3":
-                find_where_are_the_clients(database)
-                return
-            case "4":
-                get_selling_price_of_each_command(database)
-                return
-            case other:
-                case_other()
-
-
 def personnal_querry(database: DataBase):
     """Allow user to do a personnal querry
 
@@ -544,9 +572,10 @@ def personnal_querry(database: DataBase):
                         get_string("Do you want to see the result ? (y/n): ")
                         .strip()
                         .lower()
+                        .startswith("y")
                     )
 
-                    if show_result.startswith("y"):
+                    if show_result:
                         for row in db.table:
                             print(row)
 
@@ -555,64 +584,3 @@ def personnal_querry(database: DataBase):
         except ProgrammingError:
             print("Syntax error in your querry")
 
-
-def main_accounting_menu(database: DataBase) -> (int):
-    """Accountent menu
-
-    allow user to:
-    --------------
-        - set product price
-        - update price
-        - insert new product
-        - research for accounting stuff
-            - selling quantity
-            - where are the clients
-            - get price of each command
-            - get/set price of delivery
-
-    Args:
-    -----
-        database (DataBase): Data base connected for this user (the accountent)
-
-    Return:
-    -------
-        int: 0 for normal exit status and 1 for exit program (ctrl + c)
-    """
-
-    def print_menu():
-        print("You are in the accounting menu")
-        print("Type the number of the action you want to do")
-        print("1: Update a existing product")
-        print("2: Insert a new product")
-        print("3: Research for accounting stuff")
-        print("4: personnal querry (sql)")
-        print("5: Exit")
-
-    while True:
-        try:
-            print_menu()
-            choice = get_string("Enter you choice: ").strip()
-
-            match choice:
-                case "1":
-                    update_menu(database)
-                    break
-                case "2":
-                    insert_menu(database)
-                    break
-                case "3":
-                    resarch_menu(database)
-                    break
-                case "4":
-                    personnal_querry(database)
-                    break
-                case "5":
-                    cls()
-                    return 0
-                case other:
-                    case_other()
-
-        except KeyboardInterrupt:
-            cls()
-            return 1
-        time.sleep(1)

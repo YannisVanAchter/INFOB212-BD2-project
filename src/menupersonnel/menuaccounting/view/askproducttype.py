@@ -6,7 +6,7 @@ __version__ = "1.0.0"
 
 from module.get import  get_string
 
-from contants import PRODUCT_LIST, BLOOD_TYPE
+from constants import PRODUCT_LIST, BLOOD_TYPE
 
 def ask_product_type(is_organe: bool = False) -> (str):
     """ask user to enter the product type
