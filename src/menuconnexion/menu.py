@@ -1,5 +1,5 @@
-from ..module import get_int
-from ..auth import User
+from module import get_int
+from auth import User
 
 from module.database import DataBase
 
