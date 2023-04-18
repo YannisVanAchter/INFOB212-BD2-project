@@ -1,5 +1,5 @@
 from module.get import *
-from contants import * 
+from constants import * 
 
 """
 Renomer le fichier pour mieux comptendre son but, ex: menuadministrative ou mainadministrativemenu
