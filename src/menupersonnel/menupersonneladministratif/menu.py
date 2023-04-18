@@ -1,19 +1,21 @@
 from module.get import *
+from contants import ORGAN_LIST
 
 def main_persoadmin_menu ():
     """
     
     """
 
+    print("You are here for an operation but for which organe ?", f"List of organes : {ORGAN_LIST}")
+    
 
 
 
 
-    print("Have you passed an order for a transplantation or delivery ?")
-    print("Enter 1 if it is a transplantation")
-    print("Enter 1 if it is a order")
-    choice = get_int(print("What is your choice ?"))
 
+
+
+"""
     input_valid = False
     while not input_valid:
         if choice == 1:
@@ -26,6 +28,9 @@ def main_persoadmin_menu ():
             
         else:
             print("Your selection is not valid, please start from the beginning idiot")
+
+"""
+
 
     
             
