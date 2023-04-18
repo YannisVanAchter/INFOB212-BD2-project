@@ -5,29 +5,24 @@ def main_persoadmin_menu ():
     """
     
     """
+    while True :
+        organe_choice = get_string(print("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}"))
 
-    organe_choice = get_string(print("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}"))
-
-    input_valid = False
-    while not input_valid:
-        organe_choice = get_int("")
-
-        if organe_choice == "lung":
-            input_valid = True
-            pass
-        elif organe_choice == 2:
-            input_valid = True
-            pass
+        
+        if organe_choice in ORGAN_LIST:
+            print("Your selection is valid, thank you")
+            break 
+        
         else:
-            print("Votre sélection n'est pas valide, réessayez.")
+            print("Your selection is not valid, please start from the beginning idiot")
+            continue
+
     
+    date_choice = get_date(print("Enter a date for your operation"))
+    print("Your operation will attend on %d", date_choice)
 
 
-
-
-
-
-
+    
 
 
 
