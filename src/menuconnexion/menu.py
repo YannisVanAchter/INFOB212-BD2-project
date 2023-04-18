@@ -21,6 +21,7 @@ def main_login_menu(database: DataBase):
 
     input_valid = False
     while not input_valid:
+        # utiliser un get_string(...).strip().lower() pour éviter les erreurs de frappe
         choice = get_int("")
 
         if choice == 1:

@@ -1,7 +1,30 @@
 from module.get import *
 from contants import * 
 
+"""
+Renomer le fichier pour mieux comptendre son but, ex: menuadministrative ou mainadministrativemenu
+
+Faire des specs pour chaque fonction.
+
+Si une fonction du module 'get' ne fait pas exactement ce que tu veux, tu peux la modifier.
+par exemple get_string(print("STING1", "STRING2" ...))
+Pour que get_string supporte cette manière de recevoir les arguments, il faut modifier la fonction get_string comme suit:
+def get_string(*prompt: str) -> (str):
+    "SPEC"
+    while True:
+        try:
+            return input(*prompt)
+        except (TypeError, ValueError):
+            pass
+
+Faire de même pour toutes les fonctions du module 'get' qui ne font pas exactement ce que tu veux.
+
+Le reste de la review est impossibles sans savoir (grâces aux specs) ce que tu veux faire dans cette fonction.
+
+"""
+
 def main_persoadmin_menu (db: DataBase):
+    # TODO: SPEC FIRST !
     """
     
     """
@@ -10,6 +33,10 @@ def main_persoadmin_menu (db: DataBase):
 
 
     while True :
+        # You does not need to use "print" in get_string.
+        # get_string will print the prompt for you
+        # if you want to pass the request to user like you do in "print"
+        # you will need to update the function get_string
         organe_choice = get_string(print("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}"))
 
         
@@ -21,7 +48,7 @@ def main_persoadmin_menu (db: DataBase):
             print("Your selection is not valid, please start from the beginning idiot")
             continue
 
-    
+    # same as above for "print" command
     date_choice = get_date(print("Enter a date for your operation"))
     print("Your operation will attend on %d", date_choice)
 
@@ -30,13 +57,13 @@ def main_persoadmin_menu (db: DataBase):
 
     #Pour avoir les médecins qui sont libres
     db.execute("SELECT T.id, D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id")
-    doctor_choice = db.table
+    doctor_choice = db.table # récupère le résultat de la requête
     if len(doctor_choice) == 0 :
         print("All of the medecins is occuped")
     else : 
         # doctor_choice = db.execute("SELECT inami_number, D.id, T.id FROM DOCTOR D, TRANSPLANTATION T WHERE T.D_w_id <> D.id")
-        doc_id = doctor_choice[0][2]
-        print ("Your medecin is %i", doctor_choice)
+        doc_id = doctor_choice[0][2] # get the doc id from the result
+        print ("Your medecin is %i", doc_id)
 
 
     #Pour avoir les anathésistes qui sont libres

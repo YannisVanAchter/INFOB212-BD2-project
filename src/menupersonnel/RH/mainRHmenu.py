@@ -4,6 +4,19 @@ from module.get import get_bool
 from module.get import get_string 
 from menuconnexion.menu import main_login_menu
 
+"""
+
+Utiliser le module get pour demander à l'utilisateur de rentrer des informations (pour l'id notament) afin d'améliorer la liste du code.
+
+L'idée est de faire un menu qui permet de faire les opération de base pour le RH. 
+Est aussi que ce menu permette de faire autant d'action que souhaitée par l'utilisateur. (ex: ajouter un employé pui modifier un employé puis supprimer un employé puis ajouter un autre employe)
+
+Enfin, une mauvaise utilisation des f-string dans le code.
+Syntax: f"string {variable} string" 
+! Ne pas oublier le 'f' avant les guillemets !
+! Ne pas oublier les accolades autour de(s) la/es variable(s) !
+"""
+
 def main_RH_menu(db: DataBase):
     """
     Menu for HR. 
@@ -35,7 +48,7 @@ def main_RH_menu(db: DataBase):
             validity = True 
     db.connect()
     # According to the number choosen, will redirect to the good function
-    if choice == 0:
+    if choice == 0: # you can do the path in the while loop statement and add a exit option to user
         add_employee()
     
     if choice == 1: 
@@ -97,7 +110,9 @@ def create_employee(id, db: DataBase):
     
     salary_person = get_int("Please enter the salary of the person: ")
     function_person = get_string("Please enter the exact function of the person in the company: ")
-        
+    
+    # use f before the string to use the variable in the string
+    # example: f"INSERT INTO ... (...) VALUES ({my_variable}, {my_variable_2}, {my_variable_3})"    
     db.execute("INSERT INTO STAFF (id, salary, function) VALUES ({id}, {salary_person}, {function_person})")
     
     print("Choose the category of the person: ")
@@ -116,6 +131,7 @@ def create_employee(id, db: DataBase):
     else: 
         if category == 0:
             inami = get_string("Enter the INAMI number of the person:")
+            # use f-string as explained above
             db.execute("INSERT INTO ANAESTHETIST (id,inami_number) VALUES ({id},{inami})")
         if category == 1: 
             db.execute("INSERT INTO NURSE (id) VALUES ({id})")

@@ -10,7 +10,7 @@ import mysql.connector as mysql
 from menupersonnel.menuaccounting import main_accounting_menu
 from menupersonnel.menumédecin import main_medecin_menu
 from menupersonnel.RH import main_RH_menu
-from menupersonnel.menupersonneladministratif import menu
+from menupersonnel.menupersonneladministratif import main_persoadmin_menu
 from module.database import DataBase
 
 # function and class
@@ -41,7 +41,7 @@ def main():
 
     #     for row in database.table:
     #         print(row)
-    menu.main_persoadmin_menu()
+    main_persoadmin_menu()
 
 
 if __name__ == "__main__":

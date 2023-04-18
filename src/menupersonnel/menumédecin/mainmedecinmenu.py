@@ -5,6 +5,16 @@ import module.get as get
 
 from module.database import DataBase
 
+"""
+La fonction de connection qui appelle celle des menu s'occupe déjà de connecter l'utilisateur
+Tu peux demander d'avoir son identifiant et son mot de passe dans ta spécification
+
+Tu peux utiliser le module 'get' pour demander à l'utilisateur de rentrer des informations (pour l'id notament) afin d'améliorer la liste du code.
+
+N'hésite pas non plus a faire de plus petites fonctions pour éviter de trop longues ligne à lire
+Cela vas aussi augmenter la lisiblé de ton code
+"""
+
 def main_medecin_menu(database: DataBase):
     # connection is not requere, Youlan manage it 
     print("In médecin menu")
