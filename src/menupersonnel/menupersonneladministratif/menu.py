@@ -29,6 +29,7 @@ def main_persoadmin_menu ():
     print("Enter 1 if it is a order")
     choice = get_int(print("What is your choice ?"))
 
+
     input_valid = False
     while not input_valid:
         if choice == 1:
@@ -42,8 +43,4 @@ def main_persoadmin_menu ():
         else:
             print("Your selection is not valid, please start from the beginning idiot")
 
-    
 """
-   
-            
-
