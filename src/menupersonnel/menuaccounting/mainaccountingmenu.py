@@ -3,10 +3,10 @@
 from datetime import date as Date
 import time
 
-from module.get import get_string, get_float, get_sql_user_querry, get_bool, get_date
+from module.get import get_string, get_sql_user_querry, get_bool, get_date
 from module.database import DataBase, ProgrammingError
 from module.utils import clear_terminal as cls
-from constants import BLOOD_TYPE, ORGAN_LIST, ORGAN_STATE_LIST, BLOOD_PRICE_FACTOR
+from constants import BLOOD_PRICE_FACTOR
 
 from .view import *
 from .controler import *
