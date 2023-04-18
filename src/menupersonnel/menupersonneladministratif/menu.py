@@ -1,15 +1,30 @@
 from module.get import *
+from contants import * 
 
 def main_persoadmin_menu ():
     """
     
     """
 
+    get_int(print("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}"))
 
 
 
 
-    print("Have you passed an order for a transplantation or delivery ?")
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+ print("Have you passed an order for a transplantation or delivery ?")
     print("Enter 1 if it is a transplantation")
     print("Enter 1 if it is a order")
     choice = get_int(print("What is your choice ?"))
@@ -28,5 +43,7 @@ def main_persoadmin_menu ():
             print("Your selection is not valid, please start from the beginning idiot")
 
     
+"""
+   
             
 

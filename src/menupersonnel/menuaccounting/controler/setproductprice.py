@@ -1,7 +1,7 @@
 # encoding uft-8
 
 from module import *
-from menupersonnel.menuaccounting.contants import TABLE_FOR_PRICE_UPDATES 
+from contants import TABLE_FOR_PRICE_UPDATES 
 
 def set_product_price(database: DataBase, price: float, product_id: int|str, table: str):
     """define the price of a product (already created)

@@ -9,7 +9,7 @@ from module.utils import clear_terminal as cls
 
 from .view import ask_product_price, ask_product_type, ask_product_id
 from .controler import set_product_price
-from .contants import BLOOD_TYPE, ORGAN_LIST, ORGAN_STATE_LIST, BLOOD_PRICE_FACTOR
+from ...contants import BLOOD_TYPE, ORGAN_LIST, ORGAN_STATE_LIST, BLOOD_PRICE_FACTOR
 
 
 def case_other():
