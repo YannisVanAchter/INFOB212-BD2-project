@@ -6,7 +6,22 @@ def main_persoadmin_menu ():
     
     """
 
-    get_int(print("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}"))
+    organe_choice = get_string(print("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}"))
+
+    input_valid = False
+    while not input_valid:
+        organe_choice = get_int("")
+
+        if organe_choice == "lung":
+            input_valid = True
+            pass
+        elif organe_choice == 2:
+            input_valid = True
+            pass
+        else:
+            print("Votre sélection n'est pas valide, réessayez.")
+    
+
 
 
 
