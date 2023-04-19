@@ -172,7 +172,7 @@ def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type
     -----
         database (DataBase): database to check id, 
             connect with user that have SELECT grant permission on table_name
-        prompt (str): Request to user.
+        prompt (str): Request to user.( ce qui est affiché à l'utilisateur)
         table_name (str): Name of table to check id.
         id_type (Type, optional): type of id to check (int or str). Defaults to 'integer'
         
