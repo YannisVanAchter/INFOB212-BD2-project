@@ -378,6 +378,13 @@ create view RH (SALARY, S.DOCTOR, S.NURSE, S.ANAESTHETIST, S.CEO, S.ACCOUNTABLE,
      group by S.ACCOUNTABLE
      group by S.HR
 
+create view VUE_MEDECIN (organe, client, sang, anesthesiste, medecin)
+-- View goal: view informations on the custormer and the organe the doctor will have to transplant on him 
+-- Authors: Eline Mota
+as select type.ORGANE, Rec_id.TRANSPLANTATION, blood_type.CUSTOMER, id.ANAESTHETIST, id.DOCTOR
+from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHETIST A, DOCTOR M
+where T.Rec_id = C.id and T.Con_id = O.id and T.D_w_id = M.id and T.A_w_id = A.id
+
 
 
 
