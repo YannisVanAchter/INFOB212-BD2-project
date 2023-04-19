@@ -2,6 +2,10 @@
 
 BLOOD_PRICE_FACTOR = 2.5
 
+#prix d'une poche de sang, peu importe la quantité, ça reste le même prix
+BLOODPOCHE = 250
+
+#Dico des organes avec leur prix et les quantités de poches de sang qu'il faut pour une opération d'un organe particulier 
 ORGAN_DICO = {
     "lung": ["10 000", 1, 0, 5], #1ere val = prix, 2eme val = nbr poche 500ml, 3eme val = nbr poche 480ml, 4eme val = nbr poche 450ml
     "heart": ["2 000 000", 1, 0, 5],
