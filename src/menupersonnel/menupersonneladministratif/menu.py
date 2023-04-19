@@ -36,10 +36,10 @@ def main_persoadmin_menu (db: DataBase):
     while True :
         # if you want to pass the request to user like you do in "print"
         # you will need to update the function get_string
-        organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}")
+        organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO}")
 
         
-        if organe_choice in ORGAN_LIST:
+        if organe_choice in ORGAN_DICO:
             print("Your selection is valid, thank you")
             break 
         
@@ -47,14 +47,14 @@ def main_persoadmin_menu (db: DataBase):
             print("Your selection is not valid, please start from the beginning idiot")
             continue
 
-
+    #To get the date of the operation
     date_choice = get_date("Enter a date for your operation")
     print("Your operation will attend on %d", date_choice)
 
 
     print("We will assign you a doctor, an anaesthetist and a nurse")
 
-    #Pour avoir les médecins qui sont libres
+    #To get the doctors who are free
     db.execute("SELECT T.id, D.inami_number, D.D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id")
     doctor_choice = db.table # récupère le résultat de la requête
     if len(doctor_choice) == 0 :
@@ -64,7 +64,7 @@ def main_persoadmin_menu (db: DataBase):
         print ("Your medecin is %i", doc_id)
 
 
-    #Pour avoir les anathésistes qui sont libres
+    #To get the anesthesists who are free
     db.execute("SELECT T.id, T.A_w_id, A.inami_number, A.id FROM TRANSPLANTATION T, ANESTHESIST A WHERE T.A_w_id <> A.id")
     anesthesist_choice = db.table 
     if len(anesthesist_choice) == 0 :
@@ -74,7 +74,7 @@ def main_persoadmin_menu (db: DataBase):
         print ("Your anesthesist is %i", anesthesist_id)
 
     
-    #Pour avoir les infirmières qui sont libres
+    #To get the nurses who are free
     db.execute("SELECT T.id, NW.id, N.id FROM TRANSPLANTATION T, NURSE N, N_work_on NW WHERE N.id = NW.id and NW.id <> T.id")
     nurse_choice = db.table 
     if len(nurse_choice) == 0 :
@@ -86,13 +86,28 @@ def main_persoadmin_menu (db: DataBase):
     #To get the price of the organe 
     db.execute("SELECT O.price, O.type FROM ORGANE O WHERE O.type = organe_choice")
 
+    #To get the price of the price of the organe
+    organe_price = ORGAN_DICO[organe_choice][0]
 
-    #db.last_row_id
+    #To get the price of the pockets of blood
+    nbr_poche500 = ORGAN_DICO[organe_choice][1] 
+    prix_500 = nbr_poche500*BLOODPOCHE
+    nbr_poche480 = ORGAN_DICO[organe_choice][2] 
+    prix_480 = nbr_poche480*BLOODPOCHE
+    nbr_poche450 = ORGAN_DICO[organe_choice][3]
+    prix_450 = nbr_poche450*BLOODPOCHE
+
+    prix_totalblood = prix_450 + prix_480 + prix_500 
+     
+    #To get the price of the transplantation
+    transplantation_price = organe_price + prix_totalblood #+ salaire 
+
+    #Insert in the table TRANSPLANTATION
     insert_into(
         database=db,
         table="TRANSPLANTATION",
         attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
-        values=(date_choice, id, Con_id, price, Rec_id, doc_id, anesthesist_id)
+        values=(date_choice, id, Con_id, transplantation_price, Rec_id, doc_id, anesthesist_id) #on ne sait pas comment remplacer Con_id et Rec_id
     )
 
 
