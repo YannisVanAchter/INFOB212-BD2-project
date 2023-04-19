@@ -1,5 +1,6 @@
 from module.get import *
 from constants import * 
+from menupersonnel.menuaccounting.controler import *
 
 """
 Renomer le fichier pour mieux comptendre son but, ex: menuadministrative ou mainadministrativemenu
@@ -33,11 +34,9 @@ def main_persoadmin_menu (db: DataBase):
 
 
     while True :
-        # You does not need to use "print" in get_string.
-        # get_string will print the prompt for you
         # if you want to pass the request to user like you do in "print"
         # you will need to update the function get_string
-        organe_choice = get_string(print("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}"))
+        organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_LIST}")
 
         
         if organe_choice in ORGAN_LIST:
@@ -48,43 +47,53 @@ def main_persoadmin_menu (db: DataBase):
             print("Your selection is not valid, please start from the beginning idiot")
             continue
 
-    # same as above for "print" command
-    date_choice = get_date(print("Enter a date for your operation"))
+
+    date_choice = get_date("Enter a date for your operation")
     print("Your operation will attend on %d", date_choice)
 
 
     print("We will assign you a doctor, an anaesthetist and a nurse")
 
     #Pour avoir les médecins qui sont libres
-    db.execute("SELECT T.id, D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id")
+    db.execute("SELECT T.id, D.inami_number, D.D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id")
     doctor_choice = db.table # récupère le résultat de la requête
     if len(doctor_choice) == 0 :
         print("All of the medecins is occuped")
     else : 
-        # doctor_choice = db.execute("SELECT inami_number, D.id, T.id FROM DOCTOR D, TRANSPLANTATION T WHERE T.D_w_id <> D.id")
-        doc_id = doctor_choice[0][2] # get the doc id from the result
+        doc_id = doctor_choice[0][3] # get the doc inami from the result
         print ("Your medecin is %i", doc_id)
 
 
     #Pour avoir les anathésistes qui sont libres
-    db.execute("SELECT id, A_w_id FROM TRANSPLANTATION T, ANESTHESIST A WHERE T.A_w_id <> A.id")
-    if len(db.table) == 0 :
+    db.execute("SELECT T.id, T.A_w_id, A.inami_number, A.id FROM TRANSPLANTATION T, ANESTHESIST A WHERE T.A_w_id <> A.id")
+    anesthesist_choice = db.table 
+    if len(anesthesist_choice) == 0 :
         print("All of the anesthesist is occuped")
     else : 
-        anesthesist_choice = db.execute("SELECT inami_number, A.id, T.id FROM TRANSPLANTATION T, ANESTHESIST A WHERE T.A_w_id <> A.id")
-        print ("Your anesthesist is %i", anesthesist_choice)
+        anesthesist_id = anesthesist_choice[0][3] # get the anesthesist inami from the result
+        print ("Your anesthesist is %i", anesthesist_id)
 
     
     #Pour avoir les infirmières qui sont libres
     db.execute("SELECT T.id, NW.id, N.id FROM TRANSPLANTATION T, NURSE N, N_work_on NW WHERE N.id = NW.id and NW.id <> T.id")
-    if len(db.table) == 0 :
+    nurse_choice = db.table 
+    if len(nurse_choice) == 0 :
         print("All of the nurse is occuped")
     else : 
-        nurse_choice = db.execute("SELECT N.id, NW.id, N.id FROM TRANSPLANTATION T, NURSE N, N_work_on NW WHERE N.id WHERE N.id = NW.id and NW.id <> T.id")
-        print ("Your nurse is %i", nurse_choice)
+        nurse_id = nurse_choice[0][2] # get the nurse inami from the result
+        print ("Your nurse is %i", nurse_id)
+
+    #To get the price of the organe 
+    db.execute("SELECT O.price, O.type FROM ORGANE O WHERE O.type = organe_choice")
+
 
     #db.last_row_id
-    db.execute("INSERT INTO TRANSPLANTATION (date, Con_id, price, Rec_id, D_w_id, A_w_id) ")
+    insert_into(
+        database=db,
+        table="TRANSPLANTATION",
+        attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
+        values=(date_choice, id, Con_id, price, Rec_id, doc_id, anesthesist_id)
+    )
 
 
 
