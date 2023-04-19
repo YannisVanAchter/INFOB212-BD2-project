@@ -50,6 +50,7 @@ def main_persoadmin_menu (db: DataBase):
     #To get the date of the operation
     date_choice = get_date("Enter a date for your operation")
     print("Your operation will attend on %d", date_choice)
+    #TO DO demander l'heure et check si date = libre ou pas 
 
 
     print("We will assign you a doctor, an anaesthetist and a nurse")
@@ -83,9 +84,6 @@ def main_persoadmin_menu (db: DataBase):
         nurse_id = nurse_choice[0][2] # get the nurse inami from the result
         print ("Your nurse is %i", nurse_id)
 
-    #To get the price of the organe 
-    db.execute("SELECT O.price, O.type FROM ORGANE O WHERE O.type = organe_choice")
-
     #To get the price of the price of the organe
     organe_price = ORGAN_DICO[organe_choice][0]
 
@@ -98,18 +96,27 @@ def main_persoadmin_menu (db: DataBase):
     prix_450 = nbr_poche450*BLOODPOCHE
 
     prix_totalblood = prix_450 + prix_480 + prix_500 
+
+    #To get the salary of the staff
+    doctor_salary = SALARY_DOCTOR_TRANSPL[organe_choice]
+    anesthesist_salary = SALARY_ANESTHESIST_TRANSPL[organe_choice]
+    nurse_salary = SALARY_NURSE_TRANSPL[organe_choice]
+
+    salary_total = doctor_salary + anesthesist_salary + nurse_salary
      
     #To get the price of the transplantation
-    transplantation_price = organe_price + prix_totalblood #+ salaire 
+    transplantation_price = organe_price + prix_totalblood + salary_total 
 
     #Insert in the table TRANSPLANTATION
     insert_into(
         database=db,
         table="TRANSPLANTATION",
         attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
-        values=(date_choice, id, Con_id, transplantation_price, Rec_id, doc_id, anesthesist_id) #on ne sait pas comment remplacer Con_id et Rec_id
+        values=(date_choice, id, Con_id, transplantation_price, Rec_id, doc_id, anesthesist_id) 
     )
 
+
+#TO DO on ne sait pas comment remplacer Con_id et Rec_id
 
 
 
