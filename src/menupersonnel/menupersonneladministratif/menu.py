@@ -83,7 +83,9 @@ def main_persoadmin_menu (db: DataBase):
         nurse_id = nurse_choice[0][2] # get the nurse inami from the result
         print ("Your nurse is %i", nurse_id)
 
-    #
+    #To get the price of the organe 
+    db.execute("SELECT O.price, O.type FROM ORGANE O WHERE O.type = organe_choice")
+
 
     #db.last_row_id
     insert_into(
