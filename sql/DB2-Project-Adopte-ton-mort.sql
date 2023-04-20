@@ -346,7 +346,7 @@ create index ORGANES_Types
 -- _____________ 
 -- create view ACCOUNTABLEORGABLO(O.type, O.price, B.type, B.signe)
 --      -- View goal : view accountable to view the price of the articles 
---      -- Author: Aline Boulanger (ft. Loulou)
+--      -- Authors: Aline Boulanger  et Louise Delpierre
 --      as  select O.type, B.type, B.signe, O.price
 --      from ORGANE O, BLOOD B
 --      where O.type = O.price
@@ -354,8 +354,8 @@ create index ORGANES_Types
 --      group by O.type and  B.type
 
 -- create view ACCOUNTABLETRANPLANLIVRAI(PRICE, TYPE)
---      -- View goal : view accountable to view the price of the transplantation and the livraison
---      -- Author: Aline Boulanger (ft. Loulou)
+--      -- View goal : view accountable to view the price of the transplantation and the delivery
+--      -- Author: Aline Boulanger et Louise Delpierre
 --      as  select TD.price
 --      from TRANSPLANTATION T, DELIVERY D, TYPE_DELIVERY TD, CUSTOMER C, ADDRESS A
 --      where D.Typ_id = TD.id
@@ -363,8 +363,8 @@ create index ORGANES_Types
    
 
 -- create view RH (SALARY, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, NAME, FIRST_NAME, EMAIL, PHONE)
---      -- View goal : view RH, to view the personnel, the wages, jobs
---      -- Author: Louise DELPIERRE (ft. Alinette)
+--      -- View goal : view RH, to view the staff, the wages, jobs
+--      -- Author: Louise DELPIERRE et Aline Boulanger 
 --      as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
 --      from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTABLE AC, HR H, ADDRESS AD
 --      where id.STAFF = id.PERSON
@@ -382,8 +382,8 @@ create index ORGANES_Types
 --      group by S.ACCOUNTABLE
 --      group by S.HR
 
--- create view VUE_MEDECIN (organe, client, sang, anesthesiste, medecin)
--- -- View goal: view informations on the custormer and the organe the doctor will have to transplant on him 
+-- create view MEDECIN (organe, client, sang, anesthesiste, medecin)
+-- -- View goal: view information on the customer and the organ the doctor will have to transplant on him 
 -- -- Authors: Eline Mota
 -- as select type.ORGANE, Rec_id.TRANSPLANTATION, blood_type.CUSTOMER, id.ANAESTHESIST, id.DOCTOR
 -- from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR M
@@ -396,7 +396,7 @@ create index ORGANES_Types
 -- _____________ 
 
 -- create trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
---      -- Trigger goal: Check if the date of delivery is after the date expiration of the organe
+--      -- Trigger goal: Check if the date of delivery is before the date expiration of the organe
 --      -- Author: Yannis Van Achter
 --      before insert or update on DELIVERY
 --      for each row
