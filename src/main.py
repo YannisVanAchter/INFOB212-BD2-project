@@ -16,10 +16,6 @@ from auth import login, register
 
 # function and class
 def main():
-    print("Hello, world!")
-    print("Helle Aline :)")
-    print("Hello Loulou :)")
-
     
     with DataBase(
                 host='localhost', 

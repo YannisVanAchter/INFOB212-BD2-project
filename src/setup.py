@@ -1,7 +1,7 @@
 # encoding uft-8
-"""Setup the database by reading the ddl file and executing its contents"""
+"""Setup the database by reading the ddl file and executing its content"""
 
-__author__ = "Yannis Van Achter <discord:Yannis Van Achter#1444"
+__author__ = "Yannis Van Achter"
 __version__ = "INCOMPLETE AND TO FIX"
 
 import logging
@@ -22,7 +22,7 @@ CONFIG = {
 }
 
 def __init_database__():
-    """Init database by insert values"""
+    """Init database by inserting values"""
     # define constants for main function
     database_sql_file = "../sql/DB2-Project-Adopte-ton-mort.ddl"
     

@@ -5,7 +5,7 @@ from module.get import get_int
 def ask_product_id() -> (int):
     """ask user to enter the product id
 
-    loop since user did not enter an correct product id
+    loop since user did not enter a correct product id
 
     Return:
     -------

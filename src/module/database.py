@@ -5,7 +5,7 @@ Allow user of DataBase object to connect to MySQL database and execute sql insid
 Follow the pep 249 functionnality for more information about the functionnality of this object 
 follow this link: https://peps.python.org/pep-0249/
 
-Done and functionnal, check DataBase object documentation to get use example
+Done and functionnal, check DataBase object documentation to get examples of use
 """
 __version__ = "1.1.0"
 __author__  = "Yannis Van Achter <discord:Yannis Van Achter#1444>"
@@ -21,7 +21,7 @@ from exception.unconnectederror import UnConnectedError
 
 
 class DataBase:
-    """DataBase object is a collection of usefull function for database management with mysql.connector
+    """DataBase object is a collection of useful function for database management with mysql.connector
 
     use case example:
         config = {
@@ -43,9 +43,9 @@ class DataBase:
             for row in db.table:\n
                 print(row)\n
 
-    You can also use this object as parameter for execute sql querry in other functions\n
+    You can also use this object as parameter to execute sql querry in other functions\n
 
-    For more detail about this object use print(help(DataBase))
+    For more details about this object use print(help(DataBase))
     """
 
     def __init__(
