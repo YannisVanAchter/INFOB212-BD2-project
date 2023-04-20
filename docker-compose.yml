@@ -6,6 +6,8 @@ services:
     image: mysql:latest
     ports:
       - 3306:3306
+    volumes:
+      - ./sql/DB2-Project-Adopte-ton-mort.sql:/docker-entrypoint-initdb.d/ddl.sql
     environment:
       MYSQL_ROOT_PASSWORD: 'password'
       MYSQL_DATABASE: 'db'

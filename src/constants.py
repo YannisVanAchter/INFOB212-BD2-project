@@ -7,23 +7,25 @@ BLOODPOCHE = 250
 
 #Dico des organes avec leur prix et les quantités de poches de sang qu'il faut pour une opération d'un organe particulier 
 ORGAN_DICO = {
-    "lung": [10_000, 1, 0, 5], #1ere val = prix, 2eme val = nbr poche 500ml, 3eme val = nbr poche 480ml, 4eme val = nbr poche 450ml
-    "heart": [2_000_000, 1, 0, 5],
-    "liver": [15_000, 1, 0, 5],
-    "stomach": [12_100, 1, 0, 5],
-    "small intestine": [5_000, 1, 0, 5],
-    "large intestine": [13_000, 1, 0, 5],
-    "pancreas": [15_000, 1, 0, 5],
-    "brain": [4_000_000, 1, 0, 5],
-    "rates": [400_000, 1, 0, 5],
-    "foot": [5_000, 1, 0, 5],
-    "arm": [5_000, 1, 0, 5],
-    "hand": [6_000, 1, 0, 5],
-    "kidney": [1_000_000, 1, 0, 5],
-    "bladder": [1_000_000, 1, 0, 5],
-    "ear": [5_000, 1, 0, 5],
-    "nose": [7_000, 1, 0, 5]
+    "lung": [10000, 1, 0, 5], #1ere val = prix, 2eme val = nbr poche 500ml, 3eme val = nbr poche 480ml, 4eme val = nbr poche 450ml
+    "heart": [2000000, 1, 0, 5],
+    "liver": [15000, 1, 0, 5],
+    "stomach": [12100, 1, 0, 5],
+    "small intestine": [5000, 1, 0, 5],
+    "large intestine": [13000, 1, 0, 5],
+    "pancreas": [15000, 1, 0, 5],
+    "brain": [4000000, 1, 0, 5],
+    "rates": [400000, 1, 0, 5],
+    "foot": [5000, 1, 0, 5],
+    "arm": [5000, 1, 0, 5],
+    "hand": [6000, 1, 0, 5],
+    "kidney": [1000000, 1, 0, 5],
+    "bladder": [1000000, 1, 0, 5],
+    "ear": [5000, 1, 0, 5],
+    "nose": [7000, 1, 0, 5]
 }
+
+ORGAN_DICO_TRANSPLANTATION = ORGAN_DICO
 
 SALARY_DOCTOR_TRANSPL = {
     "lung": 500,
