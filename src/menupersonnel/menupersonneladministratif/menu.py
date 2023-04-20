@@ -117,6 +117,8 @@ def main_persoadmin_menu (db: DataBase):
 
 
 #TO DO on ne sait pas comment remplacer Con_id et Rec_id
+#check si organe libre
+#demander si le client veut plusieurs nurses
 
 
 
