@@ -1,4 +1,5 @@
 from user import User
+from ..module import DataBase
 
 def login(email: str, password: str) -> User:
     """Login a user
@@ -16,6 +17,7 @@ def login(email: str, password: str) -> User:
     pass
 
 def register(
+        db: DataBase,
         email: str, 
         nickname: str, 
         password: str, 
@@ -51,7 +53,37 @@ def register(
     
     """
 
+    db.execute_with_params("INSERT INTO ADDRESS (street, number, postal_code, city, land) VALUES (%s,%s,%s,%s,%s);", 
+        (address["street"], address["number"], address["postalCode"], address["city"], address["land"])
+    )
+
+    addressId = db.last_row_id
+
+    args = ["email", "born_date", "password", "Liv_id"]
+    birthDateFormatted = birthDate.split("/").reverse().join("-")
+    argsValue = [email, birthDateFormatted, password, addressId]
+
+    if lastName != None:
+        args.append("last_name")
+        argsValue.append(lastName)
+    if firstName != None:
+        args.append("first_name")
+        argsValue.append(firstName)
+    if phoneNumber != None:
+        args.append("phone_number")
+        argsValue.append(phoneNumber)
+
+    argsForQuery = args.join(", ")
+    argsValueForQuery = ("%s," * len(argsValue))[::-1]
+    query = f"INSERT INTO PERSON ({argsForQuery}) VALUES ({argsValueForQuery});"
+
+    db.execute_with_params(query, tuple(argsValue))
+
+    personId = db.last_row_id
+
+
+    db.execute_with_params("INSERT INTO CUSTOMER (id, pseudo, blood_type, blood_sign) VALUES (%s,%s,%s,%s)", (personId, nickname, bloodType, bloodSign))
 
     if selfLogin:
-        return login()
+        return login(email, password)
     pass

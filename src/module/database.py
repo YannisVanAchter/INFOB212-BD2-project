@@ -83,6 +83,7 @@ class DataBase:
         # self.auto_commit_ = auto_commit
         self.auto_connect = auto_connect
         self.__fetched = []
+        self.__fetchedPrepared = []
         self.__cursor = None
         self.__db = None
 
@@ -115,6 +116,12 @@ class DataBase:
             replace self._DataBase__cursor.fetchall()
         """
         return self.__fetched
+    
+    def tableArgs(self) -> (list[tuple]):
+        """Represent the list of raws fetch from SELECT SQL command when args are used
+        
+        """
+        return self.__fetchedPrepared
 
     @property
     def cursor(self) -> (MySQLCursor):
@@ -200,6 +207,7 @@ class DataBase:
                     raise UnConnectedError()
 
                 self.__cursor = self.__db.cursor(buffered=True)
+                self.__cursorPrepared = self.__db.cursor(prepared=True)
 
                 self.__is_connected = True
 
@@ -272,6 +280,20 @@ class DataBase:
                 #     self.commit()
                 
                 # self.disconnect()
+
+    def execute_with_params(self, query: str, argsTuple: tuple):
+        self.__cursorPrepared.execute(query, argsTuple)
+        if query.startswith("SELECT") or query.startswith("SHOW"):
+            self.__fetchedPrepared = self.__cursor.fetchall()
+            if (not self.__db.is_connected()):
+                self.__db.recconect()
+            self.__cursorPrepared.nextset()
+        else:
+            if (not self.__db.is_connected()):
+                self.__db.recconect()
+            self.__cursorPrepared.close()
+            self.__cursorPrepared = self.__db.cursor(prepared=True)
+
 
     def execute_many(self, *querry: str):
         """execute many SQL querry in database
