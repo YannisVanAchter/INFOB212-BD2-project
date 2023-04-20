@@ -9,7 +9,7 @@ from module.utils import clear_terminal as cls
 from constants import BLOOD_PRICE_FACTOR
 
 from .view import *
-from .controler import *
+from module.utils import insert_into
 
 
 def main_accounting_menu(database: DataBase) -> (int):

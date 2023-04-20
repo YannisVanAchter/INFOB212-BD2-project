@@ -1,6 +1,6 @@
 from module.get import *
 from constants import * 
-from menupersonnel.menuaccounting.controler import *
+from module.utils import *
 
 """
 Renomer le fichier pour mieux comptendre son but, ex: menuadministrative ou mainadministrativemenu
@@ -34,9 +34,7 @@ def main_persoadmin_menu (db: DataBase):
 
 
     while True :
-        # if you want to pass the request to user like you do in "print"
-        # you will need to update the function get_string
-        organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO}")
+        organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO.keys}")
 
         
         if organe_choice in ORGAN_DICO:
@@ -48,9 +46,12 @@ def main_persoadmin_menu (db: DataBase):
             continue
 
     #To get the date of the operation
-    date_choice = get_date("Enter a date for your operation")
-    print("Your operation will attend on %d", date_choice)
-    #TO DO demander l'heure et check si date = libre ou pas 
+    
+    while True :
+        date_choice = get_date("Enter a date for your operation")
+        print("Your operation will attend on %d", date_choice)
+        
+    #check si date = libre ou pas 
 
 
     print("We will assign you a doctor, an anaesthetist and a nurse")
@@ -117,8 +118,10 @@ def main_persoadmin_menu (db: DataBase):
 
 
 #TO DO on ne sait pas comment remplacer Con_id et Rec_id
-#check si organe libre
-#demander si le client veut plusieurs nurses
+#TO DO check si organe libre
+#TO DO demander si le client veut plusieurs nurses
+#TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
+#TO DO con id de l'organe 
 
 
 
