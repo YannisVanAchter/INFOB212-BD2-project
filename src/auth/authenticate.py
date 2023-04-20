@@ -17,7 +17,7 @@ def login(db: DataBase, email: str, password: str) -> User | None:
 
     query = "SELECT password FROM person WHERE email = '%s';"
 
-    db.execute_with_params(query, (email))
+    db.execute_with_params(query, (email,))
     print(db.tableArgs)
 
     pass
@@ -79,8 +79,9 @@ def register(
         args.append("phone_number")
         argsValue.append(phoneNumber)
 
-    argsForQuery = args.join(", ")
+    argsForQuery = ", ".join(args)
     argsValueForQuery = ("%s," * len(argsValue))[::-1]
+    print(f"{argsForQuery=}\n{argsValueForQuery=}")
     query = f"INSERT INTO PERSON ({argsForQuery}) VALUES ({argsValueForQuery});"
 
     db.execute_with_params(query, tuple(argsValue))
