@@ -1,1 +1,1 @@
-from .authenticate import User
+from .user import User
