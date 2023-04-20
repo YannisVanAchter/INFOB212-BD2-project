@@ -26,7 +26,7 @@ $ docker-compose up
 Into another terminal use (please wait till the docker container has been created and started):
 ```bash	
 $ cd src
-$ python main.py
+src $ python main.py
 ```
 
 ## Open relational schema
