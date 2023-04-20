@@ -12,7 +12,7 @@
 -- Database Section
 -- ________________ 
 
-create database db;
+-- create database db;
 
 -- DBSpace Section
 -- _______________
@@ -133,8 +133,7 @@ create table IF NOT EXISTS BLOOD (
      Giv_id INT unsigned,
      Nee_id INT unsigned,
      constraint ID_BLOOD_ID primary key (id),
-     constraint FK_BloodPerson foreign key (Giv_id) references PERSON(id),
-     constraint FK_BloodTransplantation foreign key (Nee_id) references TRANSPLANTATION(id));
+     constraint FK_BloodPerson foreign key (Giv_id) references PERSON(id));
      
 create table IF NOT EXISTS DONATOR (
      id INT unsigned not null AUTO_INCREMENT,
@@ -177,11 +176,11 @@ create table IF NOT EXISTS TRANSPLANTATION (
 create table IF NOT EXISTS DETAIL (
      BLOOD INT unsigned,
      ORGANE INT unsigned,
-     id INT unsigned not null AUTO_INCREMENT,
+     id INT unsigned not null,
      constraint SID_DETAIL_ID unique (BLOOD, ORGANE, id),
-     foreign key (BLOOD) references BLOOD,
-     foreign key (ORGANE) references ORGANE,
-     foreign key (id) references ORDER_
+     foreign key (BLOOD) references BLOOD(id),
+     foreign key (ORGANE) references ORGANE(id),
+     foreign key (id) references ORDER_(id),
      constraint EXTONE_DETAIL check(
           (ORGANE is not null and BLOOD is null)
           or (ORGANE is null and BLOOD is not null))
@@ -198,9 +197,9 @@ create table IF NOT EXISTS N_work_on (
 -- Constraints Section - Checks
 -- ____________________________ 
 
-alter table ORGANE add constraint ID_ORGANE_CHK
-     check(exists(select * from DETAIL
-                  where DETAIL.ORGANE = id)); 
+-- alter table ORGANE add constraint ID_ORGANE_CHK
+--      check(exists(select * from DETAIL
+--                   where DETAIL.ORGANE = id)); 
 
 alter table STAFF add constraint EXCL_STAFF
      check((CEO is not null and HR is null and ACCOUNTANT is null and ANAESTHESIST is null and NURSE is null and DOCTOR is null)
@@ -211,16 +210,19 @@ alter table STAFF add constraint EXCL_STAFF
            or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHESIST is null and NURSE is null and DOCTOR is not null)
            or (CEO is null and HR is null and ACCOUNTANT is null and ANAESTHESIST is null and NURSE is null and DOCTOR is null)); 
 
-alter table BLOOD add constraint ID_BLOOD_CHK 
-     check(exists(select * from DETAIL
-                  where DETAIL.BLOOD = id)); 
+-- alter table BLOOD add constraint ID_BLOOD_CHK 
+--      check(exists(select * from DETAIL
+--                   where DETAIL.BLOOD = id)); 
 
-alter table TRANSPLANTATION add constraint ID_TRANSPLANTATION_CHK
-     check(exists(select * from N_work_on
-                  where N_work_on.id = id));
+-- alter table TRANSPLANTATION add constraint ID_TRANSPLANTATION_CHK
+--      check(exists(select * from N_work_on
+--                   where N_work_on.id = id));
 
-alter table ORGANE add constraint LIST_ORGANES
-     check((ORGANE.type));
+alter table BLOOD add
+     constraint FK_BloodTransplantation foreign key (Nee_id) references TRANSPLANTATION(id);
+
+-- alter table ORGANE add constraint LIST_ORGANES
+--      check((ORGANE.type));
 
 -- Index Section
 -- _____________ 
@@ -238,13 +240,13 @@ create unique index ID_CUSTO_PERSO_IND
      on CUSTOMER (id);
 
 create unique index ID_ORDER_IND
-     on ORDER (id);
+     on ORDER_ (id);
 
 create index REF_ORDER_DELIV_IND
-     on ORDER (Typ_id);
+     on ORDER_ (Typ_id);
 
 create index REF_ORDER_CUSTO_IND
-     on ORDER (Buy_id);
+     on ORDER_ (Buy_id);
 
 create unique index ID_ACCOU_STAFF_IND
      on ACCOUNTANT (id);
@@ -342,50 +344,50 @@ create index ORGANES_Types
 
 -- View Section
 -- _____________ 
-create view ACCOUNTABLEORGABLO(O.type, O.price, B.type, B.signe)
-     -- View goal : view accountable to view the price of the articles 
-     -- Author: Aline Boulanger (ft. Loulou)
-     as  select O.type, B.type, B.signe, O.price
-     from ORGANE O, BLOOD B
-     where O.type = O.price
-     and B.type = B.signe 
-     group by O.type and  B.type
+-- create view ACCOUNTABLEORGABLO(O.type, O.price, B.type, B.signe)
+--      -- View goal : view accountable to view the price of the articles 
+--      -- Author: Aline Boulanger (ft. Loulou)
+--      as  select O.type, B.type, B.signe, O.price
+--      from ORGANE O, BLOOD B
+--      where O.type = O.price
+--      and B.type = B.signe 
+--      group by O.type and  B.type
 
-create view ACCOUNTABLETRANPLANLIVRAI(PRICE, TYPE)
-     -- View goal : view accountable to view the price of the transplantation and the livraison
-     -- Author: Aline Boulanger (ft. Loulou)
-     as  select TD.price
-     from TRANSPLANTATION T, DELIVERY D, TYPE_DELIVERY TD, CUSTOMER C, ADDRESS A
-     where D.Typ_id = TD.id
-     and C.id = A.id
+-- create view ACCOUNTABLETRANPLANLIVRAI(PRICE, TYPE)
+--      -- View goal : view accountable to view the price of the transplantation and the livraison
+--      -- Author: Aline Boulanger (ft. Loulou)
+--      as  select TD.price
+--      from TRANSPLANTATION T, DELIVERY D, TYPE_DELIVERY TD, CUSTOMER C, ADDRESS A
+--      where D.Typ_id = TD.id
+--      and C.id = A.id
    
 
-create view RH (SALARY, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, NAME, FIRST_NAME, EMAIL, PHONE)
-     -- View goal : view RH, to view the personnel, the wages, jobs
-     -- Author: Louise DELPIERRE (ft. Alinette)
-     as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
-     from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTABLE AC, HR H, ADDRESS AD
-     where id.STAFF = id.PERSON
-     and S.NURSE = N.NURSE
-     and S.ANAESTHESIST = A.ANAESTHESIST
-     and S.CEO = C.CEO
-     and S.ACCOUNTABLE = AC.ACCOUNTABLE
-     and S.HR = H.HR
-     and S.DOCTOR = D.DOCTOR
-     and id.PERSON = id.ADDRESS
-     group by S.DOCTOR
-     group by S.NURSE
-     group by S.ANAESTHESIST
-     group by S.CEO
-     group by S.ACCOUNTABLE
-     group by S.HR
+-- create view RH (SALARY, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, NAME, FIRST_NAME, EMAIL, PHONE)
+--      -- View goal : view RH, to view the personnel, the wages, jobs
+--      -- Author: Louise DELPIERRE (ft. Alinette)
+--      as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
+--      from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTABLE AC, HR H, ADDRESS AD
+--      where id.STAFF = id.PERSON
+--      and S.NURSE = N.NURSE
+--      and S.ANAESTHESIST = A.ANAESTHESIST
+--      and S.CEO = C.CEO
+--      and S.ACCOUNTABLE = AC.ACCOUNTABLE
+--      and S.HR = H.HR
+--      and S.DOCTOR = D.DOCTOR
+--      and id.PERSON = id.ADDRESS
+--      group by S.DOCTOR
+--      group by S.NURSE
+--      group by S.ANAESTHESIST
+--      group by S.CEO
+--      group by S.ACCOUNTABLE
+--      group by S.HR
 
-create view VUE_MEDECIN (organe, client, sang, anesthesiste, medecin)
--- View goal: view informations on the custormer and the organe the doctor will have to transplant on him 
--- Authors: Eline Mota
-as select type.ORGANE, Rec_id.TRANSPLANTATION, blood_type.CUSTOMER, id.ANAESTHESIST, id.DOCTOR
-from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR M
-where T.Rec_id = C.id and T.Con_id = O.id and T.D_w_id = M.id and T.A_w_id = A.id
+-- create view VUE_MEDECIN (organe, client, sang, anesthesiste, medecin)
+-- -- View goal: view informations on the custormer and the organe the doctor will have to transplant on him 
+-- -- Authors: Eline Mota
+-- as select type.ORGANE, Rec_id.TRANSPLANTATION, blood_type.CUSTOMER, id.ANAESTHESIST, id.DOCTOR
+-- from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR M
+-- where T.Rec_id = C.id and T.Con_id = O.id and T.D_w_id = M.id and T.A_w_id = A.id
 
 
 
@@ -487,7 +489,7 @@ where T.Rec_id = C.id and T.Con_id = O.id and T.D_w_id = M.id and T.A_w_id = A.i
 -- Init Section
 -- _____________
 
-insert into TYPE_LIVRAISON values ('normal', 5);
-insert into TYPE_LIVRAISON values ('express', 10);
-insert into TYPE_LIVRAISON values ('internationnal', 15);
-insert into TYPE_LIVRAISON values ('main propre', 3);
+insert into TYPE_DELIVERY values ('normal', 5);
+insert into TYPE_DELIVERY values ('express', 10);
+insert into TYPE_DELIVERY values ('internationnal', 15);
+insert into TYPE_DELIVERY values ('main propre', 3);
