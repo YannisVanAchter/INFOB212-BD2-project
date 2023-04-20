@@ -3,7 +3,7 @@ from module.get import get_int
 from module.get import get_bool
 from module.get import get_string 
 from module.get import get_valid_id 
-from menuconnexion.menu import main_login_menu
+from auth.authenticate import register
 
 
 def main_RH_menu(db: DataBase):
@@ -84,14 +84,15 @@ def create_person(db : DataBase):
     Args:
     db (DataBase) : Data base connected for HR
     """
-    main_login_menu(db) ## Appelle la fonction de Youlan pr la création d'un compte 
+   
+    ## register (db, .....) ## Appelle la fonction de Youlan pr la création d'un compte 
     ## On crée nous-même un compte employée mais du coup en théorie on génère ici un mdp temporaire que la personne devra changer 
     id_person = get_valid_id(db, "Please enter the id of the person:", "PERSON" , int)
     create_employee(id_person, db)
 
 def create_employee(id, db: DataBase): 
     """
-    To add to a person who has already created an account in the company the role of employee 
+    To add the role of employee to a person who has already created an account in the company 
     
     Args: 
     id : the id of the person that has already had an account in the company 
@@ -185,19 +186,24 @@ def delete_employee(db: DataBase):
         medecins += db.table 
         db.execute("SELECT id FROM ANAESTHETIST")
         medecins += db.table
+        db.execute ("SELECT id FROM CUSTOMER")
+        customers += db.table 
         
         if id_employee not in medecins:
             db.execute("SELECT id FROM CEO")
             ceo = db.table
             if id_employee not in ceo:
-                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") # La personne devra supprimer son compte personne elle-même 
+                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") ## MODIF LA SUPPRESSION DES DONNEES (ANONYMISER)
+                if id_employee not in customers: 
+                    db.execute(f"DELETE id FROM PERSONNE WHERE id = {id_employee}")
+                
             else:
                 print("You don't have the permission to delete the CEO")  
         else:
             db.execute("SELECT id FROM TRANSPLANTATION")
             transplantation_medecins = db.table 
             
-            if id_employee not in transplantation_medecins:
+            if id_employee not in transplantation_medecins: ## et que date_transplantation plus loin que date actuelle 
                 db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee}")
             else: 
                 print('This person can not be actually deleted because she works on a transplantation')       
