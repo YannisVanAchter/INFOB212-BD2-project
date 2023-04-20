@@ -1,7 +1,7 @@
-from user import User
-from ..module import DataBase
+from auth import User
+from module import DataBase
 
-def login(email: str, password: str) -> User:
+def login(db: DataBase, email: str, password: str) -> User | None:
     """Login a user
 
     Args:
@@ -11,9 +11,15 @@ def login(email: str, password: str) -> User:
 
     Returns:
     --------
-    user: User object
+    user: User object or None if login details are incorrect.
     
     """
+
+    query = "SELECT password FROM person WHERE email = '%s';"
+
+    db.execute_with_params(query, (email))
+    print(db.tableArgs)
+
     pass
 
 def register(
@@ -38,7 +44,7 @@ def register(
         nicname: Nickname of the user (str)
         password: Password of the user to register (str)
         birthDate: Date of birth of the user (DD/MM/YYYY) (str)
-        address:
+        address: Dict representing the address (dict)
             street: Street of the address (str)
             number: Number of the address (int)
             postalCode: Postal code of the address (int)

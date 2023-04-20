@@ -7,22 +7,22 @@ BLOODPOCHE = 250
 
 #Dico des organes avec leur prix et les quantités de poches de sang qu'il faut pour une opération d'un organe particulier 
 ORGAN_DICO = {
-    "lung": [10 000, 1, 0, 5], #1ere val = prix, 2eme val = nbr poche 500ml, 3eme val = nbr poche 480ml, 4eme val = nbr poche 450ml
-    "heart": [2 000 000, 1, 0, 5],
-    "liver": [15 000, 1, 0, 5],
-    "stomach": [12 100, 1, 0, 5],
-    "small intestine": [5 000, 1, 0, 5],
-    "large intestine": [13 000, 1, 0, 5],
-    "pancreas": [15 000, 1, 0, 5],
-    "brain": [4 000 000, 1, 0, 5],
-    "rates": [400 000, 1, 0, 5],
-    "foot": [5 000, 1, 0, 5],
-    "arm": [5 000, 1, 0, 5],
-    "hand": [6 000, 1, 0, 5],
-    "kidney": [1 000 000, 1, 0, 5],
-    "bladder": [1 000 000, 1, 0, 5],
-    "ear": [5 000, 1, 0, 5],
-    "nose": [7 000, 1, 0, 5]
+    "lung": [10_000, 1, 0, 5], #1ere val = prix, 2eme val = nbr poche 500ml, 3eme val = nbr poche 480ml, 4eme val = nbr poche 450ml
+    "heart": [2_000_000, 1, 0, 5],
+    "liver": [15_000, 1, 0, 5],
+    "stomach": [12_100, 1, 0, 5],
+    "small intestine": [5_000, 1, 0, 5],
+    "large intestine": [13_000, 1, 0, 5],
+    "pancreas": [15_000, 1, 0, 5],
+    "brain": [4_000_000, 1, 0, 5],
+    "rates": [400_000, 1, 0, 5],
+    "foot": [5_000, 1, 0, 5],
+    "arm": [5_000, 1, 0, 5],
+    "hand": [6_000, 1, 0, 5],
+    "kidney": [1_000_000, 1, 0, 5],
+    "bladder": [1_000_000, 1, 0, 5],
+    "ear": [5_000, 1, 0, 5],
+    "nose": [7_000, 1, 0, 5]
 }
 
 SALARY_DOCTOR_TRANSPL = {
@@ -61,7 +61,7 @@ SALARY_ANESTHESIST_TRANSPL = {
     "kidney": 800,
     "bladder": 680,
     "ear": 800,
-    "nose": 700,
+    "nose": 700
 
 }
 
@@ -81,7 +81,7 @@ SALARY_NURSE_TRANSPL = {
     "kidney": 400,
     "bladder": 340,
     "ear": 400,
-    "nose": 350,
+    "nose": 350
 
 }
 
@@ -92,19 +92,19 @@ ORGAN_STATE_LIST = (
     "good",
     "bad",
     "unknown",
-    "very bad",   
+    "very bad"
 )
 
 BLOOD_TYPE = (
     "A", 
     "B", 
     "AB", 
-    "O",
+    "O"
 )
 
 TABLE_FOR_PRICE_UPDATES = (
     "ORGANE",
     "BLOOD",
     "TYPE_DELIVERY",
-    "TRANSPLATATION",
+    "TRANSPLATATION"
 )

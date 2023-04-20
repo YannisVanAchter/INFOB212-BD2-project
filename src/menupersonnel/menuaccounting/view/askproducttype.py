@@ -6,7 +6,7 @@ __version__ = "1.0.0"
 
 from module.get import  get_string
 
-from constants import PRODUCT_LIST, BLOOD_TYPE
+from constants import ORGAN_DICO, BLOOD_TYPE
 
 def ask_product_type(is_organe: bool = False) -> (str):
     """ask user to enter the product type
@@ -20,7 +20,7 @@ def ask_product_type(is_organe: bool = False) -> (str):
     product_type = ""
     
     if is_organe:
-        while product_type not in PRODUCT_LIST:
+        while product_type not in ORGAN_DICO.keys():
             product_type = get_string("Enter the product type: ")
     else:
         while product_type not in BLOOD_TYPE:

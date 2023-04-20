@@ -12,21 +12,32 @@ from menupersonnel.menumédecin import main_medecin_menu
 from menupersonnel.RH import main_RH_menu
 from menupersonnel.menupersonneladministratif import main_persoadmin_menu
 from module.database import DataBase
+from auth import login, register
 
 # function and class
 def main():
     print("Hello, world!")
     print("Helle Aline :)")
     print("Hello Loulou :)")
-    # with DataBase(
-    #             host='localhost', 
-    #             user='user', 
-    #             password='password', 
-    #             database='mysql',
-    #             port=3306,
-    #             auto_connect=True,
-    #             auto_commit=True,
-    #     ) as database:
+
+    
+    with DataBase(
+                host='localhost', 
+                user='user', 
+                password='password', 
+                database='mysql',
+                port=3306,
+                auto_connect=True,
+        ) as database:
+        address = {
+            'street': 'Route',
+            'number': 1,
+            'postalCode': 6000, 
+            'city': "Paris", 
+            "land": "France"
+        }
+        register(database, "test@gmail.com", "test", "password", "12/12/2000", address, "A", "+")
+        login(database, "test@gmail.com", "password")
 
     #     # TODO: create test with it
     #     database.execute(

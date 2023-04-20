@@ -117,6 +117,7 @@ class DataBase:
         """
         return self.__fetched
     
+    @property
     def tableArgs(self) -> (list[tuple]):
         """Represent the list of raws fetch from SELECT SQL command when args are used
         
