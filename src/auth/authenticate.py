@@ -41,7 +41,7 @@ def register(
     Args:
     -----
         email: Email of the user to register (str)
-        nicname: Nickname of the user (str)
+        nickname: Nickname of the user (str)
         password: Password of the user to register (str)
         birthDate: Date of birth of the user (DD/MM/YYYY) (str)
         address: Dict representing the address (dict)

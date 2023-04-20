@@ -79,16 +79,44 @@ def add_employee(db : DataBase):
 def create_person(db : DataBase): 
     """
     To add a new employee who has not already created an account in the company. 
+    Like we create ourselves a account PERSON we generate ourselves a temporary password.
     Create a new account and call the function create_employee(id) with the id created
     
     Args:
     db (DataBase) : Data base connected for HR
     """
    
+   
     ## register (db, .....) ## Appelle la fonction de Youlan pr la création d'un compte 
+    
+    """
+        Args:
+    -----
+        email: Email of the user to register (str)
+        nicname: Nickname of the user (str)
+        password: Password of the user to register (str)
+        birthDate: Date of birth of the user (DD/MM/YYYY) (str)
+        address: Dict representing the address (dict)
+            street: Street of the address (str)
+            number: Number of the address (int)
+            postalCode: Postal code of the address (int)
+            city: City of the address (str)
+            land: Land of the address (str)
+        bloodType: Type of blood of the client {A, B, AB, O}
+        bloodSign: Sign of the blood type of the client {+, -}
+        lastName: Last name of the client (str, optional)
+        firstName: Frist name of the client (str, optional)
+        phoneNumber: Phone number of the client (str, optional)
+        selfLogin: Auto login and returns the User (bool, optional)
+    
+    """
+
+
     ## On crée nous-même un compte employée mais du coup en théorie on génère ici un mdp temporaire que la personne devra changer 
     id_person = get_valid_id(db, "Please enter the id of the person:", "PERSON" , int)
     create_employee(id_person, db)
+
+
 
 def create_employee(id, db: DataBase): 
     """
