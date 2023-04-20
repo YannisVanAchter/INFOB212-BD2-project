@@ -80,7 +80,6 @@ class DataBase:
         self.config = kwargs
         self.__has_one_querry = False
         self.__is_connected = False
-        # self.auto_commit_ = auto_commit
         self.auto_connect = auto_connect
         self.__fetched = []
         self.__fetchedPrepared = []
@@ -155,19 +154,16 @@ class DataBase:
 
     # https://stackoverflow.com/questions/1984325/explaining-pythons-enter-and-exit
     def __enter__(self):
+        """Enter method for with statement"""
         self.connect()
         return self
 
     def __exit__(self, exc_type, exc_value, trace):
-        # if self.auto_commit_:
-        #     self.commit()
+        """Exit method for with statement"""
         self.disconnect()
 
     def __del__(self):
         """On delete of object disconnect from data base"""
-        # if self.auto_commit_:
-        #     self.commit()
-        
         if self.__is_connected:
             self.disconnect()
 
@@ -250,37 +246,33 @@ class DataBase:
             
         querry = querry.strip()
         try:
+            # create new cursor before next query to keep acces to last query
+            self.__cursor.close()
+            self.__cursor = self.__db.cursor()
             if multi:
                 for _ in self.__cursor.execute(querry, multi=multi):
                     pass
-                if not self._db.is_connected():
+                if not self.__db.is_connected():
                     self.__db.reconnect()
-                self.__cursor.close()
-                self.__cursor = self.__db.cursor()
 
             else:
                 self.__cursor.execute(querry, multi=multi)
-                if querry.startswith("SELECT") or querry.startswith("SHOW"):
+                if (
+                    querry.strip().upper().startswith("SELECT")
+                    or querry.strip().upper().startswith("SHOW")
+                ):
                     self.__fetched = self.__cursor.fetchall()
                     if (not self.__db.is_connected()):
                         self.__db.reconnect()
                     self.__cursor.nextset()
-                else:
-                    if (not self.__db.is_connected()):
-                        self.__db.reconnect()
-                    self.__cursor.close()
-                    self.__cursor = self.__db.cursor()
-            # if self.auto_commit_:
-            #     self.commit()
+                elif (not self.__db.is_connected()):
+                    self.__db.reconnect()
         except ProgrammingError as e:
             raise e
         finally:
             if self.auto_connect and not self.__is_connected:
+                self.disconnect()
                 pass
-                # if not self.auto_commit_:
-                #     self.commit()
-                
-                # self.disconnect()
 
     def execute_with_params(self, query: str, argsTuple: tuple):
         self.__cursorPrepared.execute(query, argsTuple)
@@ -312,32 +304,12 @@ class DataBase:
             Make sure to be connected to the database before execute querry
             Use self.table to get the return of the querry
         """
+        multi_select = []
         for q in querry:
             self.execute(q)
-
-    # def commit(self):
-    #     """commit changes in database"""
-    #     self.__db.commit()
-
-    # def auto_commit(self, querry: str):
-    #     """execute querry and commit changes in database
-        
-    #     Args:
-    #     -----
-    #         querry (str): querry formated in SQL
-    #     """
-    #     self.execute(querry)
-    #     self.commit()
-
-    # def auto_commit_many(self, *querry: str):
-    #     """execute many querry and commit changes in database
-        
-    #     Args:
-    #     -----
-    #         querry (str): querry formated in SQL
-    #     """
-    #     self.execute_many(*querry)
-    #     self.commit()
+            if q.upper().startswith("SELECT"):
+                multi_select.append(self.table)
+        return multi_select
 
     def disconnect(self) -> (None):
         """Disconnect to database and close cursor
@@ -350,6 +322,5 @@ class DataBase:
         -------
             Youlan Collard & Yannis Van Achter
         """
-        self.__cursor.close()
         self.__db.close()
         self.__is_connected = False

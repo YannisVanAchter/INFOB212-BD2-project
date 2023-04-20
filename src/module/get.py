@@ -181,6 +181,7 @@ def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type
     Return:
     -------
         id_type(): valid id
+        NoneType: if id is not valid (not found in "mysql".table)
         
     Version:
     --------
@@ -201,9 +202,10 @@ def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type
     while True:
         try:
             id = id_type(get_string(prompt))
-            if id not in id_list:
-                raise ValueError
-            return id
+            if id in id_list:
+                return id
+            print("ERROR: id not found")
+            return None
         except (TypeError, ValueError):
             pass
     
