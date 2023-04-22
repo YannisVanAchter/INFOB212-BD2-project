@@ -4,6 +4,9 @@ from module.get import get_bool
 from module.get import get_string 
 from module.get import get_valid_id 
 from auth.authenticate import register
+import string
+import random
+
 
 
 def main_RH_menu(db: DataBase):
@@ -86,34 +89,21 @@ def create_person(db : DataBase):
     db (DataBase) : Data base connected for HR
     """
    
-   
-    ## register (db, .....) ## Appelle la fonction de Youlan pr la création d'un compte 
+    print("Now you will create a new personnal account")
+    email = get_string("Please enter the email of the person: ")
+    last_name = get_string("Enter the last name of the person: ")
+    first_name = get_string("Enter the first name of the person: ")
+    phone_number = get_int ("Enter the phone number of the person: ")
+    born_date = get_string ("Enter the date of birth of the person (DD/MM/YYYY): ")
     
-    """
-        Args:
-    -----
-        email: Email of the user to register (str)
-        nicname: Nickname of the user (str)
-        password: Password of the user to register (str)
-        birthDate: Date of birth of the user (DD/MM/YYYY) (str)
-        address: Dict representing the address (dict)
-            street: Street of the address (str)
-            number: Number of the address (int)
-            postalCode: Postal code of the address (int)
-            city: City of the address (str)
-            land: Land of the address (str)
-        bloodType: Type of blood of the client {A, B, AB, O}
-        bloodSign: Sign of the blood type of the client {+, -}
-        lastName: Last name of the client (str, optional)
-        firstName: Frist name of the client (str, optional)
-        phoneNumber: Phone number of the client (str, optional)
-        selfLogin: Auto login and returns the User (bool, optional)
-    
-    """
+    #Generate a temporary password for the new person 
+    temporary_password = ""
+    length_password = 8
+    for i in range (length_password):
+        temporary_password += random.choice(string.ascii_letters + string.digits) 
 
 
-    ## On crée nous-même un compte employée mais du coup en théorie on génère ici un mdp temporaire que la personne devra changer 
-    id_person = get_valid_id(db, "Please enter the id of the person:", "PERSON" , int)
+    id_person = register ( email, last_name, first_name, phone_number, born_date, temporary_password)
     create_employee(id_person, db)
 
 
@@ -228,10 +218,10 @@ def delete_employee(db: DataBase):
             else:
                 print("You don't have the permission to delete the CEO")  
         else:
-            db.execute("SELECT id FROM TRANSPLANTATION")
+            db.execute("SELECT id FROM TRANSPLANTATION")## et que date_transplantation plus loin que date actuelle 
             transplantation_medecins = db.table 
             
-            if id_employee not in transplantation_medecins: ## et que date_transplantation plus loin que date actuelle 
+            if id_employee not in transplantation_medecins: 
                 db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee}")
             else: 
                 print('This person can not be actually deleted because she works on a transplantation')       
