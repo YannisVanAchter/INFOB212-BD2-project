@@ -106,8 +106,6 @@ def create_person(db : DataBase):
     id_person = register ( email, last_name, first_name, phone_number, born_date, temporary_password)
     create_employee(id_person, db)
 
-
-
 def create_employee(id, db: DataBase): 
     """
     To add the role of employee to a person who has already created an account in the company 
@@ -204,28 +202,52 @@ def delete_employee(db: DataBase):
         medecins += db.table 
         db.execute("SELECT id FROM ANAESTHETIST")
         medecins += db.table
-        db.execute ("SELECT id FROM CUSTOMER")
-        customers += db.table 
+      
         
         if id_employee not in medecins:
             db.execute("SELECT id FROM CEO")
             ceo = db.table
+            db.execute("SELECT id FROM CUSTOMER")
+            customers = db.table 
+            
             if id_employee not in ceo:
-                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") ## MODIF LA SUPPRESSION DES DONNEES (ANONYMISER)
+                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") ## MODIF LA SUPPRESSION DES DONNEES (ANONYMISER) // SET NULL 
                 if id_employee not in customers: 
-                    db.execute(f"DELETE id FROM PERSONNE WHERE id = {id_employee}")
+                    db.execute(f"DELETE id FROM PERSON WHERE id = {id_employee}")
                 
             else:
                 print("You don't have the permission to delete the CEO")  
         else:
-            db.execute("SELECT id FROM TRANSPLANTATION")## et que date_transplantation plus loin que date actuelle 
+            db.execute("SELECT id FROM TRANSPLANTATION")## et que date_transplantation plus loin que date actuelle // TRIGGER ????
             transplantation_medecins = db.table 
             
             if id_employee not in transplantation_medecins: 
                 db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee}")
             else: 
-                print('This person can not be actually deleted because she works on a transplantation')       
+                print('This person can not be actually deleted because she has to work on a transplantation')       
     else: 
-        print('This person will not be delete')
+        print('This person will not be deleted')
         
     db.disconnect()
+    
+    """
+    create trigger TRG_DELETE_MEDECINS 
+  -- Trigger goal: Before delete a medecin checks if this employee has to do a transplatation (in the future)
+     -- Author: Aurélie Genot 
+      before delete on STAFF 
+      for each row
+--      begin
+--           SELECT date
+--                FROM TRANSPLATATION 
+--                WHERE STAFF.id IN (SELECT STAFF.id 
+--                                    FROM STAFF 
+--                                    WHERE STAFF.id = {id_employee}
+--                                    );
+          
+--           if (date > actual_date) then
+--                signal sqlstate '45000'
+--                set message_text = 'This person cannot be deleted because she has to do a transplatation';
+--           end if;
+--      end;
+
+""" 
