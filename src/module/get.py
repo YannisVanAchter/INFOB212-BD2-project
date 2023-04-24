@@ -1,10 +1,8 @@
 # encoding uft-8
 # we could use cs50 module for it but we would need to import Falsk and other package that we won't use
 """
-module that provide useful function for input of user
+module that provide useful function for the input of user
 """
-__version__ = "1.0.0"
-__author__ = "yannis van achter <discord:Yannis Van Achter#1444"
 
 from datetime import date as Date
 from typing import Type
@@ -12,7 +10,7 @@ from typing import Type
 from .database import DataBase
 
 def get_string(prompt: str = "") -> (str):
-    """ask user a request and get input of answer
+    """ask to user a request and get input of answer
 
     Args:
     -----
@@ -20,7 +18,7 @@ def get_string(prompt: str = "") -> (str):
 
     Return:
     -------
-        str: response of user
+        str: answer of user
         
     Version:
     --------
@@ -36,17 +34,17 @@ def get_string(prompt: str = "") -> (str):
         return None
     
 def get_date(prompt: str = "", before: Date = None, after: Date = None) -> (Date):
-    """ask user a request and get input of answer
+    """ask to user a request and get input of answer
 
     Args:
     -----
-        prompt (str, optional): request show to user. Defaults to ""
+        prompt (str, optional): request shows to user. Defaults to ""
         before (Date, optional): date before. Defaults to None
         after (Date, optional): date after. Defaults to None
 
     Return:
     -------
-        Date: response of user
+        Date: answer of user
         
     Version:
     --------
@@ -65,15 +63,15 @@ def get_date(prompt: str = "", before: Date = None, after: Date = None) -> (Date
     
     
 def get_float(prompt: str = "") -> (float):
-    """ask user a request and get input of answer
+    """ask to user a request and get input of answer
 
     Args:
     -----
-        prompt (str, optional): request show to user. Defaults to "")->(str.
+        prompt (str, optional): request shows to user. Defaults to "")->(str.
 
     Return:
     -------
-        float: response of user
+        float: answer of user
         
     Version:
     --------
@@ -98,7 +96,7 @@ def get_int(prompt: str = "") -> (int):
 
     Return:
     -------
-        int: response of user
+        int: answer of user
         
     Version:
     --------
@@ -115,15 +113,15 @@ def get_int(prompt: str = "") -> (int):
             pass
         
 def get_bool(prompt: str = "") -> (bool):
-    """ask user a request and get input of answer
+    """ask to user a request and get input of answer
 
     Args:
     -----
-        prompt (str, optional): request show to user. Defaults to ""
+        prompt (str, optional): request shows to user. Defaults to ""
 
     Return:
     -------
-        bool: response of user
+        bool: answer of user
         
     Version:
     --------
@@ -140,11 +138,11 @@ def get_bool(prompt: str = "") -> (bool):
             pass
         
 def get_sql_user_querry(prompt: str = "") -> (str):
-    """Ask user for personnal sql querry
+    """Ask to user for personnal sql querry
 
     Args:
     -----
-        prompt (str): Request to user
+        prompt (str): Request shows to user
         
     Return:
     -------
@@ -172,7 +170,7 @@ def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type
     -----
         database (DataBase): database to check id, 
             connect with user that have SELECT grant permission on table_name
-        prompt (str): Request to user.
+        prompt (str): Request to user.( ce qui est affiché à l'utilisateur)
         table_name (str): Name of table to check id.
         id_type (Type, optional): type of id to check (int or str). Defaults to 'integer'
         
@@ -183,6 +181,7 @@ def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type
     Return:
     -------
         id_type(): valid id
+        NoneType: if id is not valid (not found in "mysql".table)
         
     Version:
     --------
@@ -203,9 +202,10 @@ def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type
     while True:
         try:
             id = id_type(get_string(prompt))
-            if id not in id_list:
-                raise ValueError
-            return id
+            if id in id_list:
+                return id
+            print("ERROR: id not found")
+            return None
         except (TypeError, ValueError):
             pass
     

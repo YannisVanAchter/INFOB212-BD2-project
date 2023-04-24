@@ -14,7 +14,7 @@ def create_new_organe_row(
         com_id: int,
         expiration_date_transplantation: datetime = None,
     ):
-    """create new row in organe table
+    """create new row in organ table
 
     Args:
         database (DataBase): database where insert

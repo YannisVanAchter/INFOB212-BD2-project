@@ -1,1 +1,2 @@
-from .authenticate import User
+from .user import User
+from .authenticate import register, login

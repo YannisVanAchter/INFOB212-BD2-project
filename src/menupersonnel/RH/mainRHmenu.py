@@ -2,20 +2,12 @@ from module.database import DataBase
 from module.get import get_int 
 from module.get import get_bool
 from module.get import get_string 
-from menuconnexion.menu import main_login_menu
+from module.get import get_valid_id 
+from auth.authenticate import register
+import string
+import random
 
-"""
 
-Utiliser le module get pour demander à l'utilisateur de rentrer des informations (pour l'id notament) afin d'améliorer la liste du code.
-
-L'idée est de faire un menu qui permet de faire les opération de base pour le RH. 
-Est aussi que ce menu permette de faire autant d'action que souhaitée par l'utilisateur. (ex: ajouter un employé pui modifier un employé puis supprimer un employé puis ajouter un autre employe)
-
-Enfin, une mauvaise utilisation des f-string dans le code.
-Syntax: f"string {variable} string" 
-! Ne pas oublier le 'f' avant les guillemets !
-! Ne pas oublier les accolades autour de(s) la/es variable(s) !
-"""
 
 def main_RH_menu(db: DataBase):
     """
@@ -32,31 +24,38 @@ def main_RH_menu(db: DataBase):
     """
    
     print("You are now in HR menu")
-    validity = False
     
+    validity = True 
 
-    while (validity == False): 
+    def print_menu():
         print("Choose what you want to do: ")
         print("Type 0 if you want add an employee to the company ")
         print("Type 1 if you want to modify an actual employee ")
         print("Type 2 if you want to delete an actual employee ")
+        print("Type 3 if you want to exit")
+
+
+    while (validity == True): 
+    
+        print_menu()
         choice = get_int("your choice: ")
-        if (choice != 0 and choice != 1 and choice != 2):
-            validity = False 
+        if (choice not in {0,1,2,3}):
             print("This operation is not possible, please choose another number")
         else: 
-            validity = True 
-    db.connect()
-    # According to the number choosen, will redirect to the good function
-    if choice == 0: # you can do the path in the while loop statement and add a exit option to user
-        add_employee()
-    
-    if choice == 1: 
-        modify_employee()
-        
-    if choice == 2: 
-        delete_employee()
-    db.disconnect()
+            db.connect()
+            if choice == 0: 
+                add_employee()
+            
+            if choice == 1: 
+                modify_employee()
+                
+            if choice == 2: 
+                delete_employee()
+            
+            if choice == 3: 
+                validity = False 
+
+            db.disconnect()
 
 def add_employee(db : DataBase):
     """ 
@@ -80,19 +79,36 @@ def add_employee(db : DataBase):
         
     db.disconnect()
     
-def create_person(): 
+def create_person(db : DataBase): 
     """
-    To add a new employee who hasn't already created an account in the company. 
+    To add a new employee who has not already created an account in the company. 
+    Like we create ourselves a account PERSON we generate ourselves a temporary password.
     Create a new account and call the function create_employee(id) with the id created
+    
+    Args:
+    db (DataBase) : Data base connected for HR
     """
-    main_login_menu(DataBase) ## Appelle la fonction de Youlan pr la création d'un compte 
-    ## On crée nous-même un compte employée mais du coup en théorie on génère ici un mdp temporaire que la personne devra changer 
-    id_person = get_int("Please enter the id of the person: ")
-    create_employee(id_person)
+   
+    print("Now you will create a new personnal account")
+    email = get_string("Please enter the email of the person: ")
+    last_name = get_string("Enter the last name of the person: ")
+    first_name = get_string("Enter the first name of the person: ")
+    phone_number = get_int ("Enter the phone number of the person: ")
+    born_date = get_string ("Enter the date of birth of the person (DD/MM/YYYY): ")
+    
+    #Generate a temporary password for the new person 
+    temporary_password = ""
+    length_password = 8
+    for i in range (length_password):
+        temporary_password += random.choice(string.ascii_letters + string.digits) 
+
+
+    id_person = register ( email, last_name, first_name, phone_number, born_date, temporary_password)
+    create_employee(id_person, db)
 
 def create_employee(id, db: DataBase): 
     """
-    To add to a person who has already created an account in the company the role of employee 
+    To add the role of employee to a person who has already created an account in the company 
     
     Args: 
     id : the id of the person that has already had an account in the company 
@@ -101,19 +117,11 @@ def create_employee(id, db: DataBase):
     db.connect()
     
     print("Now you will give the job of the user with this id")
-    
-    db.execute("SELECT id FROM PERSON")
-    people = db.table
 
-    if id not in people: 
-        print('The id that you entered is not valid')
-    
     salary_person = get_int("Please enter the salary of the person: ")
     function_person = get_string("Please enter the exact function of the person in the company: ")
-    
-    # use f before the string to use the variable in the string
-    # example: f"INSERT INTO ... (...) VALUES ({my_variable}, {my_variable_2}, {my_variable_3})"    
-    db.execute("INSERT INTO STAFF (id, salary, function) VALUES ({id}, {salary_person}, {function_person})")
+   
+    db.execute(f"INSERT INTO STAFF (id, salary, function) VALUES ({id}, {salary_person}, {function_person})")
     
     print("Choose the category of the person: ")
     print("Type 0 if the person is an anaesthetist")
@@ -122,7 +130,7 @@ def create_employee(id, db: DataBase):
     print("Type 3 if the person is an accountant")
     print("Type 4 if the person is a HR person")
     print("Type 5 if the person is a CEO")
-    print("Type 6 if the person doesn't belong to a particular category")
+    print("Type 6 if the person does not belong to a particular category")
     
     category = get_int("The number of the category is: ")
     
@@ -131,19 +139,18 @@ def create_employee(id, db: DataBase):
     else: 
         if category == 0:
             inami = get_string("Enter the INAMI number of the person:")
-            # use f-string as explained above
-            db.execute("INSERT INTO ANAESTHETIST (id,inami_number) VALUES ({id},{inami})")
+            db.execute(f"INSERT INTO ANAESTHETIST (id,inami_number) VALUES ({id},{inami})")
         if category == 1: 
-            db.execute("INSERT INTO NURSE (id) VALUES ({id})")
+            db.execute(f"INSERT INTO NURSE (id) VALUES ({id})")
         if category == 2: 
             inami = get_string("Enter the INAMI number of the person:")
-            db.execute("INSERT INTO DOCTOR (id,inami_number) VALUES ({id},{inami})")
+            db.execute(f"INSERT INTO DOCTOR (id,inami_number) VALUES ({id},{inami})")
         if category == 3: 
-            db.execute("INSERT INTO ACCOUNTANT (id) VALUES ({id})")  
+            db.execute(f"INSERT INTO ACCOUNTANT (id) VALUES ({id})")  
         if category == 4: 
-            db.execute("INSERT INTO HR (id) VALUES ({id})")  
+            db.execute(f"INSERT INTO HR (id) VALUES ({id})")  
         if category == 5: 
-            db.execute("INSERT INTO CEO (id) VALUES ({id})")  
+            db.execute(f"INSERT INTO CEO (id) VALUES ({id})")  
             
     db.disconnect()
             
@@ -155,25 +162,22 @@ def modify_employee(db : DataBase):
     db (DataBase): Data base connected for HR 
     """
     db.connect()
-    id_employee = get_int("Enter the id of the employee")
     
-    db.execute("SELECT id FROM STAFF")
-    staff = db.table
-    if id_employee not in staff:
-        print("The id of the person is not valid")
+    id_employee = get_valid_id(db, "Please enter the id of the employee:", "STAFF" , int)
+    
+    print("What do you want to do?")
+    choice = get_int("Type 1 if you want to modify the salary of the employee and 2 if you want to modify his function:")
+    
+    if choice not in {1,2}:
+        print("Please enter a valid integer")
     else: 
-        print("What do you want to do?")
-        choice = get_int("Type 1 if you want to modify the salary of the employee and 2 if you want to modify his function:")
-        if choice not in {1,2}:
-            print("Please enter a valid integer")
-        else: 
-            if choice == 1: 
-                new_salary = get_int("Enter the new salary: ")
-                db.execute(f"UPDATE salary = {new_salary} FROM STAFF WHERE ID = id_employee") ##A revoir 
-            if choice == 2: 
-                new_function = get_string("Enter the new function: ")
-                db.execute(f"UPDATE function = {new_function} FROM STAFF WHERE ID = id_employee")
-        
+        if choice == 1: 
+            new_salary = get_int("Enter the new salary: ")
+            db.execute(f"UPDATE salary = {new_salary} FROM STAFF WHERE ID = id_employee") 
+        if choice == 2: 
+            new_function = get_string("Enter the new function: ")
+            db.execute(f"UPDATE function = {new_function} FROM STAFF WHERE ID = id_employee")
+    
     db.disconnect()
     
 def delete_employee(db: DataBase): 
@@ -184,40 +188,66 @@ def delete_employee(db: DataBase):
     db (DataBase): Data base connected for HR 
     """
     db.connect()
-    id_employee = get_int("Enter the id of the employee")
     
-    db.execute("SELECT id FROM STAFF")
-    staff = db.table
-    if id_employee not in staff:
-        print("The id of the person is not valid")
-    else: 
-       print("Are you sure to delete this employee? After that you cannot go back ")
-       confirmation = get_string("Type yes if you want to delete this person or no otherwise")
-       if confirmation == "yes": 
-           #Verifier si la personne n'est pas medecin, infirmiere ou anesthésiste 
-            db.execute("SELECT id FROM MEDECIN")
-            medecins = db.table
-            db.execute("SELECT id FROM NURSE")
-            medecins += db.table 
-            db.execute("SELECT id FROM ANAESTHETIST")
-            medecins += db.table
+    id_employee = get_valid_id(db, "Please enter the id of the person:", "STAFF" , int)
+
+    print("Are you sure to delete this employee? After that you cannot go back ")
+    confirmation = get_string("Type yes if you want to delete this person or no otherwise")
+    
+    if confirmation == "yes": 
+        #Verifier si la personne n'est pas medecin, infirmiere ou anesthésiste 
+        db.execute("SELECT id FROM MEDECIN")
+        medecins = db.table
+        db.execute("SELECT id FROM NURSE")
+        medecins += db.table 
+        db.execute("SELECT id FROM ANAESTHETIST")
+        medecins += db.table
+      
+        
+        if id_employee not in medecins:
+            db.execute("SELECT id FROM CEO")
+            ceo = db.table
+            db.execute("SELECT id FROM CUSTOMER")
+            customers = db.table 
             
-            if id_employee not in medecins:
-                db.execute("SELECT id FROM CEO")
-                ceo = db.table
-                if id_employee not in ceo:
-                   db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") # La personne devra supprimer son compte personne elle-même 
-                else:
-                   print("You don't have the permission to delete the CEO")  
-            else:
-                db.execute("SELECT id FROM TRANSPLANTATION")
-                transplantation_medecins = db.table 
+            if id_employee not in ceo:
+                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") ## MODIF LA SUPPRESSION DES DONNEES (ANONYMISER) // SET NULL 
+                if id_employee not in customers: 
+                    db.execute(f"DELETE id FROM PERSON WHERE id = {id_employee}")
                 
-                if id_employee not in transplantation_medecins:
-                   db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee}")
-                else: 
-                   print('This person can not be actually deleted because she works on a transplantation')       
-       else: 
-           print('This person will not be delete')
-           
+            else:
+                print("You don't have the permission to delete the CEO")  
+        else:
+            db.execute("SELECT id FROM TRANSPLANTATION")## et que date_transplantation plus loin que date actuelle // TRIGGER ????
+            transplantation_medecins = db.table 
+            
+            if id_employee not in transplantation_medecins: 
+                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee}")
+            else: 
+                print('This person can not be actually deleted because she has to work on a transplantation')       
+    else: 
+        print('This person will not be deleted')
+        
     db.disconnect()
+    
+    """
+    create trigger TRG_DELETE_MEDECINS 
+  -- Trigger goal: Before delete a medecin checks if this employee has to do a transplatation (in the future)
+     -- Author: Aurélie Genot 
+      before delete on STAFF 
+      for each row
+--      begin
+--           SELECT date
+--                FROM TRANSPLATATION 
+--                WHERE STAFF.id IN (SELECT STAFF.id 
+--                                    FROM STAFF 
+--                                    WHERE STAFF.id = {id_employee}
+--                                    );
+          
+--           if (date > actual_date) then
+--                signal sqlstate '45000'
+--                set message_text = 'This person cannot be deleted because she has to do a transplatation';
+--           end if;
+--      end;
+
+""" 

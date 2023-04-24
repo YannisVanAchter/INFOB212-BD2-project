@@ -1,4 +1,4 @@
 
 # ./src
 
-Dossier source contenant toute la partie code sur laquelle on travaille tous ! 
+Source folder containing the code we are all working on

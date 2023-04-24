@@ -5,7 +5,7 @@ Allow user of DataBase object to connect to MySQL database and execute sql insid
 Follow the pep 249 functionnality for more information about the functionnality of this object 
 follow this link: https://peps.python.org/pep-0249/
 
-Done and functionnal, check DataBase object documentation to get use example
+Done and functionnal, check DataBase object documentation to get examples of use
 """
 __version__ = "1.1.0"
 __author__  = "Yannis Van Achter <discord:Yannis Van Achter#1444>"
@@ -21,7 +21,7 @@ from exception.unconnectederror import UnConnectedError
 
 
 class DataBase:
-    """DataBase object is a collection of usefull function for database management with mysql.connector
+    """DataBase object is a collection of useful function for database management with mysql.connector
 
     use case example:
         config = {
@@ -43,9 +43,9 @@ class DataBase:
             for row in db.table:\n
                 print(row)\n
 
-    You can also use this object as parameter for execute sql querry in other functions\n
+    You can also use this object as parameter to execute sql querry in other functions\n
 
-    For more detail about this object use print(help(DataBase))
+    For more details about this object use print(help(DataBase))
     """
 
     def __init__(
@@ -80,9 +80,9 @@ class DataBase:
         self.config = kwargs
         self.__has_one_querry = False
         self.__is_connected = False
-        # self.auto_commit_ = auto_commit
         self.auto_connect = auto_connect
         self.__fetched = []
+        self.__fetchedPrepared = []
         self.__cursor = None
         self.__db = None
 
@@ -115,6 +115,13 @@ class DataBase:
             replace self._DataBase__cursor.fetchall()
         """
         return self.__fetched
+    
+    @property
+    def tableArgs(self) -> (list[tuple]):
+        """Represent the list of raws fetch from SELECT SQL command when args are used
+        
+        """
+        return self.__fetchedPrepared
 
     @property
     def cursor(self) -> (MySQLCursor):
@@ -147,19 +154,16 @@ class DataBase:
 
     # https://stackoverflow.com/questions/1984325/explaining-pythons-enter-and-exit
     def __enter__(self):
+        """Enter method for with statement"""
         self.connect()
         return self
 
     def __exit__(self, exc_type, exc_value, trace):
-        # if self.auto_commit_:
-        #     self.commit()
+        """Exit method for with statement"""
         self.disconnect()
 
     def __del__(self):
         """On delete of object disconnect from data base"""
-        # if self.auto_commit_:
-        #     self.commit()
-        
         if self.__is_connected:
             self.disconnect()
 
@@ -200,6 +204,7 @@ class DataBase:
                     raise UnConnectedError()
 
                 self.__cursor = self.__db.cursor(buffered=True)
+                self.__cursorPrepared = self.__db.cursor(prepared=True)
 
                 self.__is_connected = True
 
@@ -241,37 +246,47 @@ class DataBase:
             
         querry = querry.strip()
         try:
+            # create new cursor before next query to keep acces to last query
+            self.__cursor.close()
+            self.__cursor = self.__db.cursor()
             if multi:
                 for _ in self.__cursor.execute(querry, multi=multi):
                     pass
-                if not self._db.is_connected():
+                if not self.__db.is_connected():
                     self.__db.reconnect()
-                self.__cursor.close()
-                self.__cursor = self.__db.cursor()
 
             else:
                 self.__cursor.execute(querry, multi=multi)
-                if querry.startswith("SELECT") or querry.startswith("SHOW"):
+                if (
+                    querry.strip().upper().startswith("SELECT")
+                    or querry.strip().upper().startswith("SHOW")
+                ):
                     self.__fetched = self.__cursor.fetchall()
                     if (not self.__db.is_connected()):
                         self.__db.reconnect()
                     self.__cursor.nextset()
-                else:
-                    if (not self.__db.is_connected()):
-                        self.__db.reconnect()
-                    self.__cursor.close()
-                    self.__cursor = self.__db.cursor()
-            # if self.auto_commit_:
-            #     self.commit()
+                elif (not self.__db.is_connected()):
+                    self.__db.reconnect()
         except ProgrammingError as e:
             raise e
         finally:
             if self.auto_connect and not self.__is_connected:
+                self.disconnect()
                 pass
-                # if not self.auto_commit_:
-                #     self.commit()
-                
-                # self.disconnect()
+
+    def execute_with_params(self, query: str, argsTuple: tuple):
+        self.__cursorPrepared.execute(query, argsTuple)
+        if query.startswith("SELECT") or query.startswith("SHOW"):
+            self.__fetchedPrepared = self.__cursor.fetchall()
+            if (not self.__db.is_connected()):
+                self.__db.recconect()
+            self.__cursorPrepared.nextset()
+        else:
+            if (not self.__db.is_connected()):
+                self.__db.recconect()
+            self.__cursorPrepared.close()
+            self.__cursorPrepared = self.__db.cursor(prepared=True)
+
 
     def execute_many(self, *querry: str):
         """execute many SQL querry in database
@@ -289,32 +304,12 @@ class DataBase:
             Make sure to be connected to the database before execute querry
             Use self.table to get the return of the querry
         """
+        multi_select = []
         for q in querry:
             self.execute(q)
-
-    # def commit(self):
-    #     """commit changes in database"""
-    #     self.__db.commit()
-
-    # def auto_commit(self, querry: str):
-    #     """execute querry and commit changes in database
-        
-    #     Args:
-    #     -----
-    #         querry (str): querry formated in SQL
-    #     """
-    #     self.execute(querry)
-    #     self.commit()
-
-    # def auto_commit_many(self, *querry: str):
-    #     """execute many querry and commit changes in database
-        
-    #     Args:
-    #     -----
-    #         querry (str): querry formated in SQL
-    #     """
-    #     self.execute_many(*querry)
-    #     self.commit()
+            if q.upper().startswith("SELECT"):
+                multi_select.append(self.table)
+        return multi_select
 
     def disconnect(self) -> (None):
         """Disconnect to database and close cursor
@@ -327,6 +322,5 @@ class DataBase:
         -------
             Youlan Collard & Yannis Van Achter
         """
-        self.__cursor.close()
         self.__db.close()
         self.__is_connected = False

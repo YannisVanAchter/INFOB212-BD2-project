@@ -5,7 +5,7 @@ import time
 
 from module.get import get_string, get_sql_user_querry, get_bool, get_date
 from module.database import DataBase, ProgrammingError
-from module.utils import clear_terminal as cls
+from module.utils import clear_terminal as cls, insert_into
 from constants import BLOOD_PRICE_FACTOR
 
 from .view import *
@@ -13,9 +13,9 @@ from .controler import *
 
 
 def main_accounting_menu(database: DataBase) -> (int):
-    """Accountent menu
+    """Accounting menu
 
-    allow user to:
+    allows user to:
     --------------
         - set product price
         - update price
@@ -28,7 +28,7 @@ def main_accounting_menu(database: DataBase) -> (int):
 
     Args:
     -----
-        database (DataBase): Data base connected for this user (the accountent)
+        database (DataBase): Data base connected for this user (the accountant)
 
     Return:
     -------
@@ -47,7 +47,7 @@ def main_accounting_menu(database: DataBase) -> (int):
     while True:
         try:
             print_menu()
-            choice = get_string("Enter you choice: ").strip()
+            choice = get_string("Enter your choice: ").strip()
 
             match choice:
                 case "1":
@@ -81,7 +81,7 @@ def case_other():
     
 
 def update_menu(database):
-    """Menu to update the product price (price because this is the only that can be update by accuntant)"""
+    """Menu to update the product price (price because this is the only thing that can be update by accuntant)"""
 
     def print_menu():
         print("What do you want to update ?")
@@ -256,7 +256,7 @@ def insert_organ(database: DataBase, donator_id: int = None):
 
     Args:
     -----
-        database (DataBase): database to insert organ in, connected as accuntant user
+        database (DataBase): database to insert organ in, connected as accountant user
         donator_id (int, optional): Id of the donator. Defaults to None.
     """
     if donator_id is None or donator_id < 0:
@@ -454,9 +454,7 @@ def select_selling_quantity(database: DataBase):
 
 
 def select_product_not_sell(database: DataBase):
-    """print product that are not sell
-
-    Print organe and blood that are not sell
+    """print products (organs and blood) that are not sell
 
     Args:
     -----
@@ -483,7 +481,7 @@ def select_product_not_sell(database: DataBase):
 
 
 def find_where_are_the_clients(database: DataBase):
-    """Find where are the clients buy print there address
+    """Find where are the clients and print there address
 
     Args:
     -----
