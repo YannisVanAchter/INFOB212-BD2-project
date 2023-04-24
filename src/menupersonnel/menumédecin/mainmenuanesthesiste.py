@@ -25,7 +25,7 @@ def main_medecin_menu(database: DataBase):
     """
 
     print("In médecin menu")
-    id = str(input("Quel est votre identifiant de médecin ?")) #récupère l'identifiant du médecin
+    id = str(input("Quel est votre identifiant d'anésthésiste ?")) #récupère l'identifiant de l'anésthésiste
 
     while True:
         print("Que voulez-vous faire ?")
@@ -53,8 +53,8 @@ def main_medecin_menu(database: DataBase):
 
 def seepeople(database: DataBase, id):
     """
-    Allows a medecin to see people with who he works with according to a date of an operation
-    This function prints the id of the anesthesiste and nurses he works with on a certain date
+    Allows a anesthésiste to see people with who he works with according to a date of an operation
+    This function prints the id of the doctor and nurses he works with on a certain date
     
     Author: Eline Mota
     """
@@ -69,19 +69,19 @@ def seepeople(database: DataBase, id):
     date_operation = datetime.date(annee, jour, mois)
 
     #cherche les anésthésistes qui travaillent avec le médecin à la date donnée et selon l'id du médecin
-    anesthésiste = ("SELECT id FROM ANAESTHETIST WHERE id in (SELECT A_w_id from TRANSPLANTATION WHERE date = %s AND D_w_id = %s)")
+    anesthésiste = ("SELECT id FROM DOCTOR WHERE id in (SELECT D_w_id from TRANSPLANTATION WHERE date = %s AND D_w_id = %s)")
 
     database.execute(anesthésiste, (date_operation, id))
 
     print("Voici les personnes avec lesquelles vous allez travailler")
 
     for (id) in database.table:
-        print("Vous travaillez avec cet anésthésiste:", id)
+        print("Vous travaillez avec ce médecin :", id)
     database.disconnect()
     
     database.connect()
 
-    #cherche les infirmiers qui travaillent avec le médecin à la date donnée et selon l'id du médecin 
+    #cherche les infirmiers qui travaillent avec l'anésthésiste à la date donnée et selon l'id du médecin 
     infirmier = ("SELECT id FROM NURSE WHERE id in (SELECT N_N_id FROM N_work_on WHERE id in"
     "(SELECT id FROM TRANSPLANTATION where date = %s AND D_w_id = %s))")
 
@@ -94,7 +94,7 @@ def seepeople(database: DataBase, id):
 
 def seedate_operations(database: DataBase, id):
     """
-    According to the id of the medecin, this function allows him to see the futur dates of the transplantation he will have to make
+    According to the id of the anesthésiste, this function allows him to see the futur dates of the transplantation he will have to make
     This function prints the different dates of his futures operations 
 
     Author: Eline Mota 
@@ -102,7 +102,7 @@ def seedate_operations(database: DataBase, id):
     """
     database.connect()
 
-    dates = ("SELECT date FROM TRANSPLANTATION WHERE D_w_id = %s ")
+    dates = ("SELECT date FROM TRANSPLANTATION WHERE A_w_id = %s ")
     database.execute(dates, (id))
 
     for (date) in database.table:
@@ -153,9 +153,3 @@ def info_client(database: DataBase):
         print("Voici son pseudo:", Pseudo)
         print("voici son type de sang:", type_sang)
         print("Voici son signe de sang", signe_sang)
-
-
-
-
-
-

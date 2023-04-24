@@ -1,4 +1,3 @@
-
 import datetime
 import mysql.connector as mysql
 import module.get as get
@@ -25,7 +24,7 @@ def main_medecin_menu(database: DataBase):
     """
 
     print("In médecin menu")
-    id = str(input("Quel est votre identifiant de médecin ?")) #récupère l'identifiant du médecin
+    id = str(input("Quel est votre identifiant d'infirmier ?")) #récupère l'identifiant de l'infirmier
 
     while True:
         print("Que voulez-vous faire ?")
@@ -53,8 +52,8 @@ def main_medecin_menu(database: DataBase):
 
 def seepeople(database: DataBase, id):
     """
-    Allows a medecin to see people with who he works with according to a date of an operation
-    This function prints the id of the anesthesiste and nurses he works with on a certain date
+    Allows a nurse to see people with who he works with according to a date of an operation
+    This function prints the id of the anesthesiste and medecin he works with on a certain date
     
     Author: Eline Mota
     """
@@ -81,9 +80,8 @@ def seepeople(database: DataBase, id):
     
     database.connect()
 
-    #cherche les infirmiers qui travaillent avec le médecin à la date donnée et selon l'id du médecin 
-    infirmier = ("SELECT id FROM NURSE WHERE id in (SELECT N_N_id FROM N_work_on WHERE id in"
-    "(SELECT id FROM TRANSPLANTATION where date = %s AND D_w_id = %s))")
+    #cherche le médecin qui travaille avec l'infirmier à la date donnée et selon l'id de l'infirmier
+    infirmier = ("SELECT id FROM DOCTOR WHERE id in (SELECT D_w_id from TRANSPLANTATION WHERE date = %s AND D_w_id = %s)")
 
     database.execute(infirmier, (date_operation, id))
 
@@ -94,7 +92,7 @@ def seepeople(database: DataBase, id):
 
 def seedate_operations(database: DataBase, id):
     """
-    According to the id of the medecin, this function allows him to see the futur dates of the transplantation he will have to make
+    According to the id of the nurse, this function allows him to see the futur dates of the transplantation he will have to make
     This function prints the different dates of his futures operations 
 
     Author: Eline Mota 
@@ -102,7 +100,7 @@ def seedate_operations(database: DataBase, id):
     """
     database.connect()
 
-    dates = ("SELECT date FROM TRANSPLANTATION WHERE D_w_id = %s ")
+    dates = ("SELECT date FROM TRANSPLANTATION WHERE id in (SELECT id FROM N_work_on WHERE N_N_id = %s ")
     database.execute(dates, (id))
 
     for (date) in database.table:
@@ -112,7 +110,7 @@ def seedate_operations(database: DataBase, id):
 
 def info_organe(database: DataBase):
     """
-    This function allows a doctor to see the state, the way of conservation and the type of an organe by printing it 
+    This function allows a nurse to see the state, the way of conservation and the type of an organe by printing it 
     
     Author: Eline Mota
     
@@ -135,7 +133,7 @@ def info_organe(database: DataBase):
 
 def info_client(database: DataBase):
     """
-    This function allows a doctor to see the pseudo, the type and sign of blood of a patient on who he will have to operate.
+    This function allows a nurse to see the pseudo, the type and sign of blood of a patient on who he will have to operate.
     This function will print the pseudo, the type and signe of blood of a given patient accordinf to his id
 
     Authors: Eline Mota
@@ -153,9 +151,3 @@ def info_client(database: DataBase):
         print("Voici son pseudo:", Pseudo)
         print("voici son type de sang:", type_sang)
         print("Voici son signe de sang", signe_sang)
-
-
-
-
-
-
