@@ -32,17 +32,28 @@ def main_persoadmin_menu (db: DataBase):
 
     db.connect()
 
-    #Choice of the organe jtm et aurélie a les oreilles propres 
+    #Choice of the organe 
     while True :
-        organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO.keys}")
+        organe_type_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO.keys}")
 
-        if organe_choice in ORGAN_DICO:
-            print("Your selection is valid, thank you")
+        if organe_type_choice in ORGAN_DICO:
+            print("Your selection is valid, thank you, we will check if such an organe is available")
             break 
         
         else:
             print("Your selection is not valid, please start from the beginning idiot")
             continue
+
+    #Check if such an organe is available and assiciation 
+    db.execute("SELECT O.id, O.type, D;id, T.id FROM ORGANE O, DETAILS D, TRANSPLANTATION T WHERE O.type = organe_type_choice and O.id <> D.id and 0.id <> T.id")
+    organe_choice = db.table 
+    if len(organe_choice) == 0 :
+        print("All of the organes of the type you have choice is occuped")
+    else : 
+        organe_id = organe_choice[0][0] 
+        print ("Your organe is %i", organe_id)
+
+
 
     #To get the date of the operation
     while True :
@@ -125,11 +136,10 @@ def main_persoadmin_menu (db: DataBase):
         database=db,
         table="TRANSPLANTATION",
         attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
-        values=(date_choice, id, Con_id, transplantation_price, Rec_id, doc_id, anesthesist_id) 
+        values=(date_choice, id, organe_id, transplantation_price, Rec_id, doc_id, anesthesist_id) 
     )
 
 
 
-#TO DO check si organe libre
 #TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
-#TO DO con id de l'organe 
+
