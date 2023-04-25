@@ -36,7 +36,6 @@ def main_persoadmin_menu (db: DataBase):
     while True :
         organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO.keys}")
 
-        
         if organe_choice in ORGAN_DICO:
             print("Your selection is valid, thank you")
             break 
@@ -46,16 +45,21 @@ def main_persoadmin_menu (db: DataBase):
             continue
 
     #To get the date of the operation
-    
     while True :
         date_choice = get_date("Enter a date for your operation")
-        print("Your operation will attend on %d", date_choice)
-        
-    #check si date = libre ou pas 
+        db.execute("SELECT T.date FROM TRANPLANTATION T")
+        date_table = db.table 
 
+        if date_choice is not date_table :
+            print("Your operation will attend on %d", date_choice)
+            break
+
+        else :
+            print("Your choice is not valid, please start from the beginning idiot")
+            continue
+        
 
     print("We will assign you a doctor, an anaesthetist and a nurse")
-
     #To get the doctors who are free
     db.execute("SELECT T.id, D.inami_number, D.D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id")
     doctor_choice = db.table # récupère le résultat de la requête
@@ -122,28 +126,3 @@ def main_persoadmin_menu (db: DataBase):
 #TO DO demander si le client veut plusieurs nurses
 #TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
 #TO DO con id de l'organe 
-
-
-
-
-"""
- print("Have you passed an order for a transplantation or delivery ?")
-    print("Enter 1 if it is a transplantation")
-    print("Enter 1 if it is a order")
-    choice = get_int(print("What is your choice ?"))
-
-
-    input_valid = False
-    while not input_valid:
-        if choice == 1:
-            input_valid = True
-
-            
-        elif choice == 2:
-            input_valid = True
-            
-            
-        else:
-            print("Your selection is not valid, please start from the beginning idiot")
-
-"""
