@@ -32,7 +32,7 @@ def main_persoadmin_menu (db: DataBase):
 
     db.connect()
 
-
+    #Choice of the organe jtm et aurélie a les oreilles propres 
     while True :
         organe_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO.keys}")
 
@@ -86,8 +86,16 @@ def main_persoadmin_menu (db: DataBase):
     if len(nurse_choice) == 0 :
         print("All of the nurse is occuped")
     else : 
-        nurse_id = nurse_choice[0][2] # get the nurse inami from the result
-        print ("Your nurse is %i", nurse_id)
+        nurse1_id = nurse_choice[0][2] # get the nurse inami from the result
+        print ("Your nurse is %i", nurse1_id)
+        nursenbr_choice = print ("By default, you have one nurse, do you want a second one ? If yes, please, type 1 and 0 if one nurse is enougth for you")
+        if nursenbr_choice == 1 : 
+            nurse2_id = nurse_choice[1][2]
+            print ("Your nurse is %i", nurse2_id)
+
+
+            
+        
 
     #To get the price of the price of the organe
     organe_price = ORGAN_DICO[organe_choice][0]
@@ -121,8 +129,7 @@ def main_persoadmin_menu (db: DataBase):
     )
 
 
-#TO DO on ne sait pas comment remplacer Con_id et Rec_id
+
 #TO DO check si organe libre
-#TO DO demander si le client veut plusieurs nurses
 #TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
 #TO DO con id de l'organe 
