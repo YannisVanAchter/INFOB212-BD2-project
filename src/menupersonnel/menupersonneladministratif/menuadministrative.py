@@ -1,8 +1,9 @@
 from module.get import *
 from constants import * 
 from module.utils import *
+from menuconnexion.menu import *
 
-def main_persoadmin_menu (db: DataBase):
+def main_persoadmin_menu (db: DataBase, customer_id):
     """
     Menu for personnal administratif. 
     
@@ -16,9 +17,11 @@ def main_persoadmin_menu (db: DataBase):
 
     Args:
         db (DataBase): Data base connected for personnal administratif 
+        customer_id : the id of the connected customer 
     """
 
     db.connect()
+
 
     #Choice of the organe 
     while True :
@@ -117,7 +120,7 @@ def main_persoadmin_menu (db: DataBase):
         database=db,
         table="TRANSPLANTATION",
         attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
-        values=(date_choice, id, organe_id, transplantation_price, Rec_id, doc_id, anesthesist_id) 
+        values=(date_choice, id, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
     )
 
 #TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
