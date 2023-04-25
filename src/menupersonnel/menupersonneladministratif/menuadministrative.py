@@ -2,32 +2,20 @@ from module.get import *
 from constants import * 
 from module.utils import *
 
-"""
-Renomer le fichier pour mieux comptendre son but, ex: menuadministrative ou mainadministrativemenu
-
-Faire des specs pour chaque fonction.
-
-Si une fonction du module 'get' ne fait pas exactement ce que tu veux, tu peux la modifier.
-par exemple get_string(print("STING1", "STRING2" ...))
-Pour que get_string supporte cette manière de recevoir les arguments, il faut modifier la fonction get_string comme suit:
-def get_string(*prompt: str) -> (str):
-    "SPEC"
-    while True:
-        try:
-            return input(*prompt)
-        except (TypeError, ValueError):
-            pass
-
-Faire de même pour toutes les fonctions du module 'get' qui ne font pas exactement ce que tu veux.
-
-Le reste de la review est impossibles sans savoir (grâces aux specs) ce que tu veux faire dans cette fonction.
-
-"""
-
 def main_persoadmin_menu (db: DataBase):
-    # TODO: SPEC FIRST !
-    """ 
-    saloute ma biche 
+    """
+    Menu for personnal administratif. 
+    
+    allow the personnal administratif to: 
+    -------------------------------------
+    - Ask for an organe, check if it is available 
+    - Ask for a date, check if it is available 
+    - Associate a doctor, an anesthesist, one or two nurse
+    - Calculate the price of the Transplantation 
+    - Insert into the table TRANPLANTATION
+
+    Args:
+        db (DataBase): Data base connected for personnal administratif 
     """
 
     db.connect()
@@ -35,11 +23,9 @@ def main_persoadmin_menu (db: DataBase):
     #Choice of the organe 
     while True :
         organe_type_choice = get_string("You are there for a transplantation on which organe?", f"List of organes: {ORGAN_DICO.keys}")
-
         if organe_type_choice in ORGAN_DICO:
             print("Your selection is valid, thank you, we will check if such an organe is available")
             break 
-        
         else:
             print("Your selection is not valid, please start from the beginning idiot")
             continue
@@ -52,7 +38,6 @@ def main_persoadmin_menu (db: DataBase):
     else : 
         organe_id = organe_choice[0][0] 
         print ("Your organe is %i", organe_id)
-
 
 
     #To get the date of the operation
@@ -104,10 +89,6 @@ def main_persoadmin_menu (db: DataBase):
             nurse2_id = nurse_choice[1][2]
             print ("Your nurse is %i", nurse2_id)
 
-
-            
-        
-
     #To get the price of the price of the organe
     organe_price = ORGAN_DICO[organe_choice][0]
 
@@ -138,8 +119,6 @@ def main_persoadmin_menu (db: DataBase):
         attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
         values=(date_choice, id, organe_id, transplantation_price, Rec_id, doc_id, anesthesist_id) 
     )
-
-
 
 #TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
 
