@@ -26,8 +26,8 @@ Le reste de la review est impossibles sans savoir (grâces aux specs) ce que tu 
 
 def main_persoadmin_menu (db: DataBase):
     # TODO: SPEC FIRST !
-    """
-    
+    """ 
+    saloute ma biche 
     """
 
     db.connect()
