@@ -15,7 +15,7 @@ N'hésite pas non plus a faire de plus petites fonctions pour éviter de trop lo
 Cela vas aussi augmenter la lisiblé de ton code
 """
 
-def main_medecin_menu(database: DataBase):
+def main_anesthesiste_menu(database: DataBase):
 
     """
     Allows a medecin to navigate throughout his patients, his operations and his colleguas according to what he asks
