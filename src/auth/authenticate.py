@@ -32,7 +32,7 @@ def register(
         firstName: str = None, 
         phoneNumber: str = None, 
         selfLogin=False
-    ) -> User | None:
+    ) -> User | int:
     """Register a user in the databse
     
     Args:
@@ -52,7 +52,10 @@ def register(
         selfLogin: Auto login and returns the User (bool, optional)
 
     Returns:
+    --------
         personId: Id of the person registered
+        or
+        User: User object of the logged in user
     
     """
 
