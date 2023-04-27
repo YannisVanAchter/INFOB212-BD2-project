@@ -486,6 +486,22 @@ create index ORGANES_Types
 --           end if; 
 --      end; 
 
+-- create trigger TRG_CHECK_STAFF_NOT_OPERATING_THEMSELF
+--      -- Tigger goal: Checks if the receiver of an organ is not operating themself
+--      -- Author: Youlan Collard
+--      before insert or update on TRANSPLANTATION
+--      for each row
+--      begin
+--           if new.Rec_id = new.D_w_id or new.Rec_id = new.A_w_id or exists (
+--                SELECT * FROM N_work_on
+--                WHERE id = new.id and N_N_id = new.Rec_id;
+--           )
+--           then
+--                signal sqlstate '45000'
+--                set message_text = 'The receiver of an organ can not be in the transplant team';
+--           end if;
+--      end;
+
 -- Init Section
 -- _____________
 
