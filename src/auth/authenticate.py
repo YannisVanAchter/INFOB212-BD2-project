@@ -25,12 +25,9 @@ def login(db: DataBase, email: str, password: str) -> User | None:
 def register(
         db: DataBase,
         email: str, 
-        nickname: str, 
         password: str, 
         birthDate: str, 
         address: dict, 
-        bloodType: str, 
-        bloodSign: str, 
         lastName: str = None, 
         firstName: str = None, 
         phoneNumber: str = None, 
@@ -41,7 +38,6 @@ def register(
     Args:
     -----
         email: Email of the user to register (str)
-        nickname: Nickname of the user (str)
         password: Password of the user to register (str)
         birthDate: Date of birth of the user (DD/MM/YYYY) (str)
         address: Dict representing the address (dict)
@@ -50,12 +46,13 @@ def register(
             postalCode: Postal code of the address (int)
             city: City of the address (str)
             land: Land of the address (str)
-        bloodType: Type of blood of the client {A, B, AB, O}
-        bloodSign: Sign of the blood type of the client {+, -}
         lastName: Last name of the client (str, optional)
         firstName: Frist name of the client (str, optional)
         phoneNumber: Phone number of the client (str, optional)
         selfLogin: Auto login and returns the User (bool, optional)
+
+    Returns:
+        personId: Id of the person registered
     
     """
 
@@ -88,9 +85,12 @@ def register(
 
     personId = db.last_row_id
 
-
-    db.execute_with_params("INSERT INTO CUSTOMER (id, pseudo, blood_type, blood_sign) VALUES (%s,%s,%s,%s)", (personId, nickname, bloodType, bloodSign))
-
     if selfLogin:
         return login(email, password)
-    pass
+    return personId
+
+def register_cutomer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):
+    """Create a new customer based on a person
+    
+    """
+    db.execute_with_params("INSERT INTO CUSTOMER (id, pseudo, blood_type, blood_sign) VALUES (%s,%s,%s,%s)", (personId, nickname, bloodType, bloodSign))
