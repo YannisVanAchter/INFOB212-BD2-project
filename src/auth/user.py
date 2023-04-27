@@ -3,11 +3,15 @@ class User:
     
     """
 
-    def __init__(self, email: str, password: str):
-        self.__id = None
+    def __init__(self, email: str, password: str, id: int):
+        self.__id = id
         self.__email = email
         self.__password = password
         self.__type = None # Représente la fonction de l'utilisateur pour les permissions (employés, médecin etc)
+
+    @property
+    def id(self):
+        return self.__id
 
     @property
     def logged(self):

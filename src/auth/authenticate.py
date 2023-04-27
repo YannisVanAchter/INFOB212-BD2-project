@@ -15,12 +15,18 @@ def login(db: DataBase, email: str, password: str) -> User | None:
     
     """
 
-    query = "SELECT password FROM person WHERE email = '%s';"
+    query = "SELECT password FROM PERSON WHERE email = %s;"
+    db.execute_with_params(query, [email])
+    passwordFromDb = db.tableArgs[0][0]
 
-    db.execute_with_params(query, (email,))
-    print(db.tableArgs)
-
-    pass
+    if passwordFromDb == password:
+        query = "SELECT id FROM PERSON WHERE email = %s;"
+        db.execute_with_params(query, [email])
+        user = User(email, password, db.tableArgs[0][0])
+    else:
+        print("Identifiant incorrect.")
+        return None
+    return user
 
 def register(
         db: DataBase,
@@ -59,14 +65,18 @@ def register(
     
     """
 
-    db.execute_with_params("INSERT INTO ADDRESS (street, number, postal_code, city, land) VALUES (%s,%s,%s,%s,%s);", 
+    addressId = db.execute_with_params("INSERT INTO ADDRESS (street, number, postal_code, city, land) VALUES (%s,%s,%s,%s,%s);", 
         (address["street"], address["number"], address["postalCode"], address["city"], address["land"])
     )
 
-    addressId = db.last_row_id
+    print(addressId)
 
     args = ["email", "born_date", "password", "Liv_id"]
-    birthDateFormatted = birthDate.split("/").reverse().join("-")
+    print(birthDate)
+    birthDateTemp = birthDate.split("/")
+    birthDateTemp.reverse()
+    print(birthDateTemp)
+    birthDateFormatted = "-".join(birthDateTemp)
     argsValue = [email, birthDateFormatted, password, addressId]
 
     if lastName != None:
@@ -80,9 +90,10 @@ def register(
         argsValue.append(phoneNumber)
 
     argsForQuery = ", ".join(args)
-    argsValueForQuery = ("%s," * len(argsValue))[::-1]
-    print(f"{argsForQuery=}\n{argsValueForQuery=}")
+    argsValueForQuery = ("%s," * len(argsValue))[:-1]
+    print(f"{argsForQuery=}\n{argsValueForQuery=}\n{argsValue=}")
     query = f"INSERT INTO PERSON ({argsForQuery}) VALUES ({argsValueForQuery});"
+    print(query)
 
     db.execute_with_params(query, tuple(argsValue))
 

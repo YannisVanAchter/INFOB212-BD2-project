@@ -151,6 +151,10 @@ class DataBase:
     def last_row_id(self):
         """Returns id of the last row inserted"""
         return self.__cursor.lastrowid
+    
+    @property
+    def last_row_id_with_params(self):
+        return self.__cursorPrepared.lastrowid
 
     # https://stackoverflow.com/questions/1984325/explaining-pythons-enter-and-exit
     def __enter__(self):
@@ -274,18 +278,26 @@ class DataBase:
                 self.disconnect()
                 pass
 
-    def execute_with_params(self, query: str, argsTuple: tuple):
+    def execute_with_params(self, query: str, argsTuple: tuple) -> int:
+        """Execute a query and returns its id if an insert was made. -1 otherwise.
+        """
+        toReturn = -1
         self.__cursorPrepared.execute(query, argsTuple)
-        if query.startswith("SELECT") or query.startswith("SHOW"):
-            self.__fetchedPrepared = self.__cursor.fetchall()
+        print(self.__cursorPrepared)
+        if self.__cursorPrepared.with_rows:
+            self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             if (not self.__db.is_connected()):
                 self.__db.recconect()
             self.__cursorPrepared.nextset()
         else:
             if (not self.__db.is_connected()):
                 self.__db.recconect()
+            if query.startswith("INSERT") or query.startswith("UPDATE"):
+                toReturn = self.__cursorPrepared.lastrowid
+                self.__db.commit()
             self.__cursorPrepared.close()
             self.__cursorPrepared = self.__db.cursor(prepared=True)
+        return toReturn
 
 
     def execute_many(self, *querry: str):
