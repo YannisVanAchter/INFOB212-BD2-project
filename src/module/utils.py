@@ -2,6 +2,8 @@
 
 import os
 
+from module.database import DataBase
+
 
 def clear_terminal():
     """clear terminal"""
@@ -10,10 +12,6 @@ def clear_terminal():
         command = 'cls'
     os.system(command)
 
-
-# encoding: utf-8
-
-from module.database import DataBase
 
 def insert_into(database: DataBase, table: list[str], attributes: tuple[str], values: tuple):
     """insert into database

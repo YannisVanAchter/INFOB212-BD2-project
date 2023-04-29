@@ -65,7 +65,7 @@ def main_accounting_menu(database: DataBase) -> (int):
                 case "5":
                     cls()
                     return 0
-                case other:
+                case _:
                     case_other()
 
         except KeyboardInterrupt:
@@ -81,7 +81,9 @@ def case_other():
     
 
 def update_menu(database):
-    """Menu to update the product price (price because this is the only thing that can be update by accuntant)"""
+    """Menu to update the product price 
+    (price because this is the only thing that can be update by accuntant)
+    """
 
     def print_menu():
         print("What do you want to update ?")
@@ -415,7 +417,7 @@ def select_selling_quantity(database: DataBase):
     querry = f"SELECT COUNT(*) as 'Detail quantity', SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) as 'Total price for those details'"
     querry += " FROM DETAIL, BLOOD WHERE"
     if include_start_date or include_end_date:
-        querry += " DETAIL.id IN (SELECT ORDER.id FROM ORDER WHERE ORDER.Buy_id IN (SELECT DELIVERY.id FROM DELIVERY WHERE "
+        querry += " DETAIL.id IN (SELECT ORDER_.id FROM ORDER_ WHERE ORDER_.Buy_id IN (SELECT DELIVERY.id FROM DELIVERY WHERE "
         if include_start_date:
             querry += f"DELIVERY.departure_date >= {start_date}"
             if include_end_date:
@@ -436,7 +438,7 @@ def select_selling_quantity(database: DataBase):
     querry = "SELECT COUNT(*) as 'Detail quantity', SUM(ORGANE.price) as 'Total price for those operation'"
     querry += " FROM DETAIL, ORGANE WHERE"
     if include_start_date or include_end_date:
-        querry += " DETAIL.id IN (SELECT ORDER.id FROM ORDER WHERE ORDER.Buy_id IN (SELECT DELIVERY.id FROM DELIVERY WHERE "
+        querry += " DETAIL.id IN (SELECT ORDER_.id FROM ORDER_ WHERE ORDER_.Buy_id IN (SELECT DELIVERY.id FROM DELIVERY WHERE "
         if include_start_date:
             querry += f"DELIVERY.departure_date >= {start_date}"
             if include_end_date:
@@ -490,7 +492,7 @@ def find_where_are_the_clients(database: DataBase):
     querry = ""
     querry += "SELECT CUSTOMER.id AS 'Customer id', ADDRESS.street AS 'Street', ADDRESS.city AS 'City', ADDRESS.postal_code AS 'Postal code', ADDRESS.land AS 'Country'"
     querry += " FROM CUSTOMER, PERSON, ADDRESS WHERE CUSTOMER.id = PERSON.id AND PERSON.Liv_id = ADDRESS.id"
-    querry += " AND PERSON.id IN (SELECT ORDER.Buy_id FROM ORDER);"
+    querry += " AND PERSON.id IN (SELECT ORDER_.Buy_id FROM ORDER_);"
     with database as db:
         db.execute(querry)
 
@@ -531,20 +533,20 @@ def get_selling_price_of_each_command(database: DataBase):
         )
 
     print("Here is the client that buy something:")
-    querry = f"SELECT ORDER.id AS 'COMMANDE', SUM(ORGAN.price) AS 'Price organ', SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Price blood', SUM(ORGAN.price) + SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Total price'"
-    querry += f"FROM ORDER, DETAIL, ORGAN, BLOOD WHERE "
+    querry = f"SELECT ORDER_.id AS 'COMMANDE', SUM(ORGAN.price) AS 'Price organ', SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Price blood', SUM(ORGAN.price) + SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Total price'"
+    querry += f"FROM ORDER_, DETAIL, ORGAN, BLOOD WHERE "
     querry += (
-        "ORDER.id = DETAIL.id AND DETAIL.ORGAN = ORGAN.id AND DETAIL.BLOOD = BLOOD.id "
+        "ORDER_.id = DETAIL.id AND DETAIL.ORGAN = ORGAN.id AND DETAIL.BLOOD = BLOOD.id "
     )
     if include_start_date or include_end_date:
         querry += " AND "
     if include_start_date:
-        querry += f"ORDER.id IN (SELECT DELIVERY.id FROM DELIVERY WHERE DELIVERY.departure_date >= {start_date})"
+        querry += f"ORDER_.id IN (SELECT DELIVERY.id FROM DELIVERY WHERE DELIVERY.departure_date >= {start_date})"
         if include_end_date:
             querry += " AND "
     if include_end_date:
-        querry += f"ORDER.id IN (SELECT DELIVERY.id FROM DELIVERY WHERE DELIVERY.departure_date <= {end_date})"
-    querry += " GROUP BY ORDER.id;"
+        querry += f"ORDER_.id IN (SELECT DELIVERY.id FROM DELIVERY WHERE DELIVERY.departure_date <= {end_date})"
+    querry += " GROUP BY ORDER_.id;"
 
     with database as db:
         db.execute(querry)

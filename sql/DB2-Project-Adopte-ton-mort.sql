@@ -344,50 +344,51 @@ create index ORGANES_Types
 
 -- View Section
 -- _____________ 
--- create view ACCOUNTABLEORGABLO(O.type, O.price, B.type, B.signe)
---      -- View goal : view accountable to view the price of the articles 
---      -- Authors: Aline Boulanger  et Louise Delpierre
---      as  select O.type, B.type, B.signe, O.price
---      from ORGANE O, BLOOD B
---      where O.type = O.price
---      and B.type = B.signe 
---      group by O.type and  B.type
+create or replace view ACC_PRICE(id_organ, type_organ, price_organ, id_blood, type_blood, signe_blood)
+     -- View goal : view accountable to view the price of the organ and the blood
+     -- Author: "The Blood" team
+     as  select O.id , O.type, O.price, B.id, B.type, B.signe
+     from ORGANE O, BLOOD B;
 
--- create view ACCOUNTABLETRANPLANLIVRAI(PRICE, TYPE)
---      -- View goal : view accountable to view the price of the transplantation and the delivery
---      -- Author: Aline Boulanger et Louise Delpierre
---      as  select TD.price
---      from TRANSPLANTATION T, DELIVERY D, TYPE_DELIVERY TD, CUSTOMER C, ADDRESS A
---      where D.Typ_id = TD.id
---      and C.id = A.id
+
+create or replace view DEL_ORDER(first_name, last_name, order_id, street, number, postal_code, city, country)
+     -- View goal : view deliverers to view information for the delivery
+     -- Author: "The Blood" team
+     as  select D.recipent_first_name, D.recipent_last_name, O.id, A.street, A.number, A.postal_code, A.city, A.land
+     from DELIVERY D, TYPE_DELIVERY TD, ADDRESS A, ORDER_ O
+     where 
+     O.Typ_id = D.id and 
+     D.Typ_id = TD.id and 
+     TD.id != "main propre" and
+     D.At_id = A.id and 
+     D.effective_arrival_date = null;
    
 
--- create view RH (SALARY, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, NAME, FIRST_NAME, EMAIL, PHONE)
---      -- View goal : view RH, to view the staff, the wages, jobs
---      -- Author: Louise DELPIERRE et Aline Boulanger 
---      as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTABLE, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
---      from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTABLE AC, HR H, ADDRESS AD
---      where id.STAFF = id.PERSON
---      and S.NURSE = N.NURSE
---      and S.ANAESTHESIST = A.ANAESTHESIST
---      and S.CEO = C.CEO
---      and S.ACCOUNTABLE = AC.ACCOUNTABLE
---      and S.HR = H.HR
---      and S.DOCTOR = D.DOCTOR
---      and id.PERSON = id.ADDRESS
---      group by S.DOCTOR
---      group by S.NURSE
---      group by S.ANAESTHESIST
---      group by S.CEO
---      group by S.ACCOUNTABLE
---      group by S.HR
+create or replace view RH (SALARY, DOCTOR, NURSE, ANAESTHESIST, CEO, ACCOUNTANT, HR, NAME, FIRST_NAME, EMAIL, PHONE)
+     -- View goal : view RH, to view the staff, the wages, jobs
+     -- Author: Louise DELPIERRE et Aline Boulanger 
+     as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTANT, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
+     from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTANT AC, HR H, ADDRESS AD
+     where S.id = P.id 
+     and S.NURSE = N.id
+     and S.ANAESTHESIST = A.id
+     and S.CEO = C.id
+     and S.ACCOUNTANT = AC.id
+     and S.HR = H.id
+     and S.DOCTOR = D.id
+     and P.id = AD.id
+     group by S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTANT, S.HR;
 
--- create view MEDECIN (organe, client, sang, anesthesiste, medecin)
--- -- View goal: view information on the customer and the organ the doctor will have to transplant on him 
--- -- Authors: Eline Mota
--- as select type.ORGANE, Rec_id.TRANSPLANTATION, blood_type.CUSTOMER, id.ANAESTHESIST, id.DOCTOR
--- from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR M
--- where T.Rec_id = C.id and T.Con_id = O.id and T.D_w_id = M.id and T.A_w_id = A.id
+create or replace view MEDECIN (organe, client, sang, anesthesiste, medecin)
+     -- View goal: view information on the customer and the organ the doctor will have to transplant on him 
+     -- Authors: Eline Mota
+     as select O.type, T.Rec_id, C.blood_type, A.id, D.id
+     from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR D
+     where 
+     T.Rec_id = C.id and 
+     T.Con_id = O.id and 
+     T.D_w_id = D.id and 
+     T.A_w_id = A.id;
 
 
 
@@ -507,5 +508,5 @@ create index ORGANES_Types
 
 insert into TYPE_DELIVERY values ('normal', 5);
 insert into TYPE_DELIVERY values ('express', 10);
-insert into TYPE_DELIVERY values ('internationnal', 15);
+insert into TYPE_DELIVERY values ('international', 15);
 insert into TYPE_DELIVERY values ('main propre', 3);
