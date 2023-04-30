@@ -8,7 +8,6 @@ import string
 import random
 
 
-
 def main_RH_menu(db: DataBase):
     """
     Menu for HR. 
@@ -103,7 +102,7 @@ def create_person(db : DataBase):
         temporary_password += random.choice(string.ascii_letters + string.digits) 
 
 
-    id_person = register ( email, last_name, first_name, phone_number, born_date, temporary_password)
+    id_person = register(email, last_name, first_name, phone_number, born_date, temporary_password)
     create_employee(id_person, db)
 
 def create_employee(id, db: DataBase): 
@@ -156,7 +155,7 @@ def create_employee(id, db: DataBase):
             
 def modify_employee(db : DataBase): 
     """_
-    To modify an actual employee (to change his function)
+    To modify an actual employee (to change his function or his salary)
     
     Args:
     db (DataBase): Data base connected for HR 
@@ -182,7 +181,7 @@ def modify_employee(db : DataBase):
     
 def delete_employee(db: DataBase): 
     """
-    To delete an employee 
+    To delete an employee (delete his data from STAFF, after that the person has to delete herself her account PERSON)
     
     Args: 
     db (DataBase): Data base connected for HR 
@@ -191,18 +190,20 @@ def delete_employee(db: DataBase):
     
     id_employee = get_valid_id(db, "Please enter the id of the person:", "STAFF" , int)
 
-    print("Are you sure to delete this employee? After that you cannot go back ")
+    print("Are you sure to delete this employee? After that you cannot go back")
     confirmation = get_string("Type yes if you want to delete this person or no otherwise")
     
     if confirmation == "yes": 
-        #Verifier si la personne n'est pas medecin, infirmiere ou anesthésiste 
+        #Verify if the person is not a doctor, nurse or anaesthetist 
         db.execute("SELECT id FROM MEDECIN")
         medecins = db.table
+        doctors = db.table
         db.execute("SELECT id FROM NURSE")
         medecins += db.table 
+        nurses = db.table
         db.execute("SELECT id FROM ANAESTHETIST")
         medecins += db.table
-      
+        anaesthetists = db.table 
         
         if id_employee not in medecins:
             db.execute("SELECT id FROM CEO")
@@ -211,43 +212,38 @@ def delete_employee(db: DataBase):
             customers = db.table 
             
             if id_employee not in ceo:
-                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee} ") ## MODIF LA SUPPRESSION DES DONNEES (ANONYMISER) // SET NULL 
-                if id_employee not in customers: 
-                    db.execute(f"DELETE id FROM PERSON WHERE id = {id_employee}")
+                db.execute("SELECT id FROM ACCOUNTANT")
+                accountants = db.table
+                db.execute("SELECT id FROM HR")
+                HRpeople = db.table 
                 
+                if id_employee in accountants: 
+                    db.execute(f"DELETE * FROM ACCOUNTANT WHERE id = {id_employee}")
+                if id_employee in HRpeople: 
+                    db.execute(f"DELETE * FROM HR WHERE id = {id_employee}")
+                    
+                db.execute(f"DELETE * FROM STAFF WHERE id = {id_employee} ") 
+            
             else:
                 print("You don't have the permission to delete the CEO")  
         else:
-            db.execute("SELECT id FROM TRANSPLANTATION")## et que date_transplantation plus loin que date actuelle // TRIGGER ????
-            transplantation_medecins = db.table 
+            ## Anonymize data if the person is a doctor, nurse or anaesthesist 
+            ## A REVOIRRRRRRRRRRRRRRRRRRR
+            ## VOIR SI OK DE DELETE DES CATEGORIES OU SI ON A BESOIN DE GARDER UNE TRACE DE LA CATEGORIE POUR LES TRANSPLANT 
+            if id_employee in doctors:
+                db.execute(f"DELETE * FROM DOCTOR WHERE id = {id_employee}")
+            if id_employee in nurses: 
+                db.execute(f"DELETE * FROM NURSE WHERE id = {id_employee}")
+            if id_employee in anaesthetists: 
+                db.execute(f"DELETE * FROM ANAESTHETIST WHERE id = {id_employee}")µ
+                
+            anonymous_salary = '0'
+            db.execute(f"UPDATE salary = {anonymous_salary} WHERE id = {id_employee}")
+            anonymous_function = "anonymous"
+            db.execute(f"UPDATE function = {anonymous_function}")
             
-            if id_employee not in transplantation_medecins: 
-                db.execute(f"DELETE id FROM STAFF WHERE id = {id_employee}")
-            else: 
-                print('This person can not be actually deleted because she has to work on a transplantation')       
     else: 
         print('This person will not be deleted')
         
     db.disconnect()
     
-    """
-    create trigger TRG_DELETE_MEDECINS 
-  -- Trigger goal: Before delete a medecin checks if this employee has to do a transplatation (in the future)
-     -- Author: Aurélie Genot 
-      before delete on STAFF 
-      for each row
---      begin
---           SELECT date
---                FROM TRANSPLATATION 
---                WHERE STAFF.id IN (SELECT STAFF.id 
---                                    FROM STAFF 
---                                    WHERE STAFF.id = {id_employee}
---                                    );
-          
---           if (date > actual_date) then
---                signal sqlstate '45000'
---                set message_text = 'This person cannot be deleted because she has to do a transplatation';
---           end if;
---      end;
-
-""" 

@@ -487,6 +487,28 @@ create or replace view MEDECIN (organe, client, sang, anesthesiste, medecin)
 --           end if; 
 --      end; 
 
+
+-- create trigger TRG_UPDATE_MEDECINS 
+  -- Trigger goal: Before update a medecin checks if this employee has to do a transplantation (in the future)
+     -- Author: Aurélie Genot 
+--   before update on STAFF 
+--   for each row
+--      begin
+--           SELECT date into date_transplantation
+--                FROM TRANSPLATATION 
+                  
+--                WHERE STAFF.id IN (SELECT STAFF.id 
+--                                    FROM STAFF 
+--                                    WHERE STAFF.id = {id_employee})
+--                ORDER BY date DESC
+--                LIMIT 1;
+--           if (date_transplantation > DATE.NOW) then
+--                signal sqlstate '45000'
+--                set message_text = 'This person cannot be deleted because she has to do a transplatation';
+--           end if;
+--      end;
+
+
 -- create trigger TRG_CHECK_STAFF_NOT_OPERATING_THEMSELF
 --      -- Tigger goal: Checks if the receiver of an organ is not operating themself
 --      -- Author: Youlan Collard
