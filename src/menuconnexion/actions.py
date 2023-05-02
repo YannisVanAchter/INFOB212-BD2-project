@@ -1,5 +1,6 @@
 from module import DataBase
 from auth import register, login, become_customer, User
+from menu import main_login_menu
 
 def register_action(db: DataBase):
     email = input("Enter your email address:")
@@ -51,8 +52,16 @@ def register_action(db: DataBase):
             "bloodSign": bloodSign
         }
     
+    selfLogin = input("Do you wish to be automatically logged in? (y/n):")
+    selfLogin = selfLogin == "y"
     
-    register(db, email, password, birthDate, address, lastName, firstName, phoneNumber, registerCustomer)
+
+    register(db, email, password, birthDate, address, lastName, firstName, phoneNumber, registerCustomer, selfLogin)
+    if not selfLogin:
+        print("You have been successfully registered.")
+        main_login_menu()
+    else:
+        pass # Call next menu
 
 def _intValidation(integer: str) -> bool:
     try:
@@ -74,5 +83,13 @@ def _birthDateValidation(birthDate: str) -> bool:
             return False
     return True
 
-def login_action(db: DataBase, email: str, password: str) -> User | None:
-    pass
+def login_action(db: DataBase) -> User | None:
+    email = input("What is your email address?")
+    password = input("What is your password?")
+
+    user = login(db, email, password)
+    if user == None:
+        print("Invalid credentials.")
+        main_login_menu(db)
+    # Call next menu
+    return user

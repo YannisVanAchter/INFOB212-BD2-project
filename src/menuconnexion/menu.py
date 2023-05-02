@@ -26,10 +26,8 @@ def main_login_menu(database: DataBase):
 
         if choice == 1:
             input_valid = True
-            pass
         elif choice == 2:
             input_valid = True
-            pass
         else:
             print("Votre sélection n'est pas valide, réessayez.")
 
