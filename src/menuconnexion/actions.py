@@ -1,5 +1,5 @@
 from module import DataBase
-from auth import register, login, become_customer
+from auth import register, login, become_customer, User
 
 def register_action(db: DataBase):
     email = input("Enter your email address:")
@@ -74,5 +74,5 @@ def _birthDateValidation(birthDate: str) -> bool:
             return False
     return True
 
-def login_action(db: DataBase):
+def login_action(db: DataBase, email: str, password: str) -> User | None:
     pass

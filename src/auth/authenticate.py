@@ -18,15 +18,36 @@ def login(db: DataBase, email: str, password: str) -> User | None:
     query = "SELECT password FROM PERSON WHERE email = %s;"
     db.execute_with_params(query, [email])
     passwordFromDb = db.tableArgs[0][0]
+    userGroups = []
 
     if passwordFromDb == password:
         query = "SELECT id FROM PERSON WHERE email = %s;"
         db.execute_with_params(query, [email])
-        user = User(email, password, db.tableArgs[0][0])
+        userId = db.tableArgs[0][0]
     else:
-        print("Identifiant incorrect.")
         return None
+
+    # Check if the user is a customer
+
+    query = "SELECT id FROM CUSTOMER WHERE id = %s;"
+    db.execute_with_params(query, [userId])
+    if len(db.tableArgs) > 0:
+        userGroups.append("CUSTOMER")
+
+    query = "SELECT id FROM STAFF WHERE id = %s;"
+    db.execute_with_params(query, [userId])
+    if len(db.tableArgs) > 0:
+        userGroups.append("STAFF")
+        for i in ("CEO", "DOCTOR", "NURSE", "ACCOUNTANT", "ANAESTHESIST", "HR"):
+            if _checkIfUserIsSpecificStaff(db, userId, i):
+                userGroups.append(i)
+    user = User(email, userId, userGroups)
     return user
+
+def _checkIfUserIsSpecificStaff(db: DataBase, userId: int, table: str):
+    query = f"SELECT id FROM {table} WHERE id = %s;"
+    db.execute_with_params(query, [userId])
+    return len(db.tableArgs) > 0
 
 def register(
         db: DataBase,

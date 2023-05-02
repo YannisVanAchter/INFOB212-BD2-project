@@ -3,11 +3,10 @@ class User:
     
     """
 
-    def __init__(self, email: str, password: str, id: int):
+    def __init__(self, email: str, id: int, type: list[str]):
         self.__id = id
         self.__email = email
-        self.__password = password
-        self.__type = None # Représente la fonction de l'utilisateur pour les permissions (employés, médecin etc)
+        self.__type = type # Représente la fonction de l'utilisateur pour les permissions (employés, médecin etc)
 
     @property
     def id(self):
@@ -24,6 +23,7 @@ class User:
     @property
     def email(self):
         return self.__email
+
 
 
     
