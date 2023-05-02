@@ -37,6 +37,7 @@ def register(
         lastName: str = None, 
         firstName: str = None, 
         phoneNumber: str = None, 
+        registerCustomer: dict = None,
         selfLogin=False
     ) -> User | int:
     """Register a user in the databse
@@ -48,13 +49,17 @@ def register(
         birthDate: Date of birth of the user (DD/MM/YYYY) (str)
         address: Dict representing the address (dict)
             street: Street of the address (str)
-            number: Number of the address (int)
+            number: Number of the address (str)
             postalCode: Postal code of the address (int)
             city: City of the address (str)
             land: Land of the address (str)
         lastName: Last name of the client (str, optional)
         firstName: Frist name of the client (str, optional)
         phoneNumber: Phone number of the client (str, optional)
+        registerCustomer: Customer information dict if user wish to create a customer account drectly (dict, optional)
+            nickname: Nickname for the customer (str, optional)
+            bloodType: Blood type of the customer (str, optional)
+            bloodSign: Blood sign of the customer (str, optional) 
         selfLogin: Auto login and returns the User (bool, optional)
 
     Returns:
@@ -99,11 +104,14 @@ def register(
 
     personId = db.last_row_id
 
+    if registerCustomer != None:
+        become_customer(db, personId, registerCustomer["nickname"], registerCustomer["bloodType"], registerCustomer["bloodSign"])
+
     if selfLogin:
         return login(email, password)
     return personId
 
-def register_cutomer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):
+def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):
     """Create a new customer based on a person
     
     """
