@@ -33,9 +33,26 @@ def register_action(db: DataBase):
     phoneNumber = input("Enter your phone number (optional, leave blank if you don't wish to share):")
     if len(phoneNumber) == 0:
         phoneNumber = None
+
+    isRegisteringAsCustomer = input("Do you wish to register for a client account now? (y/n)")
+
+    if isRegisteringAsCustomer == "y":
+        nickname = input("Enter your customer nickname:")
+        bloodType = input("Enter your blood type (A, B, AB, O):")
+        while bloodType not in ["A", "B", "AB", "O"]:
+            bloodType = input("Blood type invalid, try again:")
+        bloodSign = input("Enter your blood sign (+,-):")
+        while not bloodSign in ["+", "-"]:
+            bloodSign = input("Blood sign invalid, try again:")
+        
+        registerCustomer = {
+            "nickname": nickname,
+            "bloodType": bloodType,
+            "bloodSign": bloodSign
+        }
     
     
-    register(db, email, password, birthDate, address, lastName, firstName, phoneNumber, )
+    register(db, email, password, birthDate, address, lastName, firstName, phoneNumber, registerCustomer)
 
 def _intValidation(integer: str) -> bool:
     try:
