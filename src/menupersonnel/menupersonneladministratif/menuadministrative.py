@@ -108,7 +108,10 @@ def main_persoadmin_menu (db: DataBase, customer_id):
     #To get the salary of the staff
     doctor_salary = SALARY_DOCTOR_TRANSPL[organe_choice]
     anesthesist_salary = SALARY_ANESTHESIST_TRANSPL[organe_choice]
-    nurse_salary = SALARY_NURSE_TRANSPL[organe_choice]
+    if nursenbr_choice == 1 :
+        nurse_salary = SALARY_NURSE_TRANSPL[organe_choice]*2
+    else :
+        nurse_salary = SALARY_NURSE_TRANSPL[organe_choice]
 
     salary_total = doctor_salary + anesthesist_salary + nurse_salary
      
@@ -123,5 +126,4 @@ def main_persoadmin_menu (db: DataBase, customer_id):
         values=(date_choice, id, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
     )
 
-#TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
 
