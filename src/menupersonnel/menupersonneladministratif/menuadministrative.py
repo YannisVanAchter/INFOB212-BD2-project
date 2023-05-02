@@ -108,7 +108,10 @@ def main_persoadmin_menu (db: DataBase, customer_id):
     #To get the salary of the staff
     doctor_salary = SALARY_DOCTOR_TRANSPL[organe_choice]
     anesthesist_salary = SALARY_ANESTHESIST_TRANSPL[organe_choice]
-    nurse_salary = SALARY_NURSE_TRANSPL[organe_choice]
+    if nursenbr_choice == 1 :
+        nurse_salary = SALARY_NURSE_TRANSPL[organe_choice]*2
+    else :
+        nurse_salary = SALARY_NURSE_TRANSPL[organe_choice]
 
     salary_total = doctor_salary + anesthesist_salary + nurse_salary
      
