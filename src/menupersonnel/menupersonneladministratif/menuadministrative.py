@@ -126,5 +126,4 @@ def main_persoadmin_menu (db: DataBase, customer_id):
         values=(date_choice, id, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
     )
 
-#TO DO rec demander à youlan dans ma spec car j'ai besoin de l'id du client connecté 
 
