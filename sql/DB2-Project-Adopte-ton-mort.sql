@@ -532,3 +532,4 @@ insert into TYPE_DELIVERY values ('normal', 5);
 insert into TYPE_DELIVERY values ('express', 10);
 insert into TYPE_DELIVERY values ('international', 15);
 insert into TYPE_DELIVERY values ('main propre', 3);
+insert into ADDRESS (street, number, postal_code, city, land, id) values ("Anonymized", 1, 1, "Anonymized", "Anonymized", 1)
