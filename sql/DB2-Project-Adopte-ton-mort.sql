@@ -538,30 +538,33 @@ insert into TYPE_DELIVERY values ('main propre', 3);
 
 -- Anonymization of the database
 insert into ADDRESS (street, number, postal_code, city, land, id) values ("Anonymized", 1, 1, "Anonymized", "Anonymized", 1);
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) 
+     values (1, "Anonymized", "Anonymized", "anonymized@anonymized.com", "Anonymized", "Anonymized", "0001-01-01", 1);
+insert into CUSTOMER (id, blood_type, blood_sign, pseudo) values (1, 'A', True, "Annonimous");
 
 -- insert of personn, customers and staff members
 insert into ADDRESS (id, street, number, city, postal_code, land) values (2, 'Rue de la Loi', 16, 'Bruxelles', 1000, 'Belgique');
-insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (1, 'Van Achter', 'Yannis', "yannis.van.achter@test.gmail.com", "+32 470 00 00 00", "password", "1997-01-01", 2);
-insert into CUSTOMER (id, blood_type, blood_sign, pseudo) values (1, 'A', True, "Annonimous");
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (2, 'Van Achter', 'Yannis', "yannis.van.achter@test.gmail.com", "+32 470 00 00 00", "password", "1997-01-01", 2);
+insert into CUSTOMER (id, blood_type, blood_sign, pseudo) values (2, 'A', True, "Yannis");
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (3, 'Rue des Anges', 16, 'Bruxelles', 1000, 'Belgique');
-insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (2, 'Genot', 'Aurélie', "aurelie.genot@test.gmail.com", "+32 470 00 00 01", "password", "1997-05-07", 3);
-insert into STAFF (id, salary, HR) values (2, 2000, 2);
-insert into HR (id) values (2);
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (3, 'Genot', 'Aurélie', "aurelie.genot@test.gmail.com", "+32 470 00 00 01", "password", "1997-05-07", 3);
+insert into STAFF (id, salary, HR) values (3, 2000, 3);
+insert into HR (id) values (3);
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (4, "Rue de l'amitié", 16, 'Bruxelles', 1000, 'Belgique');
-insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (3, 'Collard', 'Youlan', "youlan.collard@test.gmail.com", "+32 302 08 08 02", 'password', "1997-05-07", 4);
-insert into STAFF (id, salary, DOCTOR) values (3, 2000, 3);
-insert into DOCTOR (id, inami_number) values (3, '83678643923');
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (4, 'Collard', 'Youlan', "youlan.collard@test.gmail.com", "+32 302 08 08 02", 'password', "1997-05-07", 4);
+insert into STAFF (id, salary, DOCTOR) values (4, 2000, 4);
+insert into DOCTOR (id, inami_number) values (4, '83678643923');
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (5, "Rue des amies vocal", 1, 'Bruxelles', 1000, 'Belgique');
-insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (4, 'Boulanger', 'Aline', "aline.boulanger@test.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
-insert into STAFF (id, salary, NURSE) values (4, 2000, 4);
-insert into NURSE (id) values (4);
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (5, 'Boulanger', 'Aline', "aline.boulanger@test.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
+insert into STAFF (id, salary, NURSE) values (5, 2000, 5);
+insert into NURSE (id) values (5);
 
-insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (5, 'Delpierre', 'Louise', "louise.delpierre@test.gmail.com", "+32 032 83 92 78", "password", "1997-05-07", 5);
-insert into STAFF (id, salary, ANAESTHESIST) values (5, 2000, 5);
-insert into ANAESTHESIST (id, inami_number) values (5, '29878470982');
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (6, 'Delpierre', 'Louise', "louise.delpierre@test.gmail.com", "+32 032 83 92 78", "password", "1997-05-07", 5);
+insert into STAFF (id, salary, ANAESTHESIST) values (6, 2000, 6);
+insert into ANAESTHESIST (id, inami_number) values (6, '29878470982');
 
 -- insert blood and organs
 insert into BLOOD (id, type, signe, quantity, expiration_date) values (1, 'A', True, 500, '2020-01-01');
