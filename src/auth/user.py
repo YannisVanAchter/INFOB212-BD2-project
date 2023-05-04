@@ -11,10 +11,6 @@ class User:
     @property
     def id(self):
         return self.__id
-
-    @property
-    def logged(self):
-        return self.__authenticated
     
     @property
     def userGroup(self):
