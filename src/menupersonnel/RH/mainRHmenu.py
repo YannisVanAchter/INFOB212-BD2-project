@@ -194,7 +194,7 @@ def delete_employee(db: DataBase):
     confirmation = get_string("Type yes if you want to delete this person or no otherwise")
     
     if confirmation == "yes": 
-        #Verify if the person is not a doctor, nurse or anaesthetist 
+        #Verify if the person is in a category
         db.execute("SELECT id FROM MEDECIN")
         medecins = db.table
         doctors = db.table
@@ -203,45 +203,34 @@ def delete_employee(db: DataBase):
         nurses = db.table
         db.execute("SELECT id FROM ANAESTHETIST")
         medecins += db.table
-        anaesthetists = db.table 
+        anaesthetists = db.table   
+        db.execute("SELECT id FROM CEO")
+        ceo = db.table
+        db.execute("SELECT id FROM CUSTOMER")
+        customers = db.table        
         
-        if id_employee not in medecins:
-            db.execute("SELECT id FROM CEO")
-            ceo = db.table
-            db.execute("SELECT id FROM CUSTOMER")
-            customers = db.table 
-            
-            if id_employee not in ceo:
-                db.execute("SELECT id FROM ACCOUNTANT")
-                accountants = db.table
-                db.execute("SELECT id FROM HR")
-                HRpeople = db.table 
-                
-                if id_employee in accountants: 
-                    db.execute(f"DELETE * FROM ACCOUNTANT WHERE id = {id_employee}")
-                if id_employee in HRpeople: 
-                    db.execute(f"DELETE * FROM HR WHERE id = {id_employee}")
-                    
-                db.execute(f"DELETE * FROM STAFF WHERE id = {id_employee} ") 
-            
-            else:
-                print("You don't have the permission to delete the CEO")  
-        else:
-            ## Anonymize data if the person is a doctor, nurse or anaesthesist 
-            ## A REVOIRRRRRRRRRRRRRRRRRRR
-            ## VOIR SI OK DE DELETE DES CATEGORIES OU SI ON A BESOIN DE GARDER UNE TRACE DE LA CATEGORIE POUR LES TRANSPLANT 
+        if id_employee in medecins:
             if id_employee in doctors:
-                db.execute(f"DELETE * FROM DOCTOR WHERE id = {id_employee}")
-            if id_employee in nurses: 
-                db.execute(f"DELETE * FROM NURSE WHERE id = {id_employee}")
-            if id_employee in anaesthetists: 
-                db.execute(f"DELETE * FROM ANAESTHETIST WHERE id = {id_employee}")
+                db.execute(f"UPDATE DOCTOR SET inami_number = '-1' WHERE id = {id_employee}")
                 
-            anonymous_salary = '0'
-            db.execute(f"UPDATE salary = {anonymous_salary} WHERE id = {id_employee}")
-            anonymous_description = "anonymous"
-            db.execute(f"UPDATE job_description = {anonymous_description}")
+            if id_employee in anaesthetists: 
+                db.execute(f"UPDATE ANAESTHETIST SET inami_number = '-1' WHERE id = {id_employee}")
             
+            db.execute(f"UPDATE STAFF SET salary = '0',job_description = 'nothing', active = false  WHERE id = {id_employee} ")
+
+        if id_employee not in ceo:
+            db.execute("SELECT id FROM ACCOUNTANT")
+            accountants = db.table
+            db.execute("SELECT id FROM HR")
+            HRpeople = db.table 
+            
+            if id_employee in accountants: 
+                db.execute(f"DELETE FROM ACCOUNTANT WHERE id = {id_employee}")
+            if id_employee in HRpeople: 
+                db.execute(f"DELETE FROM HR WHERE id = {id_employee}")        
+            
+            db.execute(f"DELETE FROM STAFF WHERE id = {id_employee} ") 
+       
     else: 
         print('This person will not be deleted')
         
