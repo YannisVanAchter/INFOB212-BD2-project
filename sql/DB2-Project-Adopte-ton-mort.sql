@@ -83,7 +83,7 @@ create table IF NOT EXISTS STAFF (
      id INT unsigned not null,
      salary numeric(32) not null,
      job_description varchar(64),
-     actif boolean not null,
+     active boolean not null,
      constraint ID_STAFF_PERSO_ID primary key (id),
      constraint FK_StaffPerson foreign key (id) references PERSON(id));
 
