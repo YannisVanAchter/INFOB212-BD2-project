@@ -118,9 +118,9 @@ def create_employee(id, db: DataBase):
     print("Now you will give the job of the user with this id")
 
     salary_person = get_int("Please enter the salary of the person: ")
-    function_person = get_string("Please enter the exact function of the person in the company: ")
+    description_person = get_string("Please enter the description of the job of the person in the company: ")
    
-    db.execute(f"INSERT INTO STAFF (id, salary, function) VALUES ({id}, {salary_person}, {function_person})")
+    db.execute(f"INSERT INTO STAFF (id, salary, job_description) VALUES ({id}, {salary_person}, {description_person})")
     
     print("Choose the category of the person: ")
     print("Type 0 if the person is an anaesthetist")
@@ -165,7 +165,7 @@ def modify_employee(db : DataBase):
     id_employee = get_valid_id(db, "Please enter the id of the employee:", "STAFF" , int)
     
     print("What do you want to do?")
-    choice = get_int("Type 1 if you want to modify the salary of the employee and 2 if you want to modify his function:")
+    choice = get_int("Type 1 if you want to modify the salary of the employee and 2 if you want to modify his description:")
     
     if choice not in {1,2}:
         print("Please enter a valid integer")
@@ -174,8 +174,8 @@ def modify_employee(db : DataBase):
             new_salary = get_int("Enter the new salary: ")
             db.execute(f"UPDATE salary = {new_salary} FROM STAFF WHERE ID = id_employee") 
         if choice == 2: 
-            new_function = get_string("Enter the new function: ")
-            db.execute(f"UPDATE function = {new_function} FROM STAFF WHERE ID = id_employee")
+            new_description = get_string("Enter the new description: ")
+            db.execute(f"UPDATE job_description = {new_description} FROM STAFF WHERE ID = id_employee")
     
     db.disconnect()
     
@@ -239,8 +239,8 @@ def delete_employee(db: DataBase):
                 
             anonymous_salary = '0'
             db.execute(f"UPDATE salary = {anonymous_salary} WHERE id = {id_employee}")
-            anonymous_function = "anonymous"
-            db.execute(f"UPDATE function = {anonymous_function}")
+            anonymous_description = "anonymous"
+            db.execute(f"UPDATE job_description = {anonymous_description}")
             
     else: 
         print('This person will not be deleted')
