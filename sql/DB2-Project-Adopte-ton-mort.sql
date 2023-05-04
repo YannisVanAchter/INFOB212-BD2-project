@@ -94,7 +94,7 @@ create table IF NOT EXISTS CEO (
 
 create table IF NOT EXISTS DOCTOR (
      id INT unsigned not null,
-     inami_number char(32) not null,
+     inami_number varchar(32) not null,
      constraint ID_DOCTO_STAFF_ID primary key (id),
      constraint FK_DoctorStaff foreign key (id) references STAFF(id));
 
@@ -110,7 +110,7 @@ create table IF NOT EXISTS ACCOUNTANT (
 
 create table IF NOT EXISTS ANAESTHESIST (
      id INT unsigned not null,
-     inami_number char(32) not null,
+     inami_number varchar(32) not null,
      constraint ID_ANAES_STAFF_ID primary key (id),
      constraint FK_AnaesthesistStaff foreign key (id) references STAFF(id));
 
