@@ -235,7 +235,7 @@ def delete_employee(db: DataBase):
             if id_employee in nurses: 
                 db.execute(f"DELETE * FROM NURSE WHERE id = {id_employee}")
             if id_employee in anaesthetists: 
-                db.execute(f"DELETE * FROM ANAESTHETIST WHERE id = {id_employee}")µ
+                db.execute(f"DELETE * FROM ANAESTHETIST WHERE id = {id_employee}")
                 
             anonymous_salary = '0'
             db.execute(f"UPDATE salary = {anonymous_salary} WHERE id = {id_employee}")

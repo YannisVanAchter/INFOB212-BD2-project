@@ -532,3 +532,44 @@ insert into TYPE_DELIVERY values ('normal', 5);
 insert into TYPE_DELIVERY values ('express', 10);
 insert into TYPE_DELIVERY values ('international', 15);
 insert into TYPE_DELIVERY values ('main propre', 3);
+
+-- Init for tests
+-- ______________
+
+-- insert of personn, customers and staff members
+insert into ADDRESS (id, street, number, city, postal_code, land) values (1, 'Rue de la Loi', 16, 'Bruxelles', 1000, 'Belgique');
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (1, 'Van Achter', 'Yannis', "yannis.van.achter@test.gmail.com", "+32 470 00 00 00", "password", "1997-01-01", 1);
+insert into CUSTOMER (id, blood_type, blood_sign, pseudo) values (1, 'A', True, "Annonimous");
+
+insert into ADDRESS (id, street, number, city, postal_code, land) values (2, 'Rue des Anges', 16, 'Bruxelles', 1000, 'Belgique');
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (2, 'Genot', 'Aurélie', "aurelie.genot@test.gmail.com", "+32 470 00 00 01", "password", "1997-05-07", 2);
+insert into STAFF (id, salary, HR) values (2, 2000, 2);
+insert into HR (id) values (2);
+
+insert into ADDRESS (id, street, number, city, postal_code, land) values (3, "Rue de l'amitié", 16, 'Bruxelles', 1000, 'Belgique');
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (3, 'Collard', 'Youlan', "youlan.collard@test.gmail.com", "+32 302 08 08 02", 'password', "1997-05-07", 3);
+insert into STAFF (id, salary, DOCTOR) values (3, 2000, 3);
+insert into DOCTOR (id, inami_number) values (3, '83678643923');
+
+insert into ADDRESS (id, street, number, city, postal_code, land) values (4, "Rue des amies vocal", 1, 'Bruxelles', 1000, 'Belgique');
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (4, 'Boulanger', 'Aline', "aline.boulanger@test.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 4);
+insert into STAFF (id, salary, NURSE) values (4, 2000, 4);
+insert into NURSE (id) values (4);
+
+insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (5, 'Delpierre', 'Louise', "louise.delpierre@test.gmail.com", "+32 032 83 92 78", "password", "1997-05-07", 4);
+insert into STAFF (id, salary, ANAESTHESIST) values (5, 2000, 5);
+insert into ANAESTHESIST (id, inami_number) values (5, '29878470982');
+
+-- insert blood and organs
+insert into BLOOD (id, type, signe, quantity, expiration_date) values (1, 'A', True, 500, '2020-01-01');
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (2, 'A', True, 500, '2020-01-01', 1);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (3, 'A', True, 500, '2020-01-01', 2);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (4, 'A', True, 500, '2020-01-01', 3);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (5, 'A', True, 500, '2020-01-01', 4);
+insert into DONATOR (id, Giv_id, gender, age_range) values (1, 1, False, 32);
+insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
+ values (1, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "heart", 2000000, 1);
+insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
+ values (2, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "foot", 5000, 1);
+insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
+ values (3, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "large intestine", 13000, 1);

@@ -221,7 +221,7 @@ class DataBase:
 
         raise UnConnectedError(
             "Fail to connect to data base, please check sql container started correctly \n"
-            + f"Original error: DatabaseError {e}"
+            + f"Original error: {type(e)} {e}"
         )
 
     def execute(self, querry: str, multi: bool = False):
@@ -278,7 +278,7 @@ class DataBase:
                 self.disconnect()
                 pass
 
-    def execute_with_params(self, query: str, argsTuple: tuple) -> int:
+    def execute_with_params(self, query: str, argsTuple: tuple) -> (int):
         """Execute a query and returns its id if an insert was made. -1 otherwise.
         """
         toReturn = -1
