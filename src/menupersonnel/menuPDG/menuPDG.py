@@ -91,40 +91,32 @@ def insert_newelements (db : DataBase):
     """
     db.connect
 
-    #Insert a new organ
+    #Insert a new organ verif que c'est pas dedans 
     print ("Do you want to add an organ?")
     organ = get_string ("Yes" or "No")
     organ_new = get_string ("which one?")
-    organ_new_price = get_float("What is its price, in float ?") 
-    organ_new_state = get_string("What is the state of this new organ ? Very good, good, average, poor or very poor ?")#voir si avec menu médecin ?
-    organ_new_functionnal = get_string ("This new organ is functionnal, Yes or No ?")
-    organ_new_expiration_date = get_date ("What is the expiration date of this organ ?") #menu medecin aussi ?
-    organ_new_expiration_date_tranplantation =  get_date("Enter the date of today") +  get_date("Enter the date of today + 5 months")
-    db.table = db.execute("SELECT O.id, D.id, O.type FROM ORGAN O, DONATOR D WHERE O.id = D.id and O.type = organ_new")
-    Donator_id = db.table[0][1]
-    organ_new_method_of_preservation = get_string("What is the method of preservation of this new organ ? For example : In the fridge under -10 degrees ")
-    if organ == "Yes":
-        insert_into(
-        database=db,
-        table="ORGANE",
-        attributes=("state", "functionnal", "expiration_date", "expiration_date_transplantation", "method_of_preservation", "type", "id", "price", "Com_id"),
-        values= (organ_new_state, organ_new_functionnal, organ_new_expiration_date, organ_new_expiration_date_tranplantation, organ_new_method_of_preservation,organ_new, id, organ_new_price, Donator_id)
-    )
+    organ_new_price = get_float("What is the price of your new organ ?")
+    organ_500ML = get_int("How much blood bag of 500 ml do we need for a transplantation of this new organ ? It could be 0")
+    organ_480ML = get_int("How much blood bag of 480 ml do we need for a transplantation of this new organ ? It could be 0")
+    organ_450ML = get_int("How much blood bag of 450 ml do we need for a transplantation of this new organ ? It could be 0")
 
+    if organ_new not in ORGAN_DICO :
+        ORGAN_DICO.update({organ_new : [organ_new_price, organ_500ML, organ_480ML, organ_450ML]})
+        insert_organ()
     else : 
-        return 0
-    
-    #Insert a new type of delivery 
+        print("This type of organ already exist ;)s")
+
+    #Insert a new type of delivery TODO
     print ("Do you want to add a new type of delivery ?")
     tp_delivery = get_string ("Yes" or "No")
     tp_delivery_id = get_string ("which one?")
-    organ_new_price = get_float("What is its price?") 
+    tp_delivery_new_price = get_float("What is its price?") 
     if tp_delivery == "Yes":
         insert_into(
         database=db,
         table="TYPE_DELIVERY",
         attributes=("id", "price"),
-        values= (tp_delivery_id, organ_new_price)
+        values= (tp_delivery_id, tp_delivery_new_price)
     )
 
     else : 
