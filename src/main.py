@@ -1,18 +1,19 @@
 # encoding uft-8
 
 # import
-import logging, sys
+import logging
+import sys
 
 # pip install -r requerements.txt
-import mysql.connector as mysql
+# import mysql.connector as mysql
 
 # # local modules
 from menupersonnel.menuaccounting import main_accounting_menu
-from menupersonnel.menumédecin import main_medecin_menu
-from menupersonnel.RH import main_RH_menu
-from menupersonnel.menupersonneladministratif import main_persoadmin_menu
+# from menupersonnel.menumédecin import main_medecin_menu
+# from menupersonnel.RH import main_RH_menu
+# from menupersonnel.menupersonneladministratif import main_persoadmin_menu
 from module.database import DataBase
-from auth import login, register
+# from auth import login, register
 
 # function and class
 def main():
@@ -21,19 +22,19 @@ def main():
                 host='localhost', 
                 user='user', 
                 password='password', 
-                database='mysql',
+                database='db',
                 port=3306,
                 auto_connect=True,
         ) as database:
-        address = {
-            'street': 'Route',
-            'number': 1,
-            'postalCode': 6000, 
-            'city': "Paris", 
-            "land": "France"
-        }
-        register(database, "test@gmail.com", "test", "password", "12/12/2000", address, "A", "+")
-        login(database, "test@gmail.com", "password")
+        # address = {
+        #     'street': 'Route',
+        #     'number': 1,
+        #     'postalCode': 6000, 
+        #     'city': "Paris", 
+        #     "land": "France",
+        # }
+        # register(database, "test@gmail.com", "test", "password", "12/12/2000", address, "A", "+")
+        # login(database, "test@gmail.com", "password")
 
     #     # TODO: create test with it
     #     database.execute(
@@ -48,7 +49,8 @@ def main():
 
     #     for row in database.table:
     #         print(row)
-    main_persoadmin_menu()
+    # main_persoadmin_menu()
+        main_accounting_menu(database)
 
 
 if __name__ == "__main__":
