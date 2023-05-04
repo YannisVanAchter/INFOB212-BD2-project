@@ -1,9 +1,8 @@
 # encoding uft-8
 
-BLOOD_PRICE_FACTOR = 2.5
-
 #prix d'une poche de sang, peu importe la quantité, ça reste le même prix
 BLOODPOCHE = 250
+BLOOD_PRICE_FACTOR = BLOODPOCHE
 
 #Dico des organes avec leur prix et les quantités de poches de sang qu'il faut pour une opération d'un organe particulier 
 ORGAN_DICO = {
