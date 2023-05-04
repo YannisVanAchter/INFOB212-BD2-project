@@ -55,7 +55,7 @@ create table IF NOT EXISTS CUSTOMER (
 
 create table IF NOT EXISTS TYPE_DELIVERY (
      id varchar(16) not null,
-     price float(32) not null check(price > 0),
+     price float(4) not null check(price > 0),
      constraint ID_TYPE_DELIVERY_ID primary key (id));
 
 create table IF NOT EXISTS DELIVERY (
