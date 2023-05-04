@@ -114,4 +114,18 @@ def insert_newelements (db : DataBase):
     else : 
         return 0
     
-    
+    #Insert a new type of delivery 
+    print ("Do you want to add a new type of delivery ?")
+    tp_delivery = get_string ("Yes" or "No")
+    tp_delivery_id = get_string ("which one?")
+    organ_new_price = get_float("What is its price?") 
+    if tp_delivery == "Yes":
+        insert_into(
+        database=db,
+        table="TYPE_DELIVERY",
+        attributes=("id", "price"),
+        values= (tp_delivery_id, organ_new_price)
+    )
+
+    else : 
+        return 0
