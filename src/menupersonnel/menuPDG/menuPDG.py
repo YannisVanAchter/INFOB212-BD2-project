@@ -91,17 +91,27 @@ def insert_newelements (db : DataBase):
     """
     db.connect
 
+    #Insert a new organ
     print ("Do you want to add an organ?")
     organ = get_string ("Yes" or "No")
     organ_new = get_string ("which one?")
+    organ_new_price = get_float("What is its price, in float ?") 
+    organ_new_state = get_string("What is the state of this new organ ? Very good, good, average, poor or very poor ?")#voir si avec menu médecin ?
+    organ_new_functionnal = get_string ("This new organ is functionnal, Yes or No ?")
+    organ_new_expiration_date = get_date ("What is the expiration date of this organ ?") #menu medecin aussi ?
+    organ_new_expiration_date_tranplantation =  get_date("Enter the date of today") +  get_date("Enter the date of today + 5 months")
+    db.table = db.execute("SELECT O.id, D.id, O.type FROM ORGAN O, DONATOR D WHERE O.id = D.id and O.type = organ_new")
+    Donator_id = db.table[0][1]
+    organ_new_method_of_preservation = get_string("What is the method of preservation of this new organ ? For example : In the fridge under -10 degrees ")
     if organ == "Yes":
         insert_into(
         database=db,
         table="ORGANE",
-        attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
-        values=(date_choice, id, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
+        attributes=("state", "functionnal", "expiration_date", "expiration_date_transplantation", "method_of_preservation", "type", "id", "price", "Com_id"),
+        values= (organ_new_state, organ_new_functionnal, organ_new_expiration_date, organ_new_expiration_date_tranplantation, organ_new_method_of_preservation,organ_new, id, organ_new_price, Donator_id)
     )
 
     else : 
         return 0
+    
     
