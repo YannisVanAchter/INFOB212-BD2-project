@@ -350,25 +350,24 @@ create or replace view DEL_ORDER(first_name, last_name, order_id, street, number
      D.effective_arrival_date = null;
    
 
-create or replace view RH (SALARY, DOCTOR, NURSE, ANAESTHESIST, CEO, ACCOUNTANT, HR, NAME, FIRST_NAME, EMAIL, PHONE)
+create or replace view RH (SALARY, NAME, FIRST_NAME, EMAIL, PHONE, JOB_DESCRIPTION)
      -- View goal : view RH, to view the staff, the wages, jobs
      -- Author: Louise DELPIERRE et Aline Boulanger 
-     as  select S.salary, S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTANT, S.HR, P.first_name, P.last_name, P.email, P.phone_number  
+     as  select S.salary, P.first_name, P.last_name, P.email, P.phone_number, S.job_description
      from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTANT AC, HR H, ADDRESS AD
      where S.id = P.id 
-     and S.NURSE = N.id
-     and S.ANAESTHESIST = A.id
-     and S.CEO = C.id
-     and S.ACCOUNTANT = AC.id
-     and S.HR = H.id
-     and S.DOCTOR = D.id
-     and P.id = AD.id
-     group by S.DOCTOR, S.NURSE, S.ANAESTHESIST, S.CEO, S.ACCOUNTANT, S.HR;
+     and S.id = N.id
+     and S.id = A.id
+     and S.id = C.id
+     and S.id = AC.id
+     and S.id = H.id
+     and S.id = D.id
+     and P.id = AD.id;
 
-create or replace view MEDECIN (organe, client, sang, anesthesiste, medecin)
+create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesiste, medecin)
      -- View goal: view information on the customer and the organ the doctor will have to transplant on him 
      -- Authors: Eline Mota
-     as select O.type, T.Rec_id, C.blood_type, A.id, D.id
+     as select O.type, T.Rec_id, C.blood_type, C.blood_sign, A.id, D.id
      from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR D
      where 
      T.Rec_id = C.id and 
@@ -535,26 +534,27 @@ insert into CUSTOMER (id, blood_type, blood_sign, pseudo) values (2, 'A', 1, "Ya
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (3, 'Rue des Anges', 16, 'Bruxelles', 1000, 'Belgique');
 insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (3, 'Genot', 'Aurélie', "aurelie.genot@test.gmail.com", "+32 470 00 00 01", "password", "1997-05-07", 3);
-insert into STAFF (id, salary, actif, job_description) values (3, 2000, true, "HR Manager");
+insert into STAFF (id, salary, active, job_description) values (3, 2000, true, "HR Manager");
 insert into HR (id) values (3);
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (4, "Rue de l'amitié", 16, 'Bruxelles', 1000, 'Belgique');
 insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (4, 'Collard', 'Youlan', "youlan.collard@test.gmail.com", "+32 302 08 08 02", 'password', "1997-05-07", 4);
-insert into STAFF (id, salary, actif, job_description) values (4, 2000, true, "Doctor general");
+insert into STAFF (id, salary, active, job_description) values (4, 2000, true, "Doctor general");
 insert into DOCTOR (id, inami_number) values (4, '83678643923');
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (5, "Rue des amies vocal", 1, 'Bruxelles', 1000, 'Belgique');
 insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (5, 'Boulanger', 'Aline', "aline.boulanger@test.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
-insert into STAFF (id, salary, actif, job_description) values (5, 2000, true, "General nurse");
+insert into STAFF (id, salary, active, job_description) values (5, 2000, true, "General nurse");
 insert into NURSE (id) values (5);
 
 insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (6, 'Delpierre', 'Louise', "louise.delpierre@test.gmail.com", "+32 032 83 92 78", "password", "1997-05-07", 5);
-insert into STAFF (id, salary, actif, job_description) values (6, 2000, true, "General anaesthesist");
+insert into STAFF (id, salary, active, job_description) values (6, 2000, true, "General anaesthesist");
 insert into ANAESTHESIST (id, inami_number) values (6, '29878470982');
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (6, "Rue de la bonté", 92, "Paris", 9000, "France");
 insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) 
 values (7, "Mota", "Eline", "mota.eline@test.gmail.com", "+32 032 83 92 78", "password", "1997-05-07", 6);
+insert into STAFF (id, salary, active, job_description) values (7, 2000, true, "General accountant");
 insert into ACCOUNTANT (id) values (7);
 
 -- insert blood and organs
