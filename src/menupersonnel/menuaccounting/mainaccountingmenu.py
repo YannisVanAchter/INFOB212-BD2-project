@@ -1,6 +1,7 @@
 # encoding uft-8
 
 from datetime import date as Date
+import logging
 import time
 
 from module.get import get_string, get_sql_user_querry, get_bool, get_date
@@ -45,6 +46,7 @@ def main_accounting_menu(database: DataBase) -> (int):
         print("5: Exit")
 
     while True:
+        cls()
         try:
             print_menu()
             choice = get_string("Enter your choice: ").strip()
@@ -52,16 +54,16 @@ def main_accounting_menu(database: DataBase) -> (int):
             match choice:
                 case "1":
                     update_menu(database)
-                    break
+                    continue
                 case "2":
                     insert_menu(database)
-                    break
+                    continue
                 case "3":
                     resarch_menu(database)
-                    break
+                    continue
                 case "4":
                     personnal_querry(database)
-                    break
+                    continue
                 case "5":
                     cls()
                     return 0
@@ -78,6 +80,7 @@ def case_other():
     """Print error message when user did not enter correct option."""
     print("You did not enter a correct choice")
     print("Please try again")
+    time.sleep(1)
     
 
 def update_menu(database):
@@ -190,35 +193,46 @@ def insert_menu(database: DataBase):
     Args:
         database (DataBase): database to insert product in, connected as accuntant user
     """
+    def print_menu():
+        print("What do you want to insert ?")
+        print("1: BLOOD\n2: ORGANE\n3: DONATOR\n4: EXIT")
     donator_id = None
     blood_id = None
     while True:
+        print_menu()
         table = (
-            get_string("Insert of 'BLOOD', 'ORGANE', 'DONATOR' or 'EXIT': ")
+            get_string("Enter your choice: ")
             .strip()
             .upper()
         )
 
-        new_donator = (
-            get_string("Is this a new donator (y/n): ")
-            .strip()
-            .lower()
-            .startswith("y")
-        )
-        if new_donator:
-            insert_donator(database)
-
         match table:
-            case "BLOOD":
+            case "1":
                 blood_id = insert_blood(database)
-                break
-            case "ORGANE":
+                continue
+            case "2":
+                new_donator = (
+                    get_string("Is this a new donator (y/n): ")
+                    .strip()
+                    .lower()
+                    .startswith("y")
+                )
+                if new_donator:
+                    donator_id = insert_donator(database)
                 insert_organ(database, donator_id)
-                break
-            case "DONATOR":
+                continue
+            case "3":
+                new_blood = (
+                    get_string("Is this a new blood (y/n): ")
+                    .strip()
+                    .lower()
+                    .startswith("y")
+                )
+                if new_blood:
+                    blood_id = insert_blood(database)
                 donator_id = insert_donator(database, blood_id)
-                break
-            case "EXIT":
+                continue
+            case "4":
                 return
             case other:
                 case_other()
@@ -242,12 +256,12 @@ def insert_blood(database: DataBase):
 
     id = insert_into(
                     database=database, 
-                    table="blood", 
-                    attributes=("type", "signe", "expiration", "quantity"), 
+                    table="BLOOD", 
+                    attributes=("type", "signe", "expiration_date", "quantity"), 
                     values=(type, signe, expiration, quantity)
     )
 
-    print("Blood inserted")
+    logging.info("Blood inserted")
     return id
 
 
@@ -290,6 +304,8 @@ def insert_organ(database: DataBase, donator_id: int = None):
         attributes=("state", "expiration_date", "expiration_date_transplantation", "type", "price", "method_of_preservation", "functional", "Com_id"),
         values=(state, expiration_date, expiration_date_transplantation, type, price, method_of_conservation, funcitonnal, donator_id)
     )
+    
+    logging.info("Organ inserted")
 
 
 def insert_donator(database: DataBase, blood_id: int = None):
@@ -303,7 +319,7 @@ def insert_donator(database: DataBase, blood_id: int = None):
     """
 
     if blood_id is None or blood_id < 0:
-        print("You have to insert a blood first")
+        print("To insert donator, you have to insert a blood first")
         blood_id = insert_blood(database)
         print("Back in insert donator")
 
@@ -317,7 +333,7 @@ def insert_donator(database: DataBase, blood_id: int = None):
         values=(blood_id, gender, age_of_death),
     )
 
-    print("Donator inserted")
+    logging.info("Donator inserted")
 
     return donator_id
 
@@ -414,7 +430,7 @@ def select_selling_quantity(database: DataBase):
 
     print("\n================================\n")
     print("Here is the total of selling for detail (BLOOD):")
-    querry = f"SELECT COUNT(*) as 'Detail quantity', SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) as 'Total price for those details'"
+    querry = f"SELECT COUNT(*) as 'Detail quantity', SUM({BLOOD_PRICE_FACTOR}) as 'Total price for those details'"
     querry += " FROM DETAIL, BLOOD WHERE"
     if include_start_date or include_end_date:
         querry += " DETAIL.id IN (SELECT ORDER_.id FROM ORDER_ WHERE ORDER_.Buy_id IN (SELECT DELIVERY.id FROM DELIVERY WHERE "
@@ -533,7 +549,7 @@ def get_selling_price_of_each_command(database: DataBase):
         )
 
     print("Here is the client that buy something:")
-    querry = f"SELECT ORDER_.id AS 'COMMANDE', SUM(ORGAN.price) AS 'Price organ', SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Price blood', SUM(ORGAN.price) + SUM(BLOOD.quantity * {BLOOD_PRICE_FACTOR}) AS 'Total price'"
+    querry = f"SELECT ORDER_.id AS 'COMMANDE', SUM(ORGAN.price) AS 'Price organ', SUM({BLOOD_PRICE_FACTOR}) AS 'Price blood', SUM(ORGAN.price) + SUM({BLOOD_PRICE_FACTOR}) AS 'Total price'"
     querry += f"FROM ORDER_, DETAIL, ORGAN, BLOOD WHERE "
     querry += (
         "ORDER_.id = DETAIL.id AND DETAIL.ORGAN = ORGAN.id AND DETAIL.BLOOD = BLOOD.id "

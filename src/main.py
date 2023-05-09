@@ -3,6 +3,7 @@
 # import
 import logging
 import sys
+import time
 
 # pip install -r requerements.txt
 # import mysql.connector as mysql
@@ -17,6 +18,12 @@ from module.database import DataBase
 
 # function and class
 def main():
+    logging.info("Start program...")
+    logging.info("Level info ✅")
+    logging.debug("Level debug ✅")
+    logging.warning("Level warning ✅")
+    logging.error("Level error ✅")
+    logging.critical("Level critical ✅")
     
     with DataBase(
                 host='localhost', 
@@ -56,11 +63,13 @@ def main():
 if __name__ == "__main__":
     if '-d' in sys.argv:
         logging.basicConfig(
-            level=logging.DEBUG
+            level=logging.DEBUG,
+            format='%(asctime)s %(levelname)s: %(message)s'
         )
     elif '-i' in sys.argv:
         logging.basicConfig(
-            level=logging.INFO
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s: %(message)s'
         )
     else:
         logging.basicConfig(

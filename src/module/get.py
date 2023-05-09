@@ -60,7 +60,7 @@ def get_date(prompt: str = "", before: Date = None, after: Date = None) -> (Date
             date_input = Date.fromisoformat(get_string(prompt))
         except (TypeError, ValueError):
             pass
-    
+    return date_input
     
 def get_float(prompt: str = "") -> (float):
     """ask to user a request and get input of answer
