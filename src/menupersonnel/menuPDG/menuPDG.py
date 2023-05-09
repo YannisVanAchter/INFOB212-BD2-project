@@ -91,7 +91,7 @@ def insert_newelements (db : DataBase):
     """
     db.connect
 
-    #Insert a new organ verif que c'est pas dedans 
+    #Insert a new organ 
     print ("Do you want to add an organ?")
     organ = get_string ("Yes" or "No")
     organ_new = get_string ("which one?")
@@ -104,9 +104,9 @@ def insert_newelements (db : DataBase):
         ORGAN_DICO.update({organ_new : [organ_new_price, organ_500ML, organ_480ML, organ_450ML]})
         insert_organ()
     else : 
-        print("This type of organ already exist ;)s")
+        print("This type of organ already exist ;)")
 
-    #Insert a new type of delivery TODO
+    #Insert a new type of delivery 
     print ("Do you want to add a new type of delivery ?")
     tp_delivery = get_string ("Yes" or "No")
     tp_delivery_id = get_string ("which one?")
