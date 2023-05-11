@@ -33,22 +33,23 @@ def main_persoadmin_menu (db: DataBase, customer_id):
         else:
             print("Your selection is not valid, please start from the beginning.")
             continue
-
-    #Check if such an organe is available and assiciation 
-    db.execute(f"SELECT O.id, O.type, D.id, T.id FROM ORGANE O, DETAIL D, TRANSPLANTATION T WHERE O.type = '{organe_type_choice}' and O.id <> D.id and O.id <> T.id")
-    organe_choice = db.table 
+    
+    #SELECT O.id, O.type, D.id, T.id FROM ORGANE O, DETAIL D, TRANSPLANTATION T WHERE O.type = %s and O.id <> D.id and O.id <> T.id", [organe_type_choice]
+    #Check if such an organe is available and assiciation faire en sous requetes
+    db.execute_with_params("SELECT O.id FROM ORGANE O WHERE O.type = %s and O.id not in(SELECT D.id FROM DETAIL D WHERE D.id = O.id) and O.id not in (SELECT T.Con_id FROM TRANSPLANTATION T WHERE T.Con_id = O.id);", [organe_type_choice])
+    organe_choice = db.tableArgs 
     if len(organe_choice) == 0 :
         print("All of the organes of the type you have choice is occuped")
     else : 
         organe_id = organe_choice[0][0] 
-        print ("Your organe is %i", organe_id)
+        print ("Your organe is", organe_id)
 
 
     #To get the date of the operation
     if len(organe_choice) != 0 :
         while True :
             date_choice = get_date("Enter a date for your operation")
-            db.execute("SELECT T.date FROM TRANPLANTATION T")
+            db.execute("SELECT T.date FROM TRANPLANTATION T;")
             date_table = db.table 
 
             if date_choice is not date_table :
@@ -64,7 +65,7 @@ def main_persoadmin_menu (db: DataBase, customer_id):
     if len(organe_choice) != 0 :
         print("We will assign you a doctor, an anaesthetist and a nurse")
         #To get the doctors who are free
-        db.execute("SELECT T.id, D.inami_number, D.D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id")
+        db.execute("SELECT T.id, D.inami_number, D.D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id;")
         doctor_choice = db.table # récupère le résultat de la requête
         if len(doctor_choice) == 0 :
             print("All of the medecins is occuped")
@@ -74,7 +75,7 @@ def main_persoadmin_menu (db: DataBase, customer_id):
 
 
         #To get the anesthesists who are free
-        db.execute("SELECT T.id, T.A_w_id, A.inami_number, A.id FROM TRANSPLANTATION T, ANESTHESIST A WHERE T.A_w_id <> A.id")
+        db.execute("SELECT T.id, T.A_w_id, A.inami_number, A.id FROM TRANSPLANTATION T, ANESTHESIST A WHERE T.A_w_id <> A.id;")
         anesthesist_choice = db.table 
         if len(anesthesist_choice) == 0 :
             print("All of the anesthesist is occuped")
@@ -84,7 +85,7 @@ def main_persoadmin_menu (db: DataBase, customer_id):
 
         
         #To get the nurses who are free
-        db.execute("SELECT T.id, NW.id, N.id FROM TRANSPLANTATION T, NURSE N, N_work_on NW WHERE N.id = NW.id and NW.id <> T.id")
+        db.execute("SELECT T.id, NW.id, N.id FROM TRANSPLANTATION T, NURSE N, N_work_on NW WHERE N.id = NW.id and NW.id <> T.id;")
         nurse_choice = db.table 
         if len(nurse_choice) == 0 :
             print("All of the nurse is occuped")
