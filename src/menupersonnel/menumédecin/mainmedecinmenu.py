@@ -25,7 +25,7 @@ def main_medecin_menu(database: DataBase):
     """
 
     print("In médecin menu")
-    id = str(input("Quel est votre identifiant de médecin ?")) #récupère l'identifiant du médecin
+    id = int(input("Quel est votre identifiant de médecin ?")) #récupère l'identifiant du médecin
 
     while True:
         print("Que voulez-vous faire ?")
@@ -38,16 +38,16 @@ def main_medecin_menu(database: DataBase):
         numero = int(input("choix:"))
 
         if numero == 1:
-            seepeople(id)
+            seepeople(database, id)
         
         elif numero == 2:
-            seedate_operations(id)
+            seedate_operations(database, id)
 
         elif numero == 3:
-            info_organe()
+            info_organe(database)
 
         elif numero == 4:
-            info_client()
+            info_client(database)
         else:
             break
 
@@ -69,9 +69,9 @@ def seepeople(database: DataBase, id):
     date_operation = datetime.date(annee, jour, mois)
 
     #cherche les anésthésistes qui travaillent avec le médecin à la date donnée et selon l'id du médecin
-    anesthésiste = ("SELECT id FROM ANAESTHETIST WHERE id in (SELECT A_w_id from TRANSPLANTATION WHERE date = %s AND D_w_id = %s)")
+    anesthesiste = ("SELECT id FROM ANAESTHETIST WHERE id in (SELECT A_w_id from TRANSPLANTATION WHERE date = '%s' AND D_w_id = '%s')")
 
-    database.execute(anesthésiste, (date_operation, id))
+    database.execute(anesthesiste, (date_operation, id))
 
     print("Voici les personnes avec lesquelles vous allez travailler")
 
@@ -83,7 +83,7 @@ def seepeople(database: DataBase, id):
 
     #cherche les infirmiers qui travaillent avec le médecin à la date donnée et selon l'id du médecin 
     infirmier = ("SELECT id FROM NURSE WHERE id in (SELECT N_N_id FROM N_work_on WHERE id in"
-    "(SELECT id FROM TRANSPLANTATION where date = %s AND D_w_id = %s))")
+    "(SELECT id FROM TRANSPLANTATION where date = '%s' AND D_w_id = '%s'))")
 
     database.execute(infirmier, (date_operation, id))
 
@@ -102,7 +102,7 @@ def seedate_operations(database: DataBase, id):
     """
     database.connect()
 
-    dates = ("SELECT date FROM TRANSPLANTATION WHERE D_w_id = %s ")
+    dates = ("SELECT date FROM TRANSPLANTATION WHERE D_w_id = '%s' ")
     database.execute(dates, (id))
 
     for (date) in database.table:
@@ -119,10 +119,10 @@ def info_organe(database: DataBase):
     """
     database.connect()
 
-    id_transplantation = input("Pouvez vous me donner l'identifiant de la transplantation dont vous souhaitez voir les organes?")
+    id_transplantation = int(input("Pouvez vous me donner l'identifiant de la transplantation dont vous souhaitez voir les organes?"))
 
     organes = ("SELECT state, method_of_preservation, type FROM ORGANE WHERE id in"
-    "(SELECT Con_id FROM TRANSPLANTATION WHERE id = %s)")
+    "(SELECT Con_id FROM TRANSPLANTATION WHERE id = '%d')")
     database.execute(organes, (id_transplantation))
 
     for (etat, methode_de_conservation, type) in database.table:
@@ -144,7 +144,7 @@ def info_client(database: DataBase):
     client = input("Quel est l'identifiant du client dont vous souhaitez avoir les informations ? ")
     database.connect()
     clients = ("SELECT Pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id in "
-    "(SELECT Rec_id FROM TRANSPLANTATION WHERE Rec_id = %s")
+    "(SELECT Rec_id FROM TRANSPLANTATION WHERE Rec_id = '%s'")
 
     database.execute(clients, (client))
 
