@@ -84,7 +84,7 @@ def suppression_PDG (db : DataBase, user_id):
     """
     db.connect
 
-    db.delete ("SELECT C.id, S.id FROM CEO C, STAFF S WHERE C.id = S.id and C.id = user_id")
+    db.delete (f"SELECT C.id, S.id FROM CEO C, STAFF S WHERE C.id = S.id and C.id = {user_id}")
 
 def insert_newelements (db : DataBase):
     """
@@ -121,7 +121,3 @@ def insert_newelements (db : DataBase):
 
     else : 
         return 0
-
-
-
-# insert des gens ???????????????? dans PERSON 
