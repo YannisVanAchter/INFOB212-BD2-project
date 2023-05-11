@@ -43,13 +43,13 @@ def main_RH_menu(db: DataBase):
         else: 
             db.connect()
             if choice == 0: 
-                add_employee()
+                add_employee(db)
             
             if choice == 1: 
-                modify_employee()
+                modify_employee(db)
                 
             if choice == 2: 
-                delete_employee()
+                delete_employee(db)
             
             if choice == 3: 
                 validity = False 

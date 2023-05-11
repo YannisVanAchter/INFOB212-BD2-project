@@ -142,7 +142,7 @@ def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, 
     """
     db.execute_with_params("INSERT INTO CUSTOMER (id, pseudo, blood_type, blood_sign) VALUES (%s,%s,%s,%s)", (personId, nickname, bloodType, bloodSign))
 
-def remove_user(db: DataBase, userId: int) -> str | True:
+def remove_user(db: DataBase, userId: int) -> str | bool:
     """
     Remove a user from the database.
 
