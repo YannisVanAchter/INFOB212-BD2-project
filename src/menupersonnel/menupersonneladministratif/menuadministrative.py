@@ -31,7 +31,7 @@ def main_persoadmin_menu (db: DataBase, customer_id):
             print("Your selection is valid, thank you, we will check if such an organe is available")
             break 
         else:
-            print("Your selection is not valid, please start from the beginning idiot")
+            print("Your selection is not valid, please start from the beginning.")
             continue
 
     #Check if such an organe is available and assiciation 

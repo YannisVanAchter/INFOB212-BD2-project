@@ -10,7 +10,7 @@ from menupersonnel.menupersonneladministratif import *
 from menupersonnel.RH import *
 from module.database import *
 
-def PDG_menu ():
+def main_PDG_menu():
     """
     """
     print ("Do you want to acces to the accountant menu?")
