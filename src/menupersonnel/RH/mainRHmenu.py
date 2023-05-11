@@ -3,6 +3,7 @@ from module.get import get_int
 from module.get import get_bool
 from module.get import get_string 
 from module.get import get_valid_id 
+from module.get import get_date
 from auth.authenticate import register
 import string
 import random
@@ -67,10 +68,12 @@ def add_employee(db : DataBase):
     
     db.connect()
     print("You have choosen to add a new employee")
-    existence = get_bool("Does this new employee is already register in our system ? Enter False if no and True if yes ")
+    
+    ## Check if the person has already registered in our system
+    existence = get_bool("Does this new employee has already an account PERSON? Enter False if no and True if yes ")
     
     if existence == True: 
-        create_person() 
+        create_person(db) 
     
     else : 
         id_person = get_int("Please enter the id of the person: ")
@@ -80,9 +83,9 @@ def add_employee(db : DataBase):
     
 def create_person(db : DataBase): 
     """
-    To add a new employee who has not already created an account in the company. 
-    Like we create ourselves a account PERSON we generate ourselves a temporary password.
-    Create a new account and call the function create_employee(id) with the id created
+    To add a new employee in the staff who has not already created an account in the company. 
+    We create ourselves an account PERSON and we generate ourselves a temporary password.
+    Call the function create_employee(id) with the id created
     
     Args:
     db (DataBase) : Data base connected for HR
@@ -93,7 +96,13 @@ def create_person(db : DataBase):
     last_name = get_string("Enter the last name of the person: ")
     first_name = get_string("Enter the first name of the person: ")
     phone_number = get_int ("Enter the phone number of the person: ")
-    born_date = get_string ("Enter the date of birth of the person (DD/MM/YYYY): ")
+    birth_date = get_string("Enter the date of birth of the person (DD/MM/YYYY): ")
+    street = get_string("Enter the street of the adress")
+    number = get_string("Enter the number of the adress")
+    postalCode = get_int ("Enter the postal code of the adress")
+    city = get_string("Enter the city")
+    land = get_string("Enter the land")
+    address = {"street" : street, "number" : number, "postalCode" : postalCode, "city" : city, "land": land }
     
     #Generate a temporary password for the new person 
     temporary_password = ""
@@ -102,7 +111,8 @@ def create_person(db : DataBase):
         temporary_password += random.choice(string.ascii_letters + string.digits) 
 
 
-    id_person = register(email, last_name, first_name, phone_number, born_date, temporary_password)
+    id_person = register(db,email, temporary_password, birth_date, address,  last_name, first_name, phone_number)
+    print(id_person)
     create_employee(id_person, db)
 
 def create_employee(id, db: DataBase): 
@@ -120,7 +130,8 @@ def create_employee(id, db: DataBase):
     salary_person = get_int("Please enter the salary of the person: ")
     description_person = get_string("Please enter the description of the job of the person in the company: ")
    
-    db.execute(f"INSERT INTO STAFF (id, salary, job_description) VALUES ({id}, {salary_person}, {description_person})")
+    ##db.execute(f"INSERT INTO STAFF (id, salary, job_description) VALUES ({id}, {salary_person}, '{description_person}')")
+    db.execute_with_params("INSERT INTO STAFF (id, salary, job_description) VALUES (%s,%s,%s)", (id, salary_person, description_person))
     
     print("Choose the category of the person: ")
     print("Type 0 if the person is an anaesthetist")
