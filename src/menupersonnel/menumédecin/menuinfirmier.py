@@ -68,7 +68,7 @@ def seepeople(database: DataBase, id):
     date_operation = datetime.date(annee, jour, mois)
 
     #cherche les anésthésistes qui travaillent avec le médecin à la date donnée et selon l'id du médecin
-    anesthésiste = ("SELECT id FROM ANAESTHETIST WHERE id in (SELECT A_w_id from TRANSPLANTATION WHERE date = %s AND D_w_id = %s)")
+    anesthésiste = ("SELECT id FROM ANAESTHETIST WHERE id in (SELECT A_w_id from TRANSPLANTATION WHERE date_ = %s AND D_w_id = %s)")
 
     database.execute(anesthésiste, (date_operation, id))
 
@@ -100,7 +100,7 @@ def seedate_operations(database: DataBase, id):
     """
     database.connect()
 
-    dates = ("SELECT date FROM TRANSPLANTATION WHERE id in (SELECT id FROM N_work_on WHERE N_N_id = %s ")
+    dates = ("SELECT date_ FROM TRANSPLANTATION WHERE id in (SELECT id FROM N_work_on WHERE N_N_id = %s ")
     database.execute(dates, (id))
 
     for (date) in database.table:

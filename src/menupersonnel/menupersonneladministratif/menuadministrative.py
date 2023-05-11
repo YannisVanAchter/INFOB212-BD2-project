@@ -122,7 +122,7 @@ def main_persoadmin_menu (db: DataBase, customer_id):
     insert_into(
         database=db,
         table="TRANSPLANTATION",
-        attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
+        attributes=("date_", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
         values=(date_choice, id, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
     )
 

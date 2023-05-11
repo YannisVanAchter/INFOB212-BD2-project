@@ -1,7 +1,7 @@
 from auth import User
 from module import DataBase
 
-def login(db: DataBase, email: str, password: str) -> User | None:
+def login(db: DataBase, email: str, password: str) -> (User | None):
     """Login a user
 
     Args:
@@ -63,7 +63,7 @@ def register(
         phoneNumber: str = None, 
         registerCustomer: dict = None,
         selfLogin=False
-    ) -> User | int | None:
+    ) -> (User | int | None):
     """Register a user in the databse
     
     Args:
@@ -142,7 +142,7 @@ def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, 
     """
     db.execute_with_params("INSERT INTO CUSTOMER (id, pseudo, blood_type, blood_sign) VALUES (%s,%s,%s,%s)", (personId, nickname, bloodType, bloodSign))
 
-def remove_user(db: DataBase, userId: int) -> str | True:
+def remove_user(db: DataBase, userId: int) -> (str | bool):
     """
     Remove a user from the database.
 

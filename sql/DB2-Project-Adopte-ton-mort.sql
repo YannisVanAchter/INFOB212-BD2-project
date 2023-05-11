@@ -154,7 +154,7 @@ create table IF NOT EXISTS ORGANE (
      -- constraint FK_TransplantationTransplantation foreign key (TRANSPLANTATION.id) references TRANSPLANTATION); -- ???
 
 create table IF NOT EXISTS TRANSPLANTATION (
-     date date not null,
+     date_ date not null,
      id INT unsigned not null AUTO_INCREMENT,
      Con_id INT unsigned not null,
      price float(32) not null check(price > 0),

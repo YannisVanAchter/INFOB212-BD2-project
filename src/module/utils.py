@@ -55,10 +55,13 @@ def insert_into(database: DataBase, table: str, attributes: tuple[str], values: 
     # init
     inserted_id = -1
     def to_string(x):
-        if not isinstance(x, str):
-            return str(x)
-        else:
+        if isinstance(x, str):
             return f"'{x}'"
+        if isinstance(x, Date):
+            return f"'{x.strftime('%Y-%m-%d')}'"
+        if isinstance(x, bool):
+            return str(int(x)).lower()
+        return str(x)
     
     # convert all values to string
     values = list(map(to_string, values))
