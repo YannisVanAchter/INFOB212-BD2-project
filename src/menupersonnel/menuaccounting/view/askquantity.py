@@ -13,8 +13,8 @@ def ask_blood_quantity(limit: int = None) -> (float):
     -------
         float: quantity of blood input by user
     """
-    quantity = 0
-    while ( limit is not None and not (0 < quantity <= limit)):
+    quantity = -1
+    while 0 > quantity or (limit is not None and (quantity >= limit)):
         quantity = get_float("Enter the blood quantity: ")
     return quantity
 

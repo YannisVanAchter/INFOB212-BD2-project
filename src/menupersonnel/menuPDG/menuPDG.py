@@ -84,24 +84,40 @@ def suppression_PDG (db : DataBase, user_id):
     """
     db.connect
 
-    db.delete ("SELECT C.id, S.id FROM CEO C, STAFF S WHERE C.id = S.id and C.id = user_id")
+    db.delete (f"SELECT C.id, S.id FROM CEO C, STAFF S WHERE C.id = S.id and C.id = {user_id}")
 
 def insert_newelements (db : DataBase):
     """
     """
     db.connect
 
+    #Insert a new organ 
     print ("Do you want to add an organ?")
     organ = get_string ("Yes" or "No")
     organ_new = get_string ("which one?")
-    if organ == "Yes":
+    organ_new_price = get_float("What is the price of your new organ ?")
+    organ_500ML = get_int("How much blood bag of 500 ml do we need for a transplantation of this new organ ? It could be 0")
+    organ_480ML = get_int("How much blood bag of 480 ml do we need for a transplantation of this new organ ? It could be 0")
+    organ_450ML = get_int("How much blood bag of 450 ml do we need for a transplantation of this new organ ? It could be 0")
+
+    if organ_new not in ORGAN_DICO :
+        ORGAN_DICO.update({organ_new : [organ_new_price, organ_500ML, organ_480ML, organ_450ML]})
+        insert_organ()
+    else : 
+        print("This type of organ already exist ;)")
+
+    #Insert a new type of delivery 
+    print ("Do you want to add a new type of delivery ?")
+    tp_delivery = get_string ("Yes" or "No")
+    tp_delivery_id = get_string ("which one?")
+    tp_delivery_new_price = get_float("What is its price?") 
+    if tp_delivery == "Yes":
         insert_into(
         database=db,
-        table="ORGANE",
-        attributes=("date", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
-        values=(date_choice, id, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
+        table="TYPE_DELIVERY",
+        attributes=("id", "price"),
+        values= (tp_delivery_id, tp_delivery_new_price)
     )
 
     else : 
         return 0
-    

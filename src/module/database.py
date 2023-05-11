@@ -280,6 +280,15 @@ class DataBase:
 
     def execute_with_params(self, query: str, argsTuple: tuple) -> (int):
         """Execute a query and returns its id if an insert was made. -1 otherwise.
+        
+        Parameters:
+        -----------
+            query (str): The query to execute
+            *argsTuple (tuple): The arguments to pass to the query
+            
+        Returns:
+        --------
+            int: The id of the inserted row if an insert was made. -1 otherwise.
         """
         toReturn = -1
         self.__cursorPrepared.execute(query, argsTuple)

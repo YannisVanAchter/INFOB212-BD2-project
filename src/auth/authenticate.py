@@ -1,7 +1,7 @@
 from auth import User
 from module import DataBase
 
-def login(db: DataBase, email: str, password: str) -> User | None:
+def login(db: DataBase, email: str, password: str) -> (User | None):
     """Login a user
 
     Args:
@@ -63,7 +63,7 @@ def register(
         phoneNumber: str = None, 
         registerCustomer: dict = None,
         selfLogin=False
-    ) -> User | int | None:
+    ) -> (User | int | None):
     """Register a user in the databse
     
     Args:
