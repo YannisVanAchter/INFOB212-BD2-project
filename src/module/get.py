@@ -202,7 +202,7 @@ def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type
     while True:
         try:
             id = id_type(get_string(prompt))
-            if id in id_list:
+            if (id) in id_list:
                 return id
             print("ERROR: id not found")
             return None

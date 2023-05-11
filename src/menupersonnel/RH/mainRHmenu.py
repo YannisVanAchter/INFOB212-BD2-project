@@ -1,13 +1,10 @@
 from module.database import DataBase
 from module.get import get_int 
-from module.get import get_bool
 from module.get import get_string 
 from module.get import get_valid_id 
-from module.get import get_date
 from auth.authenticate import register
 import string
 import random
-
 
 def main_RH_menu(db: DataBase):
     """
@@ -29,7 +26,7 @@ def main_RH_menu(db: DataBase):
 
     def print_menu():
         print("Choose what you want to do: ")
-        print("Type 0 if you want add an employee to the company ")
+        print("Type 0 if you want add an employee to the company")
         print("Type 1 if you want to modify an actual employee ")
         print("Type 2 if you want to delete an actual employee ")
         print("Type 3 if you want to exit")
@@ -70,17 +67,19 @@ def add_employee(db : DataBase):
     print("You have choosen to add a new employee")
     
     ## Check if the person has already registered in our system
-    existence = get_bool("Does this new employee has already an account PERSON? Enter False if no and True if yes ")
-    
-    if existence == True: 
+    existence = ""
+    while (existence != "yes" and existence != "no"):
+        existence = get_string("Does this new employee has already an account PERSON? Enter no or yes ")
+        
+    if existence == 'no': 
         create_person(db) 
     
-    else : 
-        id_person = get_int("Please enter the id of the person: ")
-        create_employee(id_person)
+    if existence == 'yes' : 
+        id_person = get_valid_id(db, "Please enter the id of the person:", "PERSON" , int)
+        create_employee(id_person, db)
         
     db.disconnect()
-    
+   
 def create_person(db : DataBase): 
     """
     To add a new employee in the staff who has not already created an account in the company. 
@@ -90,7 +89,7 @@ def create_person(db : DataBase):
     Args:
     db (DataBase) : Data base connected for HR
     """
-   
+    
     print("Now you will create a new personnal account")
     email = get_string("Please enter the email of the person: ")
     last_name = get_string("Enter the last name of the person: ")
@@ -129,9 +128,10 @@ def create_employee(id, db: DataBase):
 
     salary_person = get_int("Please enter the salary of the person: ")
     description_person = get_string("Please enter the description of the job of the person in the company: ")
+    activity = True
    
     ##db.execute(f"INSERT INTO STAFF (id, salary, job_description) VALUES ({id}, {salary_person}, '{description_person}')")
-    db.execute_with_params("INSERT INTO STAFF (id, salary, job_description) VALUES (%s,%s,%s)", (id, salary_person, description_person))
+    db.execute_with_params("INSERT INTO STAFF (id, salary, job_description, active) VALUES (%s,%s,%s, %s)", (id, salary_person, description_person, activity))
     
     print("Choose the category of the person: ")
     print("Type 0 if the person is an anaesthetist")
@@ -149,7 +149,7 @@ def create_employee(id, db: DataBase):
     else: 
         if category == 0:
             inami = get_string("Enter the INAMI number of the person:")
-            db.execute(f"INSERT INTO ANAESTHETIST (id,inami_number) VALUES ({id},{inami})")
+            db.execute(f"INSERT INTO ANAESTHESIST (id,inami_number) VALUES ({id},{inami})")
         if category == 1: 
             db.execute(f"INSERT INTO NURSE (id) VALUES ({id})")
         if category == 2: 
@@ -166,7 +166,7 @@ def create_employee(id, db: DataBase):
             
 def modify_employee(db : DataBase): 
     """_
-    To modify an actual employee (to change his function or his salary)
+    To modify an actual employee (to change his description or his salary)
     
     Args:
     db (DataBase): Data base connected for HR 
@@ -182,11 +182,17 @@ def modify_employee(db : DataBase):
         print("Please enter a valid integer")
     else: 
         if choice == 1: 
+            db.execute(f"SELECT salary from STAFF where id= {id_employee}")
+            actual_salary = db.table
+            print('This is the actual salary of the employee: %s', actual_salary)
             new_salary = get_int("Enter the new salary: ")
-            db.execute(f"UPDATE salary = {new_salary} FROM STAFF WHERE ID = id_employee") 
+            db.execute(f"UPDATE STAFF SET salary = {new_salary} WHERE id = {id_employee}") 
         if choice == 2: 
+            db.execute(f"SELECT description from STAFF where id= {id_employee}")
+            actual_description = db.table
+            print('This is the actual description of the employee: %s', actual_description)
             new_description = get_string("Enter the new description: ")
-            db.execute(f"UPDATE job_description = {new_description} FROM STAFF WHERE ID = id_employee")
+            db.execute(f"UPDATE  STAFF SET job_description = {new_description} WHERE id = {id_employee}")
     
     db.disconnect()
     
@@ -212,7 +218,7 @@ def delete_employee(db: DataBase):
         db.execute("SELECT id FROM NURSE")
         medecins += db.table 
         nurses = db.table
-        db.execute("SELECT id FROM ANAESTHETIST")
+        db.execute("SELECT id FROM ANAESTHESIST")
         medecins += db.table
         anaesthetists = db.table   
         db.execute("SELECT id FROM CEO")
@@ -225,7 +231,7 @@ def delete_employee(db: DataBase):
                 db.execute(f"UPDATE DOCTOR SET inami_number = '-1' WHERE id = {id_employee}")
                 
             if id_employee in anaesthetists: 
-                db.execute(f"UPDATE ANAESTHETIST SET inami_number = '-1' WHERE id = {id_employee}")
+                db.execute(f"UPDATE ANAESTHESIST SET inami_number = '-1' WHERE id = {id_employee}")
             
             db.execute(f"UPDATE STAFF SET salary = '0',job_description = 'nothing', active = false  WHERE id = {id_employee} ")
 
