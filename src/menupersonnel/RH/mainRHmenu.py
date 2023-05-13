@@ -96,11 +96,11 @@ def create_person(db : DataBase):
     first_name = get_string("Enter the first name of the person: ")
     phone_number = get_int ("Enter the phone number of the person: ")
     birth_date = get_string("Enter the date of birth of the person (DD/MM/YYYY): ")
-    street = get_string("Enter the street of the adress")
-    number = get_string("Enter the number of the adress")
-    postalCode = get_int ("Enter the postal code of the adress")
-    city = get_string("Enter the city")
-    land = get_string("Enter the land")
+    street = get_string("Enter the street of the address: ")
+    number = get_string("Enter the number of the address: ")
+    postalCode = get_int ("Enter the postal code of the addess: ")
+    city = get_string("Enter the city: ")
+    land = get_string("Enter the land: ")
     address = {"street" : street, "number" : number, "postalCode" : postalCode, "city" : city, "land": land }
     
     #Generate a temporary password for the new person 
@@ -142,26 +142,29 @@ def create_employee(id, db: DataBase):
     print("Type 5 if the person is a CEO")
     print("Type 6 if the person does not belong to a particular category")
     
-    category = get_int("The number of the category is: ")
+    category = "-1"
     
-    if category not in {0,1,2,3,4,5,6} :
-        print("The number entered is not valid")
-    else: 
-        if category == 0:
-            inami = get_string("Enter the INAMI number of the person:")
-            db.execute(f"INSERT INTO ANAESTHESIST (id,inami_number) VALUES ({id},{inami})")
-        if category == 1: 
-            db.execute(f"INSERT INTO NURSE (id) VALUES ({id})")
-        if category == 2: 
-            inami = get_string("Enter the INAMI number of the person:")
-            db.execute(f"INSERT INTO DOCTOR (id,inami_number) VALUES ({id},{inami})")
-        if category == 3: 
-            db.execute(f"INSERT INTO ACCOUNTANT (id) VALUES ({id})")  
-        if category == 4: 
-            db.execute(f"INSERT INTO HR (id) VALUES ({id})")  
-        if category == 5: 
-            db.execute(f"INSERT INTO CEO (id) VALUES ({id})")  
-            
+    while category not in {0,1,2,3,4,5,6} :
+        category = get_int("The number of the category is: ")
+              
+
+    if category == 0:
+        inami = get_string("Enter the INAMI number of the person:")
+        db.execute(f"INSERT INTO ANAESTHESIST (id,inami_number) VALUES ({id},{inami})")
+    if category == 1: 
+        db.execute(f"INSERT INTO NURSE (id) VALUES ({id})")
+    if category == 2: 
+        inami = get_string("Enter the INAMI number of the person:")
+        db.execute(f"INSERT INTO DOCTOR (id,inami_number) VALUES ({id},{inami})")
+    if category == 3: 
+        db.execute(f"INSERT INTO ACCOUNTANT (id) VALUES ({id})")  
+    if category == 4: 
+        db.execute(f"INSERT INTO HR (id) VALUES ({id})")  
+    if category == 5: 
+        db.execute(f"INSERT INTO CEO (id) VALUES ({id})")  
+    
+    print("Employee well created \n " )
+    
     db.disconnect()
             
 def modify_employee(db : DataBase): 
@@ -193,6 +196,7 @@ def modify_employee(db : DataBase):
             print('This is the actual description of the employee: %s', actual_description)
             new_description = get_string("Enter the new description: ")
             db.execute(f"UPDATE  STAFF SET job_description = {new_description} WHERE id = {id_employee}")
+    
     
     db.disconnect()
     
