@@ -75,7 +75,7 @@ def add_employee(db : DataBase):
         create_person(db) 
     
     if existence == 'yes' : 
-        id_person = get_valid_id(db, "Please enter the id of the person:", "PERSON" , int)
+        id_person = get_valid_id(db, "Please enter the id of the person: ", "PERSON")
         create_employee(id_person, db)
         
     db.disconnect()
@@ -146,22 +146,21 @@ def create_employee(id, db: DataBase):
     while category not in {0,1,2,3,4,5,6} :
         category = get_int("The number of the category is: ")
               
-
     if category == 0:
         inami = get_string("Enter the INAMI number of the person:")
-        db.execute(f"INSERT INTO ANAESTHESIST (id,inami_number) VALUES ({id},{inami})")
+        db.execute_with_params("INSERT INTO ANAESTHESIST (id,inami_number) VALUES (%s, %s)", (id, inami))
     if category == 1: 
-        db.execute(f"INSERT INTO NURSE (id) VALUES ({id})")
+        db.execute_with_params("INSERT INTO NURSE (id) VALUES (%s)", (id))
     if category == 2: 
         inami = get_string("Enter the INAMI number of the person:")
-        db.execute(f"INSERT INTO DOCTOR (id,inami_number) VALUES ({id},{inami})")
+        db.execute_with_params("INSERT INTO DOCTOR (id,inami_number) VALUES (%s, %s)", (id, inami))
     if category == 3: 
-        db.execute(f"INSERT INTO ACCOUNTANT (id) VALUES ({id})")  
-    if category == 4: 
-        db.execute(f"INSERT INTO HR (id) VALUES ({id})")  
+        db.execute_with_params("INSERT INTO ACCOUNTANT (id) VALUES (%s)", (id))
+    if category == 4:  
+        db.execute_with_params("INSERT INTO HR (id) VALUES (%s)", (id))
     if category == 5: 
-        db.execute(f"INSERT INTO CEO (id) VALUES ({id})")  
-    
+        db.execute_with_params("INSERT INTO CEO (id) VALUES (%s)", (id))
+        
     print("Employee well created \n " )
     
     db.disconnect()
@@ -174,14 +173,10 @@ def modify_employee(db : DataBase):
     db (DataBase): Data base connected for HR 
     """
     db.connect()
-    
  
     id_employee = None 
     while id_employee == None: 
         id_employee = get_valid_id(db, "Enter the id of the employee that you want to modify: ", "STAFF")
-        # db.execute_with_params("SELECT id from STAFF where id = %s; " , [id_employee])
-        # if len (db.tableArgs) == 0:
-        #     id_employee = None
     
     print("What do you want to do?")
     choice = get_int("Type 1 if you want to modify the salary of the employee and 2 if you want to modify his description:")
@@ -196,11 +191,12 @@ def modify_employee(db : DataBase):
             new_salary = get_int("Enter the new salary: ")
             db.execute(f"UPDATE STAFF SET salary = {new_salary} WHERE id = {id_employee}") 
         if choice == 2: 
-            db.execute(f"SELECT description from STAFF where id= {id_employee}")
+            db.execute(f"SELECT description from STAFF where id = {id_employee}")
             actual_description = db.table
             print('This is the actual description of the employee: %s', actual_description)
             new_description = get_string("Enter the new description: ")
-            db.execute(f"UPDATE  STAFF SET job_description = {new_description} WHERE id = {id_employee}")
+            db.execute(f"UPDATE STAFF SET job_description = {new_description} WHERE id = {id_employee}")
+           
     
     
     db.disconnect()
@@ -214,7 +210,9 @@ def delete_employee(db: DataBase):
     """
     db.connect()
     
-    id_employee = get_valid_id(db, "Please enter the id of the person:", "STAFF" , int)
+    id_employee = None 
+    while id_employee == None: 
+        id_employee = get_valid_id(db, "Enter the id of the employee that you want to delete: ", "STAFF")
 
     print("Are you sure to delete this employee? After that you cannot go back")
     confirmation = get_string("Type yes if you want to delete this person or no otherwise")

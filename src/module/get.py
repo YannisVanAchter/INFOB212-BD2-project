@@ -156,7 +156,7 @@ def get_valid_id(db: DataBase, prompt: str, table_name: str) -> int:
     Return:
     -------
         id : valid id
-        NoneType: if id is not valid (not found in "mysql".table)
+        id = None : if id is not valid (not found in "mysql".table)
         
     Version:
     --------
