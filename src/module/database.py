@@ -300,14 +300,15 @@ class DataBase:
         query = query.strip()
         self.__cursorPrepared.execute(query, argsTuple)
         print(self.__cursorPrepared)
+        print(self.__cursorPrepared.with_rows)
         if self.__cursorPrepared.with_rows:
             self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             if (not self.__db.is_connected()):
-                self.__db.recconect()
+                self.__db.reconnect()
             self.__cursorPrepared.nextset()
         else:
             if (not self.__db.is_connected()):
-                self.__db.recconect()
+                self.__db.reconnect()
             if query.upper().startswith("INSERT") or query.upper().startswith("UPDATE"):
                 toReturn = self.__cursorPrepared.lastrowid
                 self.__db.commit()
