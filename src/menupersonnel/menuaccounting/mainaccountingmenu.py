@@ -250,7 +250,8 @@ def insert_blood(database: DataBase):
         int: id of the blood inserted
     """
     type: str = ask_product_type()
-    signe: bool = get_bool("Enter the blood signe: ")
+    signe: bool = get_string("Enter the blood signe: (+/-)")
+    signe = signe == "+"
     expiration: Date = get_date("Enter the expiration date (YYYY-MM-DD): ", before=Date.today())
     quantity: float | int = ask_blood_quantity()
 
