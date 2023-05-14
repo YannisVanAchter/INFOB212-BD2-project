@@ -4,7 +4,7 @@ from datetime import date as Date
 import logging
 import time
 
-from module.get import get_string, get_sql_user_querry, get_bool, get_date
+from module.get import get_string, get_sql_user_querry, get_date
 from module.database import DataBase, ProgrammingError
 from module.utils import clear_terminal as cls, insert_into
 from constants import BLOOD_PRICE_FACTOR

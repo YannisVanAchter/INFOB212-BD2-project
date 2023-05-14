@@ -112,30 +112,6 @@ def get_int(prompt: str = "") -> (int):
         except (TypeError, ValueError):
             pass
         
-def get_bool(prompt: str = "") -> (bool):
-    """ask to user a request and get input of answer
-
-    Args:
-    -----
-        prompt (str, optional): request shows to user. Defaults to ""
-
-    Return:
-    -------
-        bool: answer of user
-        
-    Version:
-    --------
-        1.0.0
-        
-    Author:
-    -------
-        Yannis Van Achter
-    """
-    while True:
-        try:
-            return bool(get_string(prompt))
-        except (TypeError, ValueError):
-            pass
         
 def get_sql_user_querry(prompt: str = "") -> (str):
     """Ask to user for personnal sql querry
@@ -163,49 +139,44 @@ def get_sql_user_querry(prompt: str = "") -> (str):
         
     return querry
 
-def get_valid_id(database: DataBase, prompt: str, table_name: str, id_type: Type = int) -> (int):
+def get_valid_id(db: DataBase, prompt: str, table_name: str) -> int:
     """Ask user for valid id in database
 
     Args:
     -----
-        database (DataBase): database to check id, 
+        db (DataBase): database to check id, 
             connect with user that have SELECT grant permission on table_name
         prompt (str): Request to user.( ce qui est affiché à l'utilisateur)
         table_name (str): Name of table to check id.
-        id_type (Type, optional): type of id to check (int or str). Defaults to 'integer'
-        
+      
     Raises:
     -------
         TypeError: if id_type is not int or str
 
     Return:
     -------
-        id_type(): valid id
-        NoneType: if id is not valid (not found in "mysql".table)
+        id : valid id
+        id = None : if id is not valid (not found in "mysql".table)
         
     Version:
     --------
-        1.0.0
+        2.0.0
         
     Author:
     -------
         Yannis Van Achter
+        Aurélie Genot & Youlan Collard
     """
-    if id_type not in (int, str):
-        raise TypeError("id_type must be int or str")
-    
-    id_list = []
-    with database as db:
-        db.execute(f"SELECT id FROM {table_name};")
-        id_list = db.table
-        
-    while True:
-        try:
-            id = id_type(get_string(prompt))
-            if (id) in id_list:
-                return id
+
+    try:
+        id = get_int(prompt)
+        db.execute_with_params(f"SELECT id from {table_name} where id = %s; ", [id])
+        if len (db.tableArgs) == 0: 
+            id = None 
             print("ERROR: id not found")
-            return None
-        except (TypeError, ValueError):
-            pass
+        return id
+    except (TypeError, ValueError):
+        pass
+    
+
     
