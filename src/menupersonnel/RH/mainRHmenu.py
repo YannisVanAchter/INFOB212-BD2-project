@@ -130,7 +130,6 @@ def create_employee(id, db: DataBase):
     description_person = get_string("Please enter the description of the job of the person in the company: ")
     activity = True
    
-    ##db.execute(f"INSERT INTO STAFF (id, salary, job_description) VALUES ({id}, {salary_person}, '{description_person}')")
     db.execute_with_params("INSERT INTO STAFF (id, salary, job_description, active) VALUES (%s,%s,%s, %s)", (id, salary_person, description_person, activity))
     
     print("\n Choose the category of the person: ")
@@ -176,9 +175,13 @@ def modify_employee(db : DataBase):
     """
     db.connect()
     
+ 
     id_employee = None 
     while id_employee == None: 
-        id_employee = get_valid_id(db, "Please enter the id of the employee:", "STAFF" , int)
+        id_employee = get_valid_id(db, "Enter the id of the employee that you want to modify: ", "STAFF")
+        # db.execute_with_params("SELECT id from STAFF where id = %s; " , [id_employee])
+        # if len (db.tableArgs) == 0:
+        #     id_employee = None
     
     print("What do you want to do?")
     choice = get_int("Type 1 if you want to modify the salary of the employee and 2 if you want to modify his description:")
