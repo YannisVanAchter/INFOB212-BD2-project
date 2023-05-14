@@ -273,6 +273,8 @@ class DataBase:
                     if query.upper().startswith("INSERT") or query.upper().startswith("UPDATE"):
                         toReturn = self.__cursor.lastrowid
                         self.__db.commit()
+                    elif query.upper().startswith("DELETE"):
+                        self.__db.commit()
                     self.__cursor.close()
                     self.__cursor = self.__db.cursor(buffered=True)
             return toReturn
@@ -312,6 +314,9 @@ class DataBase:
             if query.upper().startswith("INSERT") or query.upper().startswith("UPDATE"):
                 toReturn = self.__cursorPrepared.lastrowid
                 self.__db.commit()
+            elif query.upper().startswith("DELETE"):
+                self.__db.commit()
+
             self.__cursorPrepared.close()
             self.__cursorPrepared = self.__db.cursor(prepared=True)
         return toReturn
