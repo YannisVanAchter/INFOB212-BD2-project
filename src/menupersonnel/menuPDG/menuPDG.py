@@ -23,7 +23,7 @@ def main_PDG_menu(database: DataBase, customer_id, user_id):
     print("Enter 5 if you want to access to the administratif menu")
     print("Enter 6 if you want to access to the RH menu")
     print("Enter 7 if you want to access to the functions of the PDG menu")
-    menu_choice = get_int(print("What is the menu that you need BITCH ?"))
+    menu_choice = get_int(print("What is the menu that you need ?"))
 
     if menu_choice == 1 : 
         main_accounting_menu(database)
