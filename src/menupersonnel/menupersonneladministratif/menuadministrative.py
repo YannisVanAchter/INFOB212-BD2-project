@@ -22,6 +22,7 @@ def main_persoadmin_menu (db: DataBase, customer_id):
 
     db.connect()
 
+    print("Welcome in the personnal administratif menu !")
 
     #Choice of the organe 
     while True :
