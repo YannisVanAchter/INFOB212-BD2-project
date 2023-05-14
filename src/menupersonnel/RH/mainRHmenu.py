@@ -226,9 +226,7 @@ def delete_employee(db: DataBase):
         medecins += db.table
         anaesthetists = db.table   
         db.execute("SELECT id FROM CEO")
-        ceo = db.table
-        db.execute("SELECT id FROM CUSTOMER")
-        customers = db.table        
+        ceo = db.table    
         
         if id_employee in medecins:
             if id_employee in doctors:
