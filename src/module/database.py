@@ -224,7 +224,7 @@ class DataBase:
             + f"Original error: {type(e)} {e}"
         )
 
-    def execute(self, querry: str, multi: bool = False):
+    def execute(self, querry: str, multi: bool = False) -> int:
         """execute SQL querry in database
 
         Args:
@@ -240,6 +240,7 @@ class DataBase:
             Make sure to be connected to the database before execute querry
             Use self.table to get the return of the querry
         """
+        toReturn = -1
         if self.auto_connect and not self.__is_connected:
             self.connect()
             
@@ -268,10 +269,11 @@ class DataBase:
                     self.__cursor.nextset()
                 else:
                     if query.upper().startswith("INSERT") or query.upper().startswith("UPDATE"):
-                        self.last_row_id = self.__cursor.lastrowid
+                        toReturn = self.__cursor.lastrowid
                         self.__db.commit()
                     self.__cursor.close()
                     self.__cursor = self.__db.cursor(buffered=True)
+            return toReturn
 
         except ProgrammingError as e:
             raise e
