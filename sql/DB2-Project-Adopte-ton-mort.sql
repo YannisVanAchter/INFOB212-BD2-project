@@ -570,3 +570,8 @@ insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_tra
  values (2, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "foot", 5000, 1);
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
  values (3, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "large intestine", 13000, 1);
+ 
+ insert into TRANSPLANTATION(date_, Con_id, price, Rec_id, D_w_id, A_w_id)
+ values('2021-01-01', 1, '45.6', 2, 4, 6);
+insert into N_work_on(N_N_id, id)
+ values(5, 1);
