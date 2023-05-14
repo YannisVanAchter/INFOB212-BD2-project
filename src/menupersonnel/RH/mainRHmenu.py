@@ -187,13 +187,13 @@ def modify_employee(db : DataBase):
             actual_salary = db.table
             print('This is the actual salary of the employee: %s', actual_salary)
             new_salary = get_int("Enter the new salary: ")
-            db.execute(f"UPDATE STAFF SET salary = {new_salary} WHERE id = {id_employee}") 
+            db.execute_with_params("UPDATE STAFF SET salary = %s WHERE id = %s", [new_salary, id_employee]) 
         if choice == 2: 
             db.execute(f"SELECT job_description from STAFF where id = {id_employee}")
             actual_description = db.table
             print('This is the actual description of the employee: %s', actual_description)
             new_description = get_string("Enter the new description: ")
-            db.execute(f"UPDATE STAFF SET job_description = '{new_description}' WHERE id = {id_employee}; ")
+            db.execute_with_params("UPDATE STAFF SET job_description = %s WHERE id = %s; ", [new_description, id_employee])
             
         print("Employee well modified")    
     db.disconnect()
