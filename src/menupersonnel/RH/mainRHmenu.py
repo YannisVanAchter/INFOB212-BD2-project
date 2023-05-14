@@ -211,17 +211,20 @@ def delete_employee(db: DataBase):
     while id_employee == None: 
         id_employee = get_valid_id(db, "Enter the id of the employee that you want to delete: ", "STAFF")
 
-    print("Are you sure to delete this employee? After that you cannot go back")
-    confirmation = get_string("Type yes if you want to delete this person or no otherwise")
+    print("Are you sure to delete this employee? After that you cannot go back ")
     
-    if confirmation == "yes": 
+    confirmation = ""
+    while (confirmation != "yes" and confirmation != "no"):
+        confirmation = get_string("Type yes if you want to delete this person or no otherwise: ")
+    
+    if confirmation == 'yes' :  
+        print ("bien entrer ! ")
         #Verify if the person is in a category
-        db.execute("SELECT id FROM MEDECIN")
+        db.execute("SELECT id FROM DOCTOR")
         medecins = db.table
         doctors = db.table
         db.execute("SELECT id FROM NURSE")
         medecins += db.table 
-        nurses = db.table
         db.execute("SELECT id FROM ANAESTHESIST")
         medecins += db.table
         anaesthetists = db.table   
@@ -249,8 +252,10 @@ def delete_employee(db: DataBase):
                 db.execute(f"DELETE FROM HR WHERE id = {id_employee}")        
             
             db.execute(f"DELETE FROM STAFF WHERE id = {id_employee} ") 
+            
+            print('Employee well deleted')
        
-    else: 
-        print('This person will not be deleted')
+    if confirmation == 'no': 
+        print('This employee will not be deleted')
         
     db.disconnect()
