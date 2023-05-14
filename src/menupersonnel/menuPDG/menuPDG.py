@@ -14,41 +14,60 @@ def main_PDG_menu(database: DataBase, customer_id, user_id):
     """
     """
 
-    print("Welcome in the PDG menu")
+    def print_menu():
+        print("Welcome in the PDG menu")
+
+        print("Enter 1 if you want to access to the accounting menu")
+        print("Enter 2 if you want to access to the medecin menu")
+        print("Enter 3 if you want to access to the anesthetist menu")
+        print("Enter 4 if you want to access to the nurse menu")
+        print("Enter 5 if you want to access to the administratif menu")
+        print("Enter 6 if you want to access to the RH menu")
+        print("Enter 7 if you want to access to the functions of the PDG menu")
+        print("Enter 8 if you want to exit ")
+        
+    finish = False
     
-    print("Enter 1 if you want to access to the accounting menu")
-    print("Enter 2 if you want to access to the medecin menu")
-    print("Enter 3 if you want to access to the anesthetist menu")
-    print("Enter 4 if you want to access to the nurse menu")
-    print("Enter 5 if you want to access to the administratif menu")
-    print("Enter 6 if you want to access to the RH menu")
-    print("Enter 7 if you want to access to the functions of the PDG menu")
-    menu_choice = get_int(print("What is the menu that you need ?"))
+    while (finish == False): 
+    
+        print_menu()
+        menu_choice = get_int("What is the menu that you need ?")
+        if (menu_choice not in {1,2,3,4,5,6,7,8}):
+            print("This operation is not possible, please choose another number")
+            
+        else: 
+            database.connect()
+            
+            if menu_choice == 1 : 
+                main_accounting_menu(database)
+            elif menu_choice == 2 :
+                main_medecin_menu(database)
+            elif menu_choice == 3 :
+                main_anesthesiste_menu(database)
+            elif menu_choice == 4 :
+                main_infirmier_menu(database)
+            elif menu_choice == 5 : 
+                main_persoadmin_menu (database, customer_id)
+            elif menu_choice == 6 : 
+                main_RH_menu (database)
+            elif menu_choice == 7 :
+                print("Enter 1 if you want to access to the function which allows to delete a PDG")
+                print("Enter 2 if you want to access to the function which allows to insert something in the DataBase")
+                function_choice = get_int("What is your choice ?")
 
-    if menu_choice == 1 : 
-        main_accounting_menu(database)
-    elif menu_choice == 2 :
-        main_medecin_menu(database)
-    elif menu_choice == 3 :
-        main_anesthesiste_menu(database)
-    elif menu_choice == 4 :
-        main_infirmier_menu(database)
-    elif menu_choice == 5 : 
-        main_persoadmin_menu (database, customer_id)
-    elif menu_choice == 6 : 
-        main_RH_menu (database)
-    elif menu_choice == 7 :
-        print("Enter 1 if you want to access to the function which allows to delete a PDG")
-        print("Enter 2 if you want to access to the function which allows to insert something in the DataBase")
-        function_choice = get_int(print("What is your choice ?"))
+                if function_choice == 1 : 
+                    suppression_PDG (database, user_id)
+                elif function_choice == 2 :
+                    insert_newelements (database)
+                else: 
+                    print('The number entered is not valid')
+                    
+            elif menu_choice == 8:
+                finish = True 
 
-        if function_choice == 1 : 
-            suppression_PDG (database, user_id)
-        elif function_choice == 2 :
-            insert_newelements (database)
-
-
-    """
+            database.disconnect()
+            
+"""
     while True : 
         print ("Do you want to acces to the accountant menu?")
         want_accounting = get_string ("Yes or No ?")
@@ -92,8 +111,7 @@ def main_PDG_menu(database: DataBase, customer_id, user_id):
                                         break
                                     else : 
                                         print("There are no option left")
-                                        continue
-                                        
+                                        continue                                     
 """
         
 def suppression_PDG (db : DataBase, user_id):
