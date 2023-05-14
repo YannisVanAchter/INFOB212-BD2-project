@@ -60,32 +60,27 @@ def seepeople(database: DataBase, id):
     """
     database.connect()
 
-    print("Quelle est la date de l'opération dont vous voulez voir les personnes avec qui vous allez travailler ? ")
-    annee = int(input("Donnez moi l'année de l'opération"))
-    jour = int(input("Donnez moi le jour de l'opération"))
-    mois = get.get_int("Donnez moi le mois de l'opération")
+    idT = int(input(("Quelle est l'identifiant de la transplantation dont vous voulez voir avec qui vous allez travailler")))
 
-    #transforme en date
-    date_operation = datetime.date(annee, jour, mois)
 
     #cherche les anésthésistes qui travaillent avec le médecin à la date donnée et selon l'id du médecin
-    anesthesiste = ("SELECT id FROM ANAESTHETIST WHERE id in (SELECT A_w_id from TRANSPLANTATION WHERE date_ = '%s' AND D_w_id = '%s')")
+    anesthesiste = ("SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = '%s')")
 
-    database.execute(anesthesiste, (date_operation, id))
+    database.execute(anesthesiste % (idT))
 
     print("Voici les personnes avec lesquelles vous allez travailler")
 
-    for (id) in database.table:
-        print("Vous travaillez avec cet anésthésiste:", id)
+    for (ana, ina) in database.table:
+        print("Vous travaillez avec cet anésthésiste:", ana, "qui a un code inami de", ina)
     database.disconnect()
     
     database.connect()
 
     #cherche les infirmiers qui travaillent avec le médecin à la date donnée et selon l'id du médecin 
-    infirmier = ("SELECT id FROM NURSE WHERE id in (SELECT N_N_id FROM N_work_on WHERE id in"
-    "(SELECT id FROM TRANSPLANTATION where date_ = '%s' AND D_w_id = '%s'))")
+    infirmier = ("SELECT N_N_id FROM N_work_on WHERE id IN"
+    "(SELECT id FROM TRANSPLANTATION where id = '%s')")
 
-    database.execute(infirmier, (date_operation, id))
+    database.execute(infirmier% (idT))
 
     for (num) in database.table:
         print("Vous travaillez avec ces infirmiers:", num)
@@ -103,7 +98,7 @@ def seedate_operations(database: DataBase, id):
     database.connect()
 
     dates = ("SELECT date_ FROM TRANSPLANTATION WHERE D_w_id = '%s' ")
-    database.execute(dates, (id))
+    database.execute(dates % (id))
 
     for (date) in database.table:
         print("Vous avez des opérations à ces dates-ci:", date)
@@ -121,15 +116,14 @@ def info_organe(database: DataBase):
 
     id_transplantation = int(input("Pouvez vous me donner l'identifiant de la transplantation dont vous souhaitez voir les organes?"))
 
-    organes = ("SELECT state, method_of_preservation, type FROM ORGANE WHERE id in"
-    "(SELECT Con_id FROM TRANSPLANTATION WHERE id = '%d')")
-    database.execute(organes, (id_transplantation))
+    organes = ("SELECT state, method_of_preservation, type FROM ORGANE WHERE id = '%s'")
+    database.execute(organes % (id_transplantation))
 
     for (etat, methode_de_conservation, type) in database.table:
         print("voici les informations sur l'organe")
-        print("Voici le type de l'organe à transplanter", type)
-        print("Voici l'état de cet organe", etat)
-        print("Voici la manière dont est conservé cet organe", methode_de_conservation)
+        print("Voici le type de l'organe à transplanter:", type)
+        print("Voici l'état de cet organe:", etat)
+        print("Voici la manière dont est conservé cet organe:", methode_de_conservation)
     
     database.disconnect()
 
@@ -143,19 +137,17 @@ def info_client(database: DataBase):
     """
     client = input("Quel est l'identifiant du client dont vous souhaitez avoir les informations ? ")
     database.connect()
-    clients = ("SELECT Pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id in "
-    "(SELECT Rec_id FROM TRANSPLANTATION WHERE Rec_id = '%s'")
+    clients = ("SELECT Pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id = '%s'")
+               
+    #in (SELECT Rec_id FROM TRANSPLANTATION WHERE Rec_id = '%s' ")
+    
+    #blood_type, blood_sign
 
-    database.execute(clients, (client))
+    database.execute(clients % (client))
 
-    for(Pseudo, type_sang, signe_sang) in database.table:
+    for (Pseudo, type, signe) in database.table:
         print("voici les informations sur le client")
         print("Voici son pseudo:", Pseudo)
-        print("voici son type de sang:", type_sang)
-        print("Voici son signe de sang", signe_sang)
-
-
-
-
-
+        print("voici son type de sang:", type)
+        print("Voici son signe de sang", signe)
 
