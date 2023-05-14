@@ -1,7 +1,5 @@
 from module.database import DataBase
-from module.get import get_int 
-from module.get import get_string 
-from module.get import get_valid_id 
+from module.get import get_int, get_string, get_valid_id 
 from auth.authenticate import register
 import string
 import random
@@ -191,14 +189,13 @@ def modify_employee(db : DataBase):
             new_salary = get_int("Enter the new salary: ")
             db.execute(f"UPDATE STAFF SET salary = {new_salary} WHERE id = {id_employee}") 
         if choice == 2: 
-            db.execute(f"SELECT description from STAFF where id = {id_employee}")
+            db.execute(f"SELECT job_description from STAFF where id = {id_employee}")
             actual_description = db.table
             print('This is the actual description of the employee: %s', actual_description)
             new_description = get_string("Enter the new description: ")
-            db.execute(f"UPDATE STAFF SET job_description = {new_description} WHERE id = {id_employee}")
-           
-    
-    
+            db.execute(f"UPDATE STAFF SET job_description = '{new_description}' WHERE id = {id_employee}; ")
+            
+        print("Employee well modified")    
     db.disconnect()
     
 def delete_employee(db: DataBase): 
@@ -259,4 +256,3 @@ def delete_employee(db: DataBase):
         print('This person will not be deleted')
         
     db.disconnect()
-    
