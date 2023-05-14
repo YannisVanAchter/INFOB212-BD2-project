@@ -10,65 +10,92 @@ from menupersonnel.menupersonneladministratif import *
 from menupersonnel.RH import *
 from module.database import *
 
-def main_PDG_menu():
+def main_PDG_menu(database: DataBase, customer_id, user_id):
     """
     """
-    print ("Do you want to acces to the accountant menu?")
-    want_accounting = get_string ("Yes" or "No")
-    if want_accounting == "Yes":
-        main_accounting_menu()
-    else : 
-        return 0 
-    
-    print ("Do you want to acces to the medecin menu?")
-    want_sexydoctor = get_string ("Yes" or "No")
-    if want_sexydoctor == "Yes":
-        main_medecin_menu()
-    else : 
-        return 0 
-    
-    print ("Do you want to acces to the medecin menu?")
-    want_anesthechit = get_string ("Yes" or "No")
-    if want_anesthechit == "Yes":
-        main_anesthesiste_menu()
-    else : 
-        return 0 
-    
-    print ("Do you want to acces to the medecin menu?")
-    want_uglynurse = get_string ("Yes" or "No")
-    if want_uglynurse == "Yes":
-        main_infirmier_menu()
-    else : 
-        return 0 
-    
-    print ("Do you want to acces to the administratif menu?")
-    want_administratif = get_string ("Yes" or "No")
-    if want_administratif == "Yes":
-        main_persoadmin_menu ()
-    else : 
-        return 0 
 
-    print ("Do you want to acces to the RH menu?")
-    want_RH = get_string ("Yes" or "No")
-    if want_RH == "Yes":
-        main_RH_menu ()
-    else : 
-        return 0 
+    print("Welcome in the PDG menu")
     
-    print ("Do you want to delete this PDG?")
-    delete_PDG = get_string ("Yes" or "No")
-    if delete_PDG == "Yes":
-        suppression_PDG ()
-    else : 
-        return 0
-    
-    print ("Do you want to insert a new element?")
-    insert_elt = get_string ("Yes" or "No")
-    if insert_elt == "Yes":
-        insert_newelements ()
-    else : 
-        return 0 
-    
+    print("Enter 1 if you want to access to the accounting menu")
+    print("Enter 2 if you want to access to the medecin menu")
+    print("Enter 3 if you want to access to the anesthetist menu")
+    print("Enter 4 if you want to access to the nurse menu")
+    print("Enter 5 if you want to access to the administratif menu")
+    print("Enter 6 if you want to access to the RH menu")
+    print("Enter 7 if you want to access to the functions of the PDG menu")
+    menu_choice = get_int(print("What is the menu that you need ?"))
+
+    if menu_choice == 1 : 
+        main_accounting_menu(database)
+    elif menu_choice == 2 :
+        main_medecin_menu(database)
+    elif menu_choice == 3 :
+        main_anesthesiste_menu(database)
+    elif menu_choice == 4 :
+        main_infirmier_menu(database)
+    elif menu_choice == 5 : 
+        main_persoadmin_menu (database, customer_id)
+    elif menu_choice == 6 : 
+        main_RH_menu (database)
+    elif menu_choice == 7 :
+        print("Enter 1 if you want to access to the function which allows to delete a PDG")
+        print("Enter 2 if you want to access to the function which allows to insert something in the DataBase")
+        function_choice = get_int(print("What is your choice ?"))
+
+        if function_choice == 1 : 
+            suppression_PDG (database, user_id)
+        elif function_choice == 2 :
+            insert_newelements (database)
+
+
+    """
+    while True : 
+        print ("Do you want to acces to the accountant menu?")
+        want_accounting = get_string ("Yes or No ?")
+        if want_accounting == "Yes":
+            main_accounting_menu(database)
+        else :
+            print ("Do you want to acces to the medecin menu?")
+            want_sexydoctor = get_string ("Yes or No ?")
+            if want_sexydoctor == "Yes":
+                main_medecin_menu(database)
+            else :
+                print ("Do you want to acces to the anesthetist menu?")
+                want_anesthechit = get_string ("Yes or No ?")
+                if want_anesthechit == "Yes":
+                    main_anesthesiste_menu(database)
+                else : 
+                    print ("Do you want to acces to the nurse menu?")
+                    want_uglynurse = get_string ("Yes or No ?")
+                    if want_uglynurse == "Yes":
+                        main_infirmier_menu(database)
+                    else :
+                        print ("Do you want to acces to the administratif menu?")
+                        want_administratif = get_string ("Yes or No ?")
+                        if want_administratif == "Yes":
+                            main_persoadmin_menu (database, customer_id)
+                        else : 
+                            print ("Do you want to acces to the RH menu?")
+                            want_RH = get_string ("Yes or No ?")
+                            if want_RH == "Yes":
+                                main_RH_menu (database)
+                            else :
+                                print ("Do you want to delete this PDG?")
+                                delete_PDG = get_string ("Yes or No ?")
+                                if delete_PDG == "Yes":
+                                    suppression_PDG (database, user_id)
+                                else : 
+                                    print ("Do you want to insert a new element?")
+                                    insert_elt = get_string ("Yes or No ?")
+                                    if insert_elt == "Yes":
+                                        insert_newelements (database)
+                                        break
+                                    else : 
+                                        print("There are no option left")
+                                        continue
+                                        
+"""
+        
 def suppression_PDG (db : DataBase, user_id):
     """
     Menu to delete a PDG. 
@@ -84,7 +111,7 @@ def suppression_PDG (db : DataBase, user_id):
     """
     db.connect
 
-    db.delete (f"SELECT C.id, S.id FROM CEO C, STAFF S WHERE C.id = S.id and C.id = {user_id}")
+    db.delete(f"DELETE C.id FROM CEO C, STAFF S WHERE C.id = S.id and C.id = {user_id}")
 
 def insert_newelements (db : DataBase):
     """
@@ -93,12 +120,12 @@ def insert_newelements (db : DataBase):
 
     #Insert a new organ 
     print ("Do you want to add an organ?")
-    organ = get_string ("Yes" or "No")
-    organ_new = get_string ("which one?")
+    organ = get_string ("Yes or No ?")
+    organ_new = get_string ("Which one ?")
     organ_new_price = get_float("What is the price of your new organ ?")
-    organ_500ML = get_int("How much blood bag of 500 ml do we need for a transplantation of this new organ ? It could be 0")
-    organ_480ML = get_int("How much blood bag of 480 ml do we need for a transplantation of this new organ ? It could be 0")
-    organ_450ML = get_int("How much blood bag of 450 ml do we need for a transplantation of this new organ ? It could be 0")
+    organ_500ML = get_int("How much blood bag of 500 ml do we need for a transplantation of this new organ ? (It could be 0) ")
+    organ_480ML = get_int("How much blood bag of 480 ml do we need for a transplantation of this new organ ? (It could be 0) ")
+    organ_450ML = get_int("How much blood bag of 450 ml do we need for a transplantation of this new organ ? (It could be 0) ")
 
     if organ_new not in ORGAN_DICO :
         ORGAN_DICO.update({organ_new : [organ_new_price, organ_500ML, organ_480ML, organ_450ML]})
@@ -108,9 +135,9 @@ def insert_newelements (db : DataBase):
 
     #Insert a new type of delivery 
     print ("Do you want to add a new type of delivery ?")
-    tp_delivery = get_string ("Yes" or "No")
-    tp_delivery_id = get_string ("which one?")
-    tp_delivery_new_price = get_float("What is its price?") 
+    tp_delivery = get_string ("Yes or No ?")
+    tp_delivery_id = get_string ("Which one ?")
+    tp_delivery_new_price = get_float("What is its price ?") 
     if tp_delivery == "Yes":
         insert_into(
         database=db,
