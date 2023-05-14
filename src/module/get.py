@@ -1,12 +1,11 @@
 # encoding uft-8
 # we could use cs50 module for it but we would need to import Falsk and other package that we won't use
 """
-module that provide useful function for the input of user
+module that provides useful functions for the input of user
 """
 
 from datetime import date as Date
 from typing import Type
-
 from .database import DataBase
 
 def get_string(prompt: str = "") -> (str):
@@ -32,6 +31,7 @@ def get_string(prompt: str = "") -> (str):
         return input(prompt)
     except EOFError:
         return None
+    
     
 def get_date(prompt: str = "", before: Date = None, after: Date = None) -> (Date):
     """ask to user a request and get input of answer
@@ -62,6 +62,7 @@ def get_date(prompt: str = "", before: Date = None, after: Date = None) -> (Date
             pass
     return date_input
     
+    
 def get_float(prompt: str = "") -> (float):
     """ask to user a request and get input of answer
 
@@ -86,6 +87,7 @@ def get_float(prompt: str = "") -> (float):
             return float(get_string(prompt))
         except (TypeError, ValueError):
             pass
+        
         
 def get_int(prompt: str = "") -> (int):
     """ask user a request and get input of answer
@@ -164,8 +166,7 @@ def get_valid_id(db: DataBase, prompt: str, table_name: str) -> int:
         
     Author:
     -------
-        Yannis Van Achter
-        Aurélie Genot & Youlan Collard
+        Yannis Van Achter & Aurélie Genot & Youlan Collard
     """
 
     try:

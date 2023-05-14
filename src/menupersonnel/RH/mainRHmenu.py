@@ -107,7 +107,6 @@ def create_person(db : DataBase):
     for i in range (length_password):
         temporary_password += random.choice(string.ascii_letters + string.digits) 
 
-
     id_person = register(db,email, temporary_password, birth_date, address,  last_name, first_name, phone_number)
     print(id_person)
     create_employee(id_person, db)
@@ -211,6 +210,7 @@ def delete_employee(db: DataBase):
     while id_employee == None: 
         id_employee = get_valid_id(db, "Enter the id of the employee that you want to delete: ", "STAFF")
 
+    id = (id_employee, )
     print("Are you sure to delete this employee? After that you cannot go back ")
     
     confirmation = ""
@@ -218,7 +218,6 @@ def delete_employee(db: DataBase):
         confirmation = get_string("Type yes if you want to delete this person or no otherwise: ")
     
     if confirmation == 'yes' :  
-        print ("bien entrer ! ")
         #Verify if the person is in a category
         db.execute("SELECT id FROM DOCTOR")
         medecins = db.table
@@ -231,24 +230,27 @@ def delete_employee(db: DataBase):
         db.execute("SELECT id FROM CEO")
         ceo = db.table    
         
-        if id_employee in medecins:
-            if id_employee in doctors:
+        if id in medecins:
+            if id in doctors:
                 db.execute(f"UPDATE DOCTOR SET inami_number = '-1' WHERE id = {id_employee}")
                 
-            if id_employee in anaesthetists: 
+            if id in anaesthetists: 
                 db.execute(f"UPDATE ANAESTHESIST SET inami_number = '-1' WHERE id = {id_employee}")
             
             db.execute(f"UPDATE STAFF SET salary = '0',job_description = 'nothing', active = false  WHERE id = {id_employee} ")
 
-        if id_employee not in ceo:
+        print(id)
+        print(medecins)
+        
+        if id not in ceo and id not in medecins :
             db.execute("SELECT id FROM ACCOUNTANT")
             accountants = db.table
             db.execute("SELECT id FROM HR")
             HRpeople = db.table 
             
-            if id_employee in accountants: 
+            if id in accountants: 
                 db.execute(f"DELETE FROM ACCOUNTANT WHERE id = {id_employee}")
-            if id_employee in HRpeople: 
+            if id in HRpeople: 
                 db.execute(f"DELETE FROM HR WHERE id = {id_employee}")        
             
             db.execute(f"DELETE FROM STAFF WHERE id = {id_employee} ") 
