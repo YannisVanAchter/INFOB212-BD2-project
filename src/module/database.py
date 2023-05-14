@@ -262,12 +262,14 @@ class DataBase:
 
             else:
                 self.__cursor.execute(query, multi=multi)
-                if (not self.__db.is_connected()):
-                    self.__db.reconnect()
                 if self.__cursor.with_rows:
                     self.__fetched = self.__cursor.fetchall()
+                    if (not self.__db.is_connected()):
+                        self.__db.reconnect()
                     self.__cursor.nextset()
                 else:
+                    if (not self.__db.is_connected()):
+                        self.__db.reconnect()
                     if query.upper().startswith("INSERT") or query.upper().startswith("UPDATE"):
                         toReturn = self.__cursor.lastrowid
                         self.__db.commit()
@@ -299,9 +301,9 @@ class DataBase:
         self.__cursorPrepared.execute(query, argsTuple)
         print(self.__cursorPrepared)
         if self.__cursorPrepared.with_rows:
+            self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             if (not self.__db.is_connected()):
                 self.__db.recconect()
-            self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             self.__cursorPrepared.nextset()
         else:
             if (not self.__db.is_connected()):
