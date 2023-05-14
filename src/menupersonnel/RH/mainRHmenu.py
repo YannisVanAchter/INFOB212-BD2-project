@@ -25,7 +25,7 @@ def main_RH_menu(db: DataBase):
     validity = True 
 
     def print_menu():
-        print("Choose what you want to do: ")
+        print("\n Choose what you want to do: ")
         print("Type 0 if you want add an employee to the company")
         print("Type 1 if you want to modify an actual employee ")
         print("Type 2 if you want to delete an actual employee ")
@@ -133,7 +133,7 @@ def create_employee(id, db: DataBase):
     ##db.execute(f"INSERT INTO STAFF (id, salary, job_description) VALUES ({id}, {salary_person}, '{description_person}')")
     db.execute_with_params("INSERT INTO STAFF (id, salary, job_description, active) VALUES (%s,%s,%s, %s)", (id, salary_person, description_person, activity))
     
-    print("Choose the category of the person: ")
+    print("\n Choose the category of the person: ")
     print("Type 0 if the person is an anaesthetist")
     print("Type 1 if the person is a nurse")
     print("Type 2 if the person is a doctor")
@@ -176,7 +176,9 @@ def modify_employee(db : DataBase):
     """
     db.connect()
     
-    id_employee = get_valid_id(db, "Please enter the id of the employee:", "STAFF" , int)
+    id_employee = None 
+    while id_employee == None: 
+        id_employee = get_valid_id(db, "Please enter the id of the employee:", "STAFF" , int)
     
     print("What do you want to do?")
     choice = get_int("Type 1 if you want to modify the salary of the employee and 2 if you want to modify his description:")
