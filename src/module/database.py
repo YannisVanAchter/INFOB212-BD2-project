@@ -248,29 +248,31 @@ class DataBase:
                 "you must be connected to database before execute querry"
             )
             
-        querry = querry.strip()
+        query = querry.strip()
         try:
             # create new cursor before next query to keep acces to last query
             self.__cursor.close()
             self.__cursor = self.__db.cursor()
             if multi:
-                for _ in self.__cursor.execute(querry, multi=multi):
+                for _ in self.__cursor.execute(query, multi=multi):
                     pass
                 if not self.__db.is_connected():
                     self.__db.reconnect()
 
             else:
-                self.__cursor.execute(querry, multi=multi)
-                if (
-                    querry.strip().upper().startswith("SELECT")
-                    or querry.strip().upper().startswith("SHOW")
-                ):
-                    self.__fetched = self.__cursor.fetchall()
-                    if (not self.__db.is_connected()):
-                        self.__db.reconnect()
-                    self.__cursor.nextset()
-                elif (not self.__db.is_connected()):
+                self.__cursor.execute(query, multi=multi)
+                if (not self.__db.is_connected()):
                     self.__db.reconnect()
+                if self.__cursor.with_rows:
+                    self.__fetched = self.__cursor.fetchall()
+                    self.__cursor.nextset()
+                else:
+                    if query.upper().startswith("INSERT") or query.upper().startswith("UPDATE"):
+                        self.last_row_id = self.__cursor.lastrowid
+                        self.__db.commit()
+                    self.__cursor.close()
+                    self.__cursor = self.__db.cursor(buffered=True)
+
         except ProgrammingError as e:
             raise e
         finally:
@@ -291,17 +293,18 @@ class DataBase:
             int: The id of the inserted row if an insert was made. -1 otherwise.
         """
         toReturn = -1
+        query = query.strip()
         self.__cursorPrepared.execute(query, argsTuple)
         print(self.__cursorPrepared)
         if self.__cursorPrepared.with_rows:
-            self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             if (not self.__db.is_connected()):
                 self.__db.recconect()
+            self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             self.__cursorPrepared.nextset()
         else:
             if (not self.__db.is_connected()):
                 self.__db.recconect()
-            if query.startswith("INSERT") or query.startswith("UPDATE"):
+            if query.upper().startswith("INSERT") or query.upper().startswith("UPDATE"):
                 toReturn = self.__cursorPrepared.lastrowid
                 self.__db.commit()
             self.__cursorPrepared.close()
