@@ -1,3 +1,4 @@
+from ..exception.usergroupinvalidexception import UserGroupInvalidException
 class User:
     """Class représentant un utilisateur.
     
@@ -20,6 +21,9 @@ class User:
     def email(self):
         return self.__email
 
-
-
+    def addUserGroup(self, userGroup):
+        if userGroup in ["CEO", "DOCTOR", "NURSE", "ACCOUNTANT", "ANAESTHESIST", "HR", "CUSTOMER"]:
+            self.__type.append(userGroup)
+        else:
+            raise UserGroupInvalidException(f"UserGroup {userGroup} is not valid")
     

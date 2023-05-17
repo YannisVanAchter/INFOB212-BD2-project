@@ -10,7 +10,7 @@ from menupersonnel.menupersonneladministratif import *
 from menupersonnel.RH import *
 from module.database import *
 
-def main_PDG_menu(database: DataBase, customer_id, user_id):
+def main_PDG_menu(database: DataBase, user_id):
     """
     """
 

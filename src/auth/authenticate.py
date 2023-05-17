@@ -61,8 +61,7 @@ def register(
         lastName: str = None, 
         firstName: str = None, 
         phoneNumber: str = None, 
-        registerCustomer: dict = None,
-        selfLogin=False
+        registerCustomer: dict = None
     ) -> (User | int | None):
     """Register a user in the databse
     
@@ -84,7 +83,6 @@ def register(
             nickname: Nickname for the customer (str, optional)
             bloodType: Blood type of the customer (str, optional)
             bloodSign: Blood sign of the customer (str, optional) 
-        selfLogin: Auto login and returns the User (bool, optional)
 
     Returns:
     --------
@@ -130,8 +128,6 @@ def register(
     if registerCustomer != None:
         become_customer(db, personId, registerCustomer["nickname"], registerCustomer["bloodType"], registerCustomer["bloodSign"])
 
-    if selfLogin:
-        return login(email, password)
     return personId
 
 def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):

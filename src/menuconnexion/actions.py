@@ -1,8 +1,10 @@
 from module import DataBase
 from auth import register, login, become_customer, User
 from menu import main_login_menu
+from menu import logged_login_menu
 
-def register_action(db: DataBase):
+def register_action(db: DataBase) -> bool:
+    """Register a user and return wether we should log them in automatically or not."""
     email = input("Enter your email address:")
     password = input("Enter the password you wish to create:")
     birthDate = input("Enter your date of birth (format: DD/MM/YYYY):")
@@ -51,17 +53,10 @@ def register_action(db: DataBase):
             "bloodType": bloodType,
             "bloodSign": bloodSign
         }
-    
-    selfLogin = input("Do you wish to be automatically logged in? (y/n):")
-    selfLogin = selfLogin == "y"
+
     
 
-    register(db, email, password, birthDate, address, lastName, firstName, phoneNumber, registerCustomer, selfLogin)
-    if not selfLogin:
-        print("You have been successfully registered.")
-        main_login_menu()
-    else:
-        pass # Call next menu
+    register(db, email, password, birthDate, address, lastName, firstName, phoneNumber, registerCustomer)
 
 def _intValidation(integer: str) -> bool:
     try:
@@ -93,3 +88,29 @@ def login_action(db: DataBase) -> User | None:
         main_login_menu(db)
     # Call next menu
     return user
+
+def become_customer_action(db: DataBase, user: User):
+    # def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):
+
+    nickname = input("Enter your desired nickname")
+
+    bloodTypeValid = False
+    while not bloodTypeValid:
+        bloodType = input("Entrez le type de votre groupe sanguin (A/B/AB/O)")
+        if bloodType in ["A", "B", "AB", "O"]:
+            bloodTypeValid = True
+        else:
+            print("Type invalide, réessayez")
+
+    bloodSignValid = False
+    while not bloodSignValid:
+        bloodSign = input("Entrer le signe de votre groupe sanguin (+/-)")
+        if bloodSign in ["+", "-"]:
+            bloodSignValid = True
+            bloodSign = bloodSign == "+"
+    
+    become_customer(db, user.id, nickname, bloodType, bloodSign)
+    user.addUserGroup("CUSTOMER")
+
+    
+    

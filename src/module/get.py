@@ -141,7 +141,7 @@ def get_sql_user_querry(prompt: str = "") -> (str):
         
     return querry
 
-def get_valid_id(db: DataBase, prompt: str, table_name: str) -> int:
+def get_valid_id(db: DataBase, prompt: str, table_name: str) -> (int | None):
     """Ask user for valid id in database
 
     Args:
