@@ -47,7 +47,7 @@ def main_PDG_menu(database: DataBase, customer_id, user_id):
             elif menu_choice == 4 :
                 main_infirmier_menu(database)
             elif menu_choice == 5 : 
-                main_persoadmin_menu (database, customer_id)
+                main_persoadmin_menu (database)
             elif menu_choice == 6 : 
                 main_RH_menu (database)
             elif menu_choice == 7 :
