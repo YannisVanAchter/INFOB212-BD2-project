@@ -3,7 +3,7 @@ from constants import *
 from module.utils import *
 from menuconnexion.menu import *
 
-def main_persoadmin_menu (db: DataBase, customer_id):
+def main_persoadmin_menu (db: DataBase):
     """
     Menu for personnal administratif. 
     
@@ -17,12 +17,15 @@ def main_persoadmin_menu (db: DataBase, customer_id):
 
     Args:
         db (DataBase): Data base connected for personnal administratif 
-        customer_id : the id of the connected customer 
     """
 
     db.connect()
 
     print("Welcome in the personnal administratif menu !")
+
+    customer_id = None
+    while customer_id == None:
+        customer_id = get_valid_id(db, "Entrez l'id de l'utilisateur pour le quel vous voulez enregister une transplantation", "CUSTOMER")
 
     #Choice of the organe 
     while True :
