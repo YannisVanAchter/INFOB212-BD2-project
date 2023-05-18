@@ -5,7 +5,7 @@ from menuconnexion.menu import *
 
 def main_persoadmin_menu (db: DataBase):
     """
-    Menu for personnal administratif. 
+    Main function of the menu for personnal administratif. 
     
     allow the personnal administratif to: 
     -------------------------------------
@@ -21,24 +21,52 @@ def main_persoadmin_menu (db: DataBase):
 
     db.connect()
 
-    print("Welcome in the personnal administratif menu !")
+    def print_menu():
+        print("Welcome in the administrative menu")
 
-    customer_id = None
-    while customer_id == None:
-        customer_id = get_valid_id(db, "Entrez l'id de l'utilisateur pour le quel vous voulez enregister une transplantation", "CUSTOMER")
+        print("Enter 1 if you want to insert a new transplantation")
+        print("Enter 2 if you want to exit ")
+        
+    finish = False
+    
+    while (finish == False): 
+    
+        print_menu()
+        choice = get_int("What is the menu that you need ?")
 
-    #Choice of the organe 
-    while True :
-        print("List of organes: ", ORGAN_DICO.keys())
-        organe_type_choice = get_string("You are there for a transplantation on which organe?")
-        if organe_type_choice in ORGAN_DICO:
-            print("Your selection is valid, thank you, we will check if such an organe is available")
-            break 
+        if choice == 1 : 
+            customer_id = None
+            while customer_id == None:
+                customer_id = get_valid_id(db, "Enter the id of the user for which you want to book a transplant: ", "CUSTOMER")
+
+            #Choice of the organe 
+            print("List of organes: ", ORGAN_DICO.keys())
+            organe_type_choice = get_string("You are there for a transplantation on which organe? ")
+            if organe_type_choice in ORGAN_DICO:
+                print("Your selection is valid, thank you, we will check if such an organe is available")
+                insert_transplantation(db, organe_type_choice, customer_id) 
+
+        elif choice == 2 :
+            finish = True
         else:
             print("Your selection is not valid, please start from the beginning.")
-            continue
     
-    #SELECT O.id, O.type, D.id, T.id FROM ORGANE O, DETAIL D, TRANSPLANTATION T WHERE O.type = %s and O.id <> D.id and O.id <> T.id", [organe_type_choice]
+
+def insert_transplantation (db: DataBase, organe_type_choice, customer_id) :
+    """
+    Menu for personnal administratif. 
+    
+    allow the personnal administratif to: 
+    -------------------------------------
+    - Ask for an organe, check if it is available 
+    - Ask for a date, check if it is available 
+    - Associate a doctor, an anesthesist, one or two nurse
+    - Calculate the price of the Transplantation 
+    - Insert into the table TRANPLANTATION
+
+    Args:
+        db (DataBase): Data base connected for personnal administratif  
+    """
     #Check if such an organe is available and assiciation faire en sous requetes
     db.execute_with_params("SELECT O.id FROM ORGANE O WHERE O.type = %s and O.id not in(SELECT D.id FROM DETAIL D WHERE D.id = O.id) and O.id not in (SELECT T.Con_id FROM TRANSPLANTATION T WHERE T.Con_id = O.id);", [organe_type_choice])
     organe_choice = db.tableArgs 
@@ -67,53 +95,43 @@ def main_persoadmin_menu (db: DataBase):
         print("No possibilties for this organes")
             
     if len(organe_choice) != 0 :
-        print("We will assign you a doctor, an anaesthetist and a nurse")
+        print("We will assign you a doctor, an anaesthetist and a or 2 nurse(s)")
         #To get the doctors who are free
-        db.execute("SELECT T.id, D.inami_number, T.D_w_id, D.id FROM TRANSPLANTATION T, DOCTOR D WHERE T.D_w_id <> D.id;")
-        doctor_choice = db.table # récupère le résultat de la requête
+        db.execute_with_params("SELECT D.inami_number, D.id FROM DOCTOR D WHERE D.id not in (SELECT T.D_w_id FROM TRANSPLANTATION T WHERE T.date_ = %s);", [date_choice])
+        doctor_choice = db.tableArgs # récupère le résultat de la requête
         if len(doctor_choice) == 0 :
             print("All of the medecins is occuped")
         else : 
             doc_id = doctor_choice[0][1] # get the doc inami from the result
-            print ("Your medecin is %i", doc_id)
+            print ("Your medecin is ", doctor_choice[0][0])
 
 
         #To get the anesthesists who are free
-        db.execute("SELECT T.id, A.inami_number, T.A_w_id, A.id FROM TRANSPLANTATION T, ANAESTHESIST A WHERE T.A_w_id <> A.id;")
-        anesthesist_choice = db.table 
+        db.execute_with_params("SELECT A.inami_number, A.id FROM ANAESTHESIST A WHERE A.id not in (SELECT T.A_w_id FROM TRANSPLANTATION T WHERE T.date_ = %s);", [date_choice])
+        anesthesist_choice = db.tableArgs 
         if len(anesthesist_choice) == 0 :
             print("All of the anesthesist is occuped")
         else : 
             anesthesist_id = anesthesist_choice[0][1] # get the anesthesist inami from the result
-            print ("Your anesthesist is %i", anesthesist_id)
+            print ("Your anesthesist is ", anesthesist_choice[0][0])
 
         
         #To get the nurses who are free
-        db.execute("SELECT T.id, NW.id, N.id FROM TRANSPLANTATION T, NURSE N, N_work_on NW WHERE N.id = NW.id and NW.id <> T.id;")
-        nurse_choice = db.table 
+        db.execute_with_params("SELECT N.id FROM NURSE N WHERE N.id not in (SELECT NW.N_N_id FROM N_work_on NW WHERE NW.id in (SELECT T.id FROM TRANSPLANTATION T WHERE T.date_ = %s));", [date_choice])
+        nurse_choice = db.tableArgs 
         if len(nurse_choice) == 0 :
             print("All of the nurse is occuped")
         else : 
-            nurse1_id = nurse_choice[0][2] # get the nurse inami from the result
-            print ("Your nurse is %i", nurse1_id)
-            nursenbr_choice = print ("By default, you have one nurse, do you want a second one ? If yes, please, type 1 and 0 if one nurse is enougth for you")
-            if nursenbr_choice == 1 : 
-                nurse2_id = nurse_choice[1][2]
-                print ("Your nurse is %i", nurse2_id)
+            nurse1_id = nurse_choice[0][0] # get the nurse id from the result
+            print ("Your nurse is ", nurse1_id)
+            nursenbr_choice = get_int("By default, you have one nurse, do you want a second one ? If yes, please, type 1 and 0 if one nurse is enougth for you ")
+            if nursenbr_choice == 1 and len(nurse_choice) >= 2: 
+                nurse2_id = nurse_choice[1][0]
+                print ("Your second nurse is ", nurse2_id)
+            elif nurse_choice == 1 : 
+                print( "There are no more nurse who is available")
 
         if len(doctor_choice) != 0 and len(anesthesist_choice) != 0 and len(nurse_choice) != 0 : 
-            #To get the price of the price of the organe
-            organe_price = ORGAN_DICO[organe_type_choice][0]
-
-            #To get the price of the pockets of blood
-            nbr_poche500 = ORGAN_DICO[organe_type_choice][1] 
-            prix_500 = nbr_poche500*BLOODPOCHE
-            nbr_poche480 = ORGAN_DICO[organe_type_choice][2] 
-            prix_480 = nbr_poche480*BLOODPOCHE
-            nbr_poche450 = ORGAN_DICO[organe_type_choice][3]
-            prix_450 = nbr_poche450*BLOODPOCHE
-
-            prix_totalblood = prix_450 + prix_480 + prix_500 
 
             #To get the salary of the staff
             doctor_salary = SALARY_DOCTOR_TRANSPL[organe_type_choice]
@@ -126,17 +144,32 @@ def main_persoadmin_menu (db: DataBase):
             salary_total = doctor_salary + anesthesist_salary + nurse_salary
             
             #To get the price of the transplantation
-            transplantation_price = organe_price + prix_totalblood + salary_total 
+            transplantation_price = salary_total 
+
+            #Check dans BLOOD
+            db.execute_with_params("SELECT B.id FROM BLOOD B WHERE B.Nee_id is null and B.expiration_date > %s and B.id not in (SELECT D.BLOOD FROM DETAIL D WHERE D.BLOOD is not null);", [date_choice])
+            selected_blood = db.tableArgs
+            nb_pochesblood_free = ORGAN_DICO[organe_type_choice][1]
+            if len(selected_blood) < nb_pochesblood_free :
+                print("There are not enough blood bags which are free")
+                return 
+            
 
             #Insert in the table TRANSPLANTATION
-            insert_into(
-                database=db,
-                table="TRANSPLANTATION",
-                attributes=("date_", "id", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
-                values=(date_choice, id, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
-            )
+            id_transplantation = insert_into(
+                                        database=db,
+                                        table="TRANSPLANTATION",
+                                        attributes=("date_", "Con_id", "price", "Rec_id", "D_w_id", "A_w_id"),
+                                        values=(date_choice, organe_id, transplantation_price, customer_id, doc_id, anesthesist_id) 
+                                        )
         
+            for bag_id in range(nb_pochesblood_free) :
+                blood_id = selected_blood[bag_id][0] #get id of the blood bag 
+                db.execute_with_params("UPDATE BLOOD SET Nee_id = %s WHERE id = %s;", [id_transplantation, blood_id])
+            logging.info("Your transplantation is inserted with success, thank you for your visit bro <3")
+
         else :
             print("Unfortunately, nobody is available for your transplantation so comme back later")
+
 
 

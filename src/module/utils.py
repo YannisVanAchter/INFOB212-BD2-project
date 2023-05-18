@@ -1,5 +1,5 @@
 # encoding uft-8
-
+import logging
 import os
 from datetime import datetime as DateTime, date as Date
 
@@ -80,7 +80,8 @@ def insert_into(database: DataBase, table: str, attributes: tuple[str], values: 
     
     # create querry
     querry = f"INSERT INTO {table} ({', '.join(attributes)}) VALUES ({', '.join(value_typed)});"
-    
+    logging.info(f"Querry: {querry}")
+    logging.info(f"Values: {values}")
     # execute querry
     with database as db:
         inserted_id = db.execute_with_params(querry, values)

@@ -12,6 +12,6 @@ def ask_product_id() -> (int):
         int: id of product
     """
     product_id = -1
-    while product_id < 0:
+    while product_id <= 0:
         product_id = get_int("Enter the product id: ")
     return product_id

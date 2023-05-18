@@ -559,10 +559,11 @@ insert into ACCOUNTANT (id) values (7);
 
 -- insert blood and organs
 insert into BLOOD (id, type, signe, quantity, expiration_date) values (1, 'A', True, 500, '2020-01-01');
-insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (2, 'A', True, 500, '2020-01-01', 1);
-insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (3, 'A', True, 500, '2020-01-01', 2);
-insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (4, 'A', True, 500, '2020-01-01', 3);
-insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (5, 'A', True, 500, '2020-01-01', 4);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (2, 'A', True, 500, '2030-01-01', 1);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (3, 'A', True, 500, '2030-01-01', 2);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (4, 'A', True, 500, '2030-01-01', 3);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (5, 'A', True, 500, '2030-01-01', 4);
+insert into BLOOD (id, type, signe, quantity, expiration_date, Giv_id) values (6, 'A', True, 500, '2030-01-01', 4);
 insert into DONATOR (id, Giv_id, gender, age_range) values (1, 1, False, 32);
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
  values (1, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "heart", 2000000, 1);
@@ -570,6 +571,11 @@ insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_tra
  values (2, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "foot", 5000, 1);
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
  values (3, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "large intestine", 13000, 1);
+insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
+ values (4, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "liver", 2000000, 1);
+insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplatation, method_of_preservation, type, price, Com_id)
+ values (5, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "ear", 2000000, 1);
+ 
  
  insert into TRANSPLANTATION(date_, Con_id, price, Rec_id, D_w_id, A_w_id)
  values('2021-01-01', 1, '45.6', 2, 4, 6);
