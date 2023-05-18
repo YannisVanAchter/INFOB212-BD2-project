@@ -1,87 +1,72 @@
-import datetime
-import mysql.connector as mysql
-import module.get as get
+# encoding uft-8
 
-from module.database import DataBase
+from module import DataBase, get_int, get_valid_id, get_string
 
-"""
-La fonction de connection qui appelle celle des menus s'occupe déjà de connecter l'utilisateur
-Tu peux demander d'avoir son identifiant et son mot de passe dans ta spécification
-
-Tu peux utiliser le module 'get' pour demander à l'utilisateur de rentrer des informations (pour l'id notament) afin d'améliorer la liste du code.
-
-N'hésite pas non plus a faire de plus petites fonctions pour éviter de trop longues ligne à lire
-Cela vas aussi augmenter la lisiblé de ton code
-"""
 
 def main_infirmier_menu(database: DataBase):
-
     """
-    Allows a medecin to navigate throughout his patients, his operations and his colleguas according to what he asks
-    This function prints what the medecin has aksed for after making requests to the Database
-    
+    Allows a nurse to navigate through their patients, operations, and colleagues based on their requests.
+    This function prints the results of the nurse's requests to the database.
+
     Author: Eline Mota
     """
 
-    print("In médecin infirmier")
-    id = int(input("Quel est votre identifiant d'infirmier ?")) #récupère l'identifiant de l'infirmier
+    print("Nurse menu")
+    id = get_int("What is your nurse identifier?")  # Get the nurse's identifier
 
     while True:
-        print("Que voulez-vous faire ?")
-        print("Tapez 1 si vous voulez voir les personnes avec lesquelles vous travaillez")
-        print("Tapez 2 si vous voulez voir les dates de vos futures opérations")
-        print("Tapez 3 si vous voulez des informations sur un organe que vous allez transplanter")
-        print("Tapez 4 si vous vouez avoir des informations sur un client en particulier")
-        print("Tapez 5 ou autre chose si vous désirez arrêter de demander des informations à la base de données")
+        print("What would you like to do?")
+        print("Press 1 to see the people you work with")
+        print("Press 2 to see the dates of your future operations")
+        print("Press 3 to get information about an organ you will transplant")
+        print("Press 4 to get information about a specific client")
+        print("Press 5 or any other key to stop requesting information from the database")
 
-        numero = int(input("choix:"))
+        choice = get_int("Choice: ")
 
-        if numero == 1:
-            seepeople(database,id)
-        
-        elif numero == 2:
+        if choice == 1:
+            seepeople(database, id)
+        elif choice == 2:
             seedate_operations(database, id)
-
-        elif numero == 3:
+        elif choice == 3:
             info_organe(database)
-
-        elif numero == 4:
+        elif choice == 4:
             info_client(database)
         else:
             break
 
 def seepeople(database: DataBase, id):
     """
-    Allows a nurse to see people with who he works with according to a date of an operation
-    This function prints the id of the anesthesiste and medecin he works with on a certain date
-    
+    Allows a nurse to see the people they work with on a specific date of an operation.
+    This function prints the IDs of the anesthesiologist and doctor the nurse works with.
+
     Author: Eline Mota
     """
     database.connect()
 
+    idT = get_int("What is the identifier of the transplantation for which you want to see who you will work with?")
 
-    idT = int(input(("Quelle est l'identifiant de la transplantation dont vous voulez voir avec qui vous allez travailler")))
+    # Find the anesthesiologists who work with the nurse on the given date and based on the nurse's ID
+    anesthesiologist = ("SELECT id, inami_number FROM ANESTHESIOLOGIST WHERE id IN (SELECT A_w_id FROM TRANSPLANTATION WHERE id = '%s')")
 
-    #cherche les anésthésistes qui travaillent avec le médecin à la date donnée et selon l'id du médecin
-    anesthésiste = ("SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = '%s')")
+    database.execute(anesthesiologist % idT)
 
-    database.execute(anesthésiste %(idT))
-
-    print("Voici les personnes avec lesquelles vous allez travailler")
+    print("Here are the people you will work with:")
 
     for (i) in database.table:
-        print("Vous travaillez avec cet anésthésiste:", i)
+        print("You work with this anesthesiologist:", i)
+    
     database.disconnect()
     
     database.connect()
 
-    #cherche le médecin qui travaille avec l'infirmier à la date donnée et selon l'id de l'infirmier
-    infirmier = ("SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = '%s')")
+    # Find the doctor who works with the nurse on the given date and based on the nurse's ID
+    doctor = ("SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id FROM TRANSPLANTATION WHERE id = '%s')")
 
-    database.execute(infirmier%(idT))
+    database.execute(doctor % idT)
 
     for (num) in database.table:
-        print("Vous travaillez avec ces infirmiers:", num)
+        print("You work with these doctors:", num)
     
     database.disconnect()
 
@@ -99,52 +84,50 @@ def seedate_operations(database: DataBase, id):
     database.execute(dates % (id))
 
     for (date) in database.table:
-        print("Vous avez des opérations à ces dates-ci:", date)
+        print("You have operations on these dates:", date)
     
     database.disconnect()
 
 def info_organe(database: DataBase):
     """
-    This function allows a doctor to see the state, the way of conservation and the type of an organe by printing it 
+    This function allows a doctor to see the state, the method of preservation, and the type of an organ by printing it 
     
     Author: Eline Mota
     
     """
     database.connect()
 
-    id_transplantation = int(input("Pouvez vous me donner l'identifiant de la transplantation dont vous souhaitez voir les organes?"))
+    id_transplantation = int(input("Can you provide the identifier of the transplantation for which you want to see the organs?"))
 
-    organes = ("SELECT state, method_of_preservation, type FROM ORGANE WHERE id = '%s'")
-    database.execute(organes % (id_transplantation))
+    organs = ("SELECT state, method_of_preservation, type FROM ORGANE WHERE id = '%s'")
+    database.execute(organs % (id_transplantation))
 
-    for (etat, methode_de_conservation, type) in database.table:
-        print("voici les informations sur l'organe")
-        print("Voici le type de l'organe à transplanter:", type)
-        print("Voici l'état de cet organe:", etat)
-        print("Voici la manière dont est conservé cet organe:", methode_de_conservation)
+    for (state, preservation_method, organ_type) in database.table:
+        print("Here are the organ's information:")
+        print("Organ type:", organ_type)
+        print("Organ state:", state)
+        print("Preservation method:", preservation_method)
+        
     
     database.disconnect()
 
+
 def info_client(database: DataBase):
     """
-    This function allows a doctor to see the pseudo, the type and sign of blood of a patient on who he will have to operate.
-    This function will print the pseudo, the type and signe of blood of a given patient accordinf to his id
+    This function allows a doctor to see the username, blood type, and blood sign of a patient on whom they will operate.
+    This function will print the username, blood type, and blood sign of a given patient based on their ID.
 
     Authors: Eline Mota
     
     """
-    client = input("Quel est l'identifiant du client dont vous souhaitez avoir les informations ? ")
+    client = input("What is the ID of the patient for whom you want to retrieve information? ")
     database.connect()
-    clients = ("SELECT Pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id = '%s'")
+    clients = ("SELECT Username, blood_type, blood_sign FROM CUSTOMER WHERE id = '%s'")
                
-    #in (SELECT Rec_id FROM TRANSPLANTATION WHERE Rec_id = '%s' ")
-    
-    #blood_type, blood_sign
-
     database.execute(clients % (client))
 
-    for (Pseudo, type, signe) in database.table:
-        print("voici les informations sur le client")
-        print("Voici son pseudo:", Pseudo)
-        print("voici son type de sang:", type)
-        print("Voici son signe de sang", signe)
+    for (username, blood_type, blood_sign) in database.table:
+        print("Here is the information about the patient:")
+        print("Username:", username)
+        print("Blood Type:", blood_type)
+        print("Blood Sign:", blood_sign)
