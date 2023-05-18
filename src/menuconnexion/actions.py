@@ -77,8 +77,8 @@ def _birthDateValidation(birthDate: str) -> bool:
     return True
 
 def login_action(db: DataBase) -> User | None:
-    email = input("What is your email address?")
-    password = input("What is your password?")
+    email = input("Quelle est votre adresse email ?")
+    password = input("Quel est votre mot de passe ?")
 
     user = login(db, email, password)
     if user == None:
@@ -90,7 +90,7 @@ def login_action(db: DataBase) -> User | None:
 def become_customer_action(db: DataBase, user: User):
     # def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):
 
-    nickname = input("Enter your desired nickname")
+    nickname = input("Entrez votre pseudoynme.")
 
     bloodTypeValid = False
     while not bloodTypeValid:
