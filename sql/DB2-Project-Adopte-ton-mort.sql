@@ -376,139 +376,187 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
      T.A_w_id = A.id;
 
 
-
-
 -- Trigger Section
 -- _____________ 
 
--- create trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL
---      -- Trigger goal: Check if the date of delivery is before the date expiration of the organe
---      -- Author: Yannis Van Achter
---      before insert or update on DELIVERY
---      for each row
---      begin
---           SELECT expiration_date INTO expiration 
---                FROM ORGANE 
---                WHERE ORGANE.id IN (SELECT DETAIL.organe 
---                                    FROM DETAIL 
---                                    WHERE DETAIL.id in (SELECT ORDER.id 
---                                                        FROM ORDER 
---                                                        WHERE ORDER.Typ_id = new.id)
---                                    );
+create trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL_INSERT
+     -- Trigger goal: Check if the date of delivery is before the date expiration of the organe
+     -- Author: Yannis Van Achter
+     before insert on DELIVERY
+     for each row
+     begin
+          SELECT expiration_date INTO expiration 
+               FROM ORGANE 
+               WHERE ORGANE.id IN (SELECT DETAIL.organe 
+                                   FROM DETAIL 
+                                   WHERE DETAIL.id in (SELECT ORDER.id 
+                                                       FROM ORDER 
+                                                       WHERE ORDER.Typ_id = new.id)
+                                   );
           
---           if (new.arrival_date < expiration) then
---                signal sqlstate '45000'
---                set message_text = 'The date of delivery must be after the date expiration of the organe';
---           end if;
---      end;
+          if (new.arrival_date < expiration) then
+               signal sqlstate '45000'
+               set message_text = 'The date of delivery must be after the date expiration of the organe';
+          end if;
+     end;
 
--- create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_SELL
---      -- Trigger goal: Checks if the organ is available before accept to sell it 
---      -- Author: Aurélie Genot 
---      before insert or update on DETAIL
---      for each row 
---      begin 
---           if new.ORGANE not exists ( SELECT *
---                                         FROM ORGANE 
---                                         WHERE NOT EXISTS (SELECT null
---                                                        FROM TRANSPLANTATION
---                                                        WHERE TANSPLANTATION.id = ORGANE.id);)
---           then 
---                signal sqlstate '45000'
---                set message_text = 'The organ that you want to sell is not available anymore';
---           end if; 
---      end; 
+create trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL_UPDATE
+     -- Trigger goal: Check if the date of delivery is before the date expiration of the organe
+     -- Author: Yannis Van Achter
+     before update on DELIVERY
+     for each row
+     begin
+          SELECT expiration_date INTO expiration 
+               FROM ORGANE 
+               WHERE ORGANE.id IN (SELECT DETAIL.organe 
+                                   FROM DETAIL 
+                                   WHERE DETAIL.id in (SELECT ORDER.id 
+                                                       FROM ORDER 
+                                                       WHERE ORDER.Typ_id = new.id)
+                                   );
+          
+          if (new.arrival_date < expiration) then
+               signal sqlstate '45000'
+               set message_text = 'The date of delivery must be after the date expiration of the organe';
+          end if;
+     end;
 
-     
--- create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT
---      -- Trigger goal: Checks if the organ is available before accept to transplant it 
---      -- Author: Aurélie Genot 
---      before insert or update on TRANSPLANTATION
---      for each row 
---      begin 
---           if new.ORGANE not exists ( SELECT *
---                                         FROM ORGANE 
---                                         WHERE NOT EXISTS (SELECT null
---                                                        FROM DETAIL
---                                                        WHERE DETAIL.id = ORGANE.id);)
---           then 
---                signal sqlstate '45000'
---                set message_text = 'The organ that you want to transplant is not available anymore';
---           end if; 
---      end; 
-
-
--- create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL
---      -- Trigger goal: Checks if the blood is available before accept to sell it 
---      -- Author: Aurélie Genot 
---      before insert or update on DETAIL
---      for each row 
---      begin 
---           if new.BLOOD not exists ( SELECT *
---                                         FROM BLOOD
---                                         WHERE NOT EXISTS (SELECT null
---                                                        FROM TRANSPLANTATION
---                                                        WHERE TANSPLANTATION.id = BLOOD.id);)
---           then 
---                signal sqlstate '45000'
---                set message_text = 'The blood that you want to sell is not available anymore';
---           end if; 
---      end; 
-   
--- create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_TRANSPLANT
---      -- Trigger goal: Checks if the blood is available before accept to transplant it 
---      -- Author: Aurélie Genot 
---      before insert or update on TRANSPLANTATION
---      for each row 
---      begin 
---           if new.BLOOD not exists ( SELECT *
---                                         FROM BLOOD 
---                                         WHERE NOT EXISTS (SELECT null
---                                                        FROM DETAIL
---                                                        WHERE DETAIL.id = BLOOD.id);)
---           then 
---                signal sqlstate '45000'
---                set message_text = 'The blood that you want to transplant is not available anymore';
---           end if; 
---      end; 
-
-
--- create trigger TRG_UPDATE_MEDECINS 
-  -- Trigger goal: Before update a medecin checks if this employee has to do a transplantation (in the future)
+create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_SELL_INSERT
+     -- Trigger goal: Checks if the organ is available before accept to sell it 
      -- Author: Aurélie Genot 
---   before update on STAFF 
---   for each row
---      begin
---           SELECT date into date_transplantation
---                FROM TRANSPLATATION 
-                  
---                WHERE STAFF.id IN (SELECT STAFF.id 
---                                    FROM STAFF 
---                                    WHERE STAFF.id = {id_employee})
---                ORDER BY date DESC
---                LIMIT 1;
---           if (date_transplantation > DATE.NOW) then
---                signal sqlstate '45000'
---                set message_text = 'This person cannot be deleted because she has to do a transplatation';
---           end if;
---      end;
+     before insert on DETAIL
+     for each row 
+     begin 
+          if (new.ORGANE in (SELECT TANSPLANTATION.Con_id
+                                                       FROM TRANSPLANTATION
+                                                       WHERE TANSPLANTATION.Con_id = ORGANE.id);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The organ that you want to sell is not available anymore';
+          end if; 
+     end; 
+
+create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_SELL_UPDATE
+     -- Trigger goal: Checks if the organ is available before accept to sell it 
+     -- Author: Aurélie Genot 
+     before update on DETAIL
+     for each row 
+     begin 
+          if (new.ORGANE in (SELECT TANSPLANTATION.Con_id
+                                                       FROM TRANSPLANTATION
+                                                       WHERE TANSPLANTATION.Con_id = ORGANE.id);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The organ that you want to sell is not available anymore';
+          end if; 
+     end; 
+     
+create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT_INSERT
+     -- Trigger goal: Checks if the organ is available before accept to transplant it 
+     -- Author: Aurélie Genot 
+     before insert on TRANSPLANTATION
+     for each row 
+     begin 
+          if (new.ORGANE in (SELECT DETAIL.ORGANE
+                              FROM DETAIL
+                              WHERE DETAIL.ORGANE is not null);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The organ that you want to transplant is not available anymore';
+          end if; 
+     end; 
+
+create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT_UPDATE
+     -- Trigger goal: Checks if the organ is available before accept to transplant it 
+     -- Author: Aurélie Genot 
+     before update on TRANSPLANTATION
+     for each row 
+     begin 
+          if (new.ORGANE in ( SELECT DETAIL.ORGANE
+                              FROM DETAIL
+                              WHERE DETAIL.ORGANE is not null);)
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The organ that you want to transplant is not available anymore';
+          end if; 
+     end; 
+
+create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_INSERT
+     -- Trigger goal: Checks if the blood is available before accept to sell it 
+     -- Author: Aurélie Genot 
+     before insert on DETAIL
+     for each row 
+     begin 
+          if (new.BLOOD in (SELECT BLOOD.id FROM BLOOD WHERE BLOOD.Nee_id is not null))
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The blood that you want to sell is not available anymore';
+          end if; 
+     end; 
+
+create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_UPDATE
+     -- Trigger goal: Checks if the blood is available before accept to sell it 
+     -- Author: Aurélie Genot 
+     before update on DETAIL
+     for each row 
+     begin 
+          if (new.BLOOD in (SELECT BLOOD.id FROM BLOOD WHERE BLOOD.Nee_id is not null))
+          then 
+               signal sqlstate '45000'
+               set message_text = 'The blood that you want to sell is not available anymore';
+          end if; 
+     end; 
+   
+
+create trigger TRG_UPDATE_MEDECINS 
+  -- Trigger goal: Before update a medecin checks if this employee has to do a transplantation (in the future)
+  -- Author: Aurélie Genot 
+  before update on DOCTOR 
+  for each row
+     begin
+          SELECT count(date_) into transplantation_in_future
+               FROM TRANSPLATATION 
+               WHERE TANSPLANTATION.D_w_id = new.id and TANSPLANTATION.date_ > CURRENT_DATE()
+               ORDER BY date DESC
+               LIMIT 1;
+          if (transplantation_in_future > 0) then
+               signal sqlstate '45000'
+               set message_text = 'This person cannot be deleted because she has to do a transplatation';
+          end if;
+     end;
 
 
--- create trigger TRG_CHECK_STAFF_NOT_OPERATING_THEMSELF
---      -- Tigger goal: Checks if the receiver of an organ is not operating themself
---      -- Author: Youlan Collard
---      before insert or update on TRANSPLANTATION
---      for each row
---      begin
---           if new.Rec_id = new.D_w_id or new.Rec_id = new.A_w_id or exists (
---                SELECT * FROM N_work_on
---                WHERE id = new.id and N_N_id = new.Rec_id;
---           )
---           then
---                signal sqlstate '45000'
---                set message_text = 'The receiver of an organ can not be in the transplant team';
---           end if;
---      end;
+create trigger TRG_CHECK_STAFF_NOT_OPERATING_THEMSELF_INSERT
+     -- Tigger goal: Checks if the receiver of an organ is not operating themself
+     -- Author: Youlan Collard
+     before insert on TRANSPLANTATION
+     for each row
+     begin
+          if (new.Rec_id = new.D_w_id or new.Rec_id = new.A_w_id or exists (
+               SELECT * FROM N_work_on
+               WHERE id = new.id and N_N_id = new.Rec_id
+          ))
+          then
+               signal sqlstate '45000'
+               set message_text = 'The receiver of an organ can not be in the transplant team';
+          end if;
+     end;
+
+create trigger TRG_CHECK_STAFF_NOT_OPERATING_THEMSELF_UPDATE
+     -- Tigger goal: Checks if the receiver of an organ is not operating themself
+     -- Author: Youlan Collard
+     before update on TRANSPLANTATION
+     for each row
+     begin
+          if (new.Rec_id = new.D_w_id or new.Rec_id = new.A_w_id or exists (
+               SELECT * FROM N_work_on
+               WHERE id = new.id and N_N_id = new.Rec_id
+          ))
+          then
+               signal sqlstate '45000'
+               set message_text = 'The receiver of an organ can not be in the transplant team';
+          end if;
+     end;
 
 -- Init Section
 -- _____________
@@ -518,8 +566,8 @@ insert into TYPE_DELIVERY values ('express', 10);
 insert into TYPE_DELIVERY values ('international', 15);
 insert into TYPE_DELIVERY values ('main propre', 3);
 
--- Init for tests
--- ______________
+-- Init for tests (base of data)
+-- _____________________________
 
 -- Anonymization of the database
 insert into ADDRESS (street, number, postal_code, city, land, id) values ("Anonymized", 1, 1, "Anonymized", "Anonymized", 1);
