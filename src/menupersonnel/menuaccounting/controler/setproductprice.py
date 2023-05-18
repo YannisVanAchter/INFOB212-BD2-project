@@ -1,9 +1,12 @@
 # encoding uft-8
 
 from module import *
-from constants import TABLE_FOR_PRICE_UPDATES 
+from constants import TABLE_FOR_PRICE_UPDATES
 
-def set_product_price(database: DataBase, price: float, product_id: int|str, table: str):
+
+def set_product_price(
+    database: DataBase, price: float, product_id: int | str, table: str
+):
     """define the price of a product (already created)
 
     Args:
@@ -27,12 +30,16 @@ def set_product_price(database: DataBase, price: float, product_id: int|str, tab
     if not is_valid_table(table):
         raise ValueError(
             f"table must be one of the following: {TABLE_FOR_PRICE_UPDATES[0]}"
-            + ", ".join(TABLE_FOR_PRICE_UPDATES[1:]) # only for visual
+            + ", ".join(TABLE_FOR_PRICE_UPDATES[1:])  # only for visual
         )
-    if (not (is_number(product_id) and product_id < 0)) and (not (
-        # check for table TYPE_DELIVERY
-        is_string(product_id) and table == "TYPE_DELIVERY"  and len(product_id) <= 16
-    )):
+    if (not (is_number(product_id) and product_id < 0)) and (
+        not (
+            # check for table TYPE_DELIVERY
+            is_string(product_id)
+            and table == "TYPE_DELIVERY"
+            and len(product_id) <= 16
+        )
+    ):
         raise ValueError(
             "product_id must be positive number or string with len <= 16, only if table is 'TYPE_DELIVERY'"
         )
@@ -40,5 +47,3 @@ def set_product_price(database: DataBase, price: float, product_id: int|str, tab
     # SQL update in data base
     with database as db:
         db.execute(f"UPDATE {table} SET price={price} WHERE id='{product_id}';")
-    
-    

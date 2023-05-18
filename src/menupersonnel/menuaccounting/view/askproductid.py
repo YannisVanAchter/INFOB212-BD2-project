@@ -2,6 +2,7 @@
 
 from module.get import get_int
 
+
 def ask_product_id() -> (int):
     """ask user to enter the product id
 

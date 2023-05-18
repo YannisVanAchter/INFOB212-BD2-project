@@ -2,7 +2,8 @@
 
 from module.get import get_float
 
-def ask_age_of_death():
+
+def ask_age_of_death() -> (float | int):
     """Ask the age of death of the donor.
 
     Return:
