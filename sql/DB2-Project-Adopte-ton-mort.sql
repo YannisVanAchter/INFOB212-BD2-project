@@ -122,7 +122,7 @@ create table IF NOT EXISTS HR (
 create table IF NOT EXISTS BLOOD (
      id INT unsigned not null AUTO_INCREMENT,
      type varchar(2) not null check(type = "A" or type = "B" or type = "O" or type = "AB"),
-     signe char not null,
+     signe boolean not null,
      expiration_date date not null,
      quantity float(4) not null,
      Giv_id INT unsigned,
