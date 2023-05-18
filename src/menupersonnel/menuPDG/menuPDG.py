@@ -12,6 +12,7 @@ from module.database import *
 
 def main_PDG_menu(database: DataBase, user_id):
     """
+    #TODO 
     """
 
     def print_menu():
@@ -65,7 +66,7 @@ def main_PDG_menu(database: DataBase, user_id):
             elif menu_choice == 8:
                 finish = True 
 
-            database.disconnect()
+        
             
 """
     while True : 
@@ -127,14 +128,14 @@ def suppression_PDG (db : DataBase, user_id):
         user_id : the id of the pdg qu'on veut supp  et qui est connecté
 
     """
-    db.connect
+    db.connect()
 
-    db.delete(f"DELETE C.id FROM CEO C, STAFF S WHERE C.id = S.id and C.id = {user_id}")
+    db.execute_with_params("DELETE FROM CEO C, STAFF S WHERE C.id = %s", [user_id]) 
 
 def insert_newelements (db : DataBase):
     """
     """
-    db.connect
+    db.connect()
 
     #Insert a new organ 
     print ("Do you want to add an organ?")
