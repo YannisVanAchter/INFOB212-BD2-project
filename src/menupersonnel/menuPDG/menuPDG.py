@@ -12,7 +12,18 @@ from module.database import *
 
 def main_PDG_menu(database: DataBase, user_id):
     """
-    #TODO 
+    Main function of the menu for the PDG. 
+    
+    allow the PDG to: 
+    -------------------------------------
+    - to naviguate in the differents menus
+    - to go to the function insert_newelements
+    - to go to the function suppression_PDG 
+
+    Args:
+        db (DataBase): Data base connected for personnal administratif
+        user_id : the id of the CEO that we want to delete and which is connected 
+
     """
 
     def print_menu():
@@ -67,66 +78,18 @@ def main_PDG_menu(database: DataBase, user_id):
                 finish = True 
 
         
-            
-"""
-    while True : 
-        print ("Do you want to acces to the accountant menu?")
-        want_accounting = get_string ("Yes or No ?")
-        if want_accounting == "Yes":
-            main_accounting_menu(database)
-        else :
-            print ("Do you want to acces to the medecin menu?")
-            want_sexydoctor = get_string ("Yes or No ?")
-            if want_sexydoctor == "Yes":
-                main_medecin_menu(database)
-            else :
-                print ("Do you want to acces to the anesthetist menu?")
-                want_anesthechit = get_string ("Yes or No ?")
-                if want_anesthechit == "Yes":
-                    main_anesthesiste_menu(database)
-                else : 
-                    print ("Do you want to acces to the nurse menu?")
-                    want_uglynurse = get_string ("Yes or No ?")
-                    if want_uglynurse == "Yes":
-                        main_infirmier_menu(database)
-                    else :
-                        print ("Do you want to acces to the administratif menu?")
-                        want_administratif = get_string ("Yes or No ?")
-                        if want_administratif == "Yes":
-                            main_persoadmin_menu (database, customer_id)
-                        else : 
-                            print ("Do you want to acces to the RH menu?")
-                            want_RH = get_string ("Yes or No ?")
-                            if want_RH == "Yes":
-                                main_RH_menu (database)
-                            else :
-                                print ("Do you want to delete this PDG?")
-                                delete_PDG = get_string ("Yes or No ?")
-                                if delete_PDG == "Yes":
-                                    suppression_PDG (database, user_id)
-                                else : 
-                                    print ("Do you want to insert a new element?")
-                                    insert_elt = get_string ("Yes or No ?")
-                                    if insert_elt == "Yes":
-                                        insert_newelements (database)
-                                        break
-                                    else : 
-                                        print("There are no option left")
-                                        continue                                     
-"""
-        
 def suppression_PDG (db : DataBase, user_id):
     """
     Menu to delete a PDG. 
     
     allow the PDG to: 
     -------------------------------------
-    - 
+    - allow to delete a CEO of the DB 
 
     Args:
         db (DataBase): Data base connected for personnal administratif 
-        user_id : the id of the pdg qu'on veut supp  et qui est connecté
-
+        user_id : the id of the CEO that we want to delete and which is connected
+    
     """
     db.connect()
 
@@ -134,6 +97,15 @@ def suppression_PDG (db : DataBase, user_id):
 
 def insert_newelements (db : DataBase):
     """
+    Menu to insert a new element in DB. 
+    
+    allow the PDG to: 
+    -------------------------------------
+    - allow to insert a new element in the DB.
+
+    Args:
+        db (DataBase): Data base connected for personnal administratif 
+
     """
     db.connect()
 
@@ -143,11 +115,9 @@ def insert_newelements (db : DataBase):
     organ_new = get_string ("Which one ?")
     organ_new_price = get_float("What is the price of your new organ ?")
     organ_500ML = get_int("How much blood bag of 500 ml do we need for a transplantation of this new organ ? (It could be 0) ")
-    organ_480ML = get_int("How much blood bag of 480 ml do we need for a transplantation of this new organ ? (It could be 0) ")
-    organ_450ML = get_int("How much blood bag of 450 ml do we need for a transplantation of this new organ ? (It could be 0) ")
 
     if organ_new not in ORGAN_DICO :
-        ORGAN_DICO.update({organ_new : [organ_new_price, organ_500ML, organ_480ML, organ_450ML]})
+        ORGAN_DICO.update({organ_new : [organ_new_price, organ_500ML]})
         insert_organ()
     else : 
         print("This type of organ already exist ;)")
