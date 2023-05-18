@@ -71,7 +71,7 @@ def logged_login_menu(db: DataBase, user: User):
     else:
         print("1. Créer un compte client")
 
-    is_accountant = "ACCOUNTANT" in user.userGroup or "CEO" in user.userGroup
+    is_accountant = "ACCOUNTANT" in user.userGroup
     if is_accountant:
         print("2. Rejoindre le menu comptable")
     
@@ -87,7 +87,7 @@ def logged_login_menu(db: DataBase, user: User):
     if is_anaesthesist:
         print("5. Rejoindre le menu des anesthésistes")
     
-    is_hr = "HR" in user.userGroup or "CEO" in user.userGroup
+    is_hr = "HR" in user.userGroup
     if is_hr:
         print("6. Rejoindre le menu RH")
 
@@ -132,3 +132,5 @@ def logged_login_menu(db: DataBase, user: User):
         elif user_choice == 7:
             if is_ceo:
                 main_PDG_menu(db)
+            else:
+                print(error_message)
