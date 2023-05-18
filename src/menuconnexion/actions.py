@@ -1,6 +1,5 @@
 from module import DataBase
 from auth import register, login, become_customer, User
-from menu import main_login_menu
 
 def register_action(db: DataBase) -> bool:
     """Register a user and return wether we should log them in automatically or not."""
@@ -84,7 +83,7 @@ def login_action(db: DataBase) -> User | None:
     user = login(db, email, password)
     if user == None:
         print("Invalid credentials.")
-        main_login_menu(db)
+        return None
     # Call next menu
     return user
 

@@ -46,6 +46,7 @@ def _try_login(database: DataBase) -> User:
     attempt = 1
     while user == None:
         print("Identifiant incorrect, réessayez.")
+        user = login_action(database)
         attempt += 1
         if attempt > 5:
             print("Trop de tentative, fermeture.")
