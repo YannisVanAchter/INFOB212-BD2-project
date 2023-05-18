@@ -2,6 +2,7 @@
 
 from module.get import get_float
 
+
 def ask_blood_quantity(limit: int = None) -> (float):
     """ask user to enter the blood quantity
 
@@ -18,6 +19,7 @@ def ask_blood_quantity(limit: int = None) -> (float):
         quantity = get_float("Enter the blood quantity: ")
     return quantity
 
+
 def ask_price(prompt: str = None) -> (float):
     """ask user to enter the price
 
@@ -28,10 +30,14 @@ def ask_price(prompt: str = None) -> (float):
     Return:
     -------
         float: price input by user
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     if prompt is None:
         prompt = "Enter the price: "
-        
+
     price = -1
     while price <= 0:
         price = get_float(prompt)

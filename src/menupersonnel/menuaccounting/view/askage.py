@@ -2,12 +2,17 @@
 
 from module.get import get_float
 
-def ask_age_of_death():
+
+def ask_age_of_death() -> (float | int):
     """Ask the age of death of the donor.
 
     Return:
     -------
         float: The age of death of the donor.
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     age = -1
     while not (0 < age < 150):

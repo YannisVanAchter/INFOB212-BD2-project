@@ -2,6 +2,7 @@
 
 from module.get import get_int
 
+
 def ask_product_id() -> (int):
     """ask user to enter the product id
 
@@ -10,6 +11,10 @@ def ask_product_id() -> (int):
     Return:
     -------
         int: id of product
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     product_id = -1
     while product_id <= 0:

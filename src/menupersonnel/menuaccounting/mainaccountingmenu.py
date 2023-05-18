@@ -1,19 +1,23 @@
 # encoding uft-8
+"""Provide the main menu for the accountant"""
+__author__  = ["Yannis Van Achter"]
+__version__ = "1.5.0"
+__date__    = "2021-05-01"
 
 from datetime import date as Date
 import logging
 import time
 
-from module.get import get_string, get_valid_id, get_date
-from module.database import DataBase, ProgrammingError
+from module.get import get_string, get_date
+from module.database import DataBase
 from module.utils import clear_terminal as cls, insert_into
 from constants import BLOOD_PRICE_FACTOR, ORGAN_DICO
 
 from .view import *
-from .controler import *
+from .controler import set_product_price
 
 
-def main_accounting_menu(database: DataBase) -> (int):
+def main_accounting_menu(database: DataBase) -> int:
     """Accounting menu
 
     allows user to:
@@ -77,10 +81,10 @@ def case_other():
     print("You did not enter a correct choice")
     print("Please try again")
     time.sleep(1)
-    
+
 
 def update_menu(database):
-    """Menu to update the product price 
+    """Menu to update the product price
     (price because this is the only thing that can be update by accuntant)
     """
 
@@ -94,7 +98,7 @@ def update_menu(database):
 
         match choice:
             case "1":
-                update_blood(database)
+                update_blood()
                 return
             case "2":
                 update_type_delivery(database)
@@ -105,7 +109,7 @@ def update_menu(database):
                 case_other()
 
 
-def update_blood(database: DataBase):
+def update_blood():
     """Update blood price for a specific blood"""
     print(
         "You are only allow to update price of product (you are currently updating blood)",
@@ -134,7 +138,7 @@ def update_type_delivery(database: DataBase):
 
     if is_insert:
         new_type_delivery_price = ask_product_price()
-        
+
         # check if id is already used and ask for an unused id
         with database as db:
             db.execute("SELECT id FROM TYPE_DELIVERY")
@@ -166,7 +170,7 @@ def update_type_delivery(database: DataBase):
             print("This type of delivery does not exist")
             product_id = get_string("Enter the type of delivery: ")
             db.execute(f"SELECT id FROM TYPE_DELIVERY WHERE id='{product_id}';")
-        
+
     new_type_delivery_price = ask_product_price()
 
     set_product_price(database, new_type_delivery_price, product_id, "TYPE_DELIVERY")
@@ -180,18 +184,16 @@ def insert_menu(database: DataBase):
     Args:
         database (DataBase): database to insert product in, connected as accuntant user
     """
+
     def print_menu():
         print("What do you want to insert ?")
         print("1: BLOOD\n2: ORGANE\n3: DONATOR\n4: EXIT")
+
     donator_id = None
     blood_id = None
     while True:
         print_menu()
-        table = (
-            get_string("Enter your choice: ")
-            .strip()
-            .upper()
-        )
+        table = get_string("Enter your choice: ").strip().upper()
 
         match table:
             case "1":
@@ -239,15 +241,16 @@ def insert_blood(database: DataBase):
     type: str = ask_product_type()
     signe: str = get_string("Enter the blood signe: (+/-)").strip().lower()
     signe: bool = signe == "+"
-    expiration: Date = get_date("Enter the expiration date (YYYY-MM-DD): ", before=Date.today())
-    # quantity: float | int = ask_blood_quantity() # TODO: delete 500ml by default
+    expiration: Date = get_date(
+        "Enter the expiration date (YYYY-MM-DD): ", before=Date.today()
+    )
     quantity: float | int = 500
 
     id = insert_into(
-                    database=database, 
-                    table="BLOOD", 
-                    attributes=("type", "signe", "expiration_date", "quantity"), 
-                    values=(type, signe, expiration, quantity)
+        database=database,
+        table="BLOOD",
+        attributes=("type", "signe", "expiration_date", "quantity"),
+        values=(type, signe, expiration, quantity),
     )
 
     logging.info("Blood inserted")
@@ -268,7 +271,7 @@ def insert_organ(database: DataBase, donator_id: int = None):
         print("To insert an organ, you need to insert a donator first")
         donator_id = insert_donator(database)
         print("Back to organ insertion")
-    
+
     state = ask_organ_state()
     funcitonnal = (
         get_string("Get the organ is functional (y/n): ")
@@ -277,10 +280,12 @@ def insert_organ(database: DataBase, donator_id: int = None):
         .startswith("y")
     )
     expiration_date_transplantation = get_date(
-        "Enter the expiration date for transplantation (YYYY-MM-DD): ", before=Date.today()
+        "Enter the expiration date for transplantation (YYYY-MM-DD): ",
+        before=Date.today(),
     )
     expiration_date = get_date(
-        "Enter the expiration date (YYYY-MM-DD): ", before=expiration_date_transplantation
+        "Enter the expiration date (YYYY-MM-DD): ",
+        before=expiration_date_transplantation,
     )
     method_of_conservation = ask_organ_conservation_method()
     type = ask_product_type(True)
@@ -304,10 +309,28 @@ def insert_organ(database: DataBase, donator_id: int = None):
     insert_into(
         database=database,
         table="ORGANE",
-        attributes=("state", "expiration_date", "expiration_date_transplantation", "type", "price", "method_of_preservation", "functional", "Com_id"),
-        values=(state, expiration_date, expiration_date_transplantation, type, price, method_of_conservation, funcitonnal, donator_id)
+        attributes=(
+            "state",
+            "expiration_date",
+            "expiration_date_transplantation",
+            "type",
+            "price",
+            "method_of_preservation",
+            "functional",
+            "Com_id",
+        ),
+        values=(
+            state,
+            expiration_date,
+            expiration_date_transplantation,
+            type,
+            price,
+            method_of_conservation,
+            funcitonnal,
+            donator_id,
+        ),
     )
-    
+
     logging.info("Organ inserted")
 
 
@@ -329,7 +352,7 @@ def insert_donator(database: DataBase, blood_id: int = None):
     gender = get_string("Gender of the donator (m/f): ").strip().lower().startswith("f")
     age_of_death = ask_age_of_death()
 
-    donator_id =insert_into(
+    donator_id = insert_into(
         database=database,
         table="DONATOR",
         attributes=("Giv_id", "gender", "age_range"),
@@ -394,7 +417,7 @@ def select_selling_quantity(database: DataBase):
     """
     start_date = None
     end_date = None
-    
+
     include_start_date = (
         get_string("Enter a start date (y/n) (if no, start from begin): ")
         .strip()
@@ -402,9 +425,7 @@ def select_selling_quantity(database: DataBase):
         .startswith("y")
     )
     if include_start_date:
-        start_date = get_date(
-            "Enter a start date (YYYY-MM-DD): ", end=Date.today()
-        )
+        start_date = get_date("Enter a start date (YYYY-MM-DD): ", after=Date.today())
 
     include_end_date = (
         get_string("Enter a end date (y/n) (if no, end at today): ")
@@ -414,7 +435,7 @@ def select_selling_quantity(database: DataBase):
     )
     if include_end_date:
         end_date = get_date(
-            "Enter a end date (YYYY-MM-DD): ", start=start_date, end=Date.today()
+            "Enter a end date (YYYY-MM-DD): ", start=start_date, after=Date.today()
         )
 
     print("Here is the total of selling for transplantation:")
@@ -442,11 +463,11 @@ def select_selling_quantity(database: DataBase):
     if include_start_date or include_end_date:
         querry += " DETAIL.id IN (SELECT ORDER_.id FROM ORDER_ WHERE ORDER_.Buy_id IN (SELECT DELIVERY.id FROM DELIVERY WHERE "
         if include_start_date:
-            querry += f"DELIVERY.departure_date >= {start_date}"
+            querry += f"DELIVERY.departure_date >= '{start_date}'"
             if include_end_date:
                 querry += " AND "
         if include_end_date:
-            querry += f"DELIVERY.departure_date <= {end_date}"
+            querry += f"DELIVERY.departure_date <= '{end_date}'"
         querry += ")) AND"
     querry += " DETAIL.BLOOD IS NOT NULL AND DETAIL.BLOOD = BLOOD.id"
     querry += ";"
@@ -463,11 +484,11 @@ def select_selling_quantity(database: DataBase):
     if include_start_date or include_end_date:
         querry += " DETAIL.id IN (SELECT ORDER_.id FROM ORDER_ WHERE ORDER_.Buy_id IN (SELECT DELIVERY.id FROM DELIVERY WHERE "
         if include_start_date:
-            querry += f"DELIVERY.departure_date >= {start_date}"
+            querry += f"DELIVERY.departure_date >= '{start_date}'"
             if include_end_date:
                 querry += " AND "
         if include_end_date:
-            querry += f"DELIVERY.departure_date <= {end_date}"
+            querry += f"DELIVERY.departure_date <= '{end_date}'"
         querry += ")) AND"
     querry += " DETAIL.ORGANE IS NOT NULL AND DETAIL.ORGANE = ORGANE.id"
     querry += ";"
@@ -532,7 +553,7 @@ def get_selling_price_of_each_command(database: DataBase):
     """
     start_date = None
     end_date = None
-    
+
     include_start_date = (
         get_string("Enter a start date (y/n) (if no, start from begin): ")
         .strip()
@@ -541,7 +562,7 @@ def get_selling_price_of_each_command(database: DataBase):
     )
     if include_start_date:
         start_date = get_date(
-            "Enter a start date (format: YYYY-MM-DD): ", end=Date.today()
+            "Enter a start date (format: YYYY-MM-DD): ", after=Date.today()
         )
 
     include_end_date = (
@@ -552,17 +573,17 @@ def get_selling_price_of_each_command(database: DataBase):
     )
     if include_end_date:
         end_date = get_date(
-            "Enter a end date (format: YYYY-MM-DD): ", before=start_date, end=Date.today()
+            "Enter a end date (format: YYYY-MM-DD): ",
+            before=start_date,
+            after=Date.today(),
         )
 
     print("Here is the client that buy something:")
-    
+
     # build querry of clients order
     querry = f"SELECT ORDER_.id AS 'COMMANDE', SUM(ORGANE.price) AS 'Price organ', SUM({BLOOD_PRICE_FACTOR}) AS 'Price blood', SUM(ORGANE.price) + SUM({BLOOD_PRICE_FACTOR}) AS 'Total price'"
     querry += f"FROM ORDER_, DETAIL, ORGANE, BLOOD WHERE "
-    querry += (
-        "ORDER_.id = DETAIL.id AND DETAIL.ORGANE = ORGANE.id AND DETAIL.BLOOD = BLOOD.id "
-    )
+    querry += "ORDER_.id = DETAIL.id AND DETAIL.ORGANE = ORGANE.id AND DETAIL.BLOOD = BLOOD.id "
     if include_start_date or include_end_date:
         querry += " AND "
     if include_start_date:
