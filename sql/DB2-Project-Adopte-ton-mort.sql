@@ -314,11 +314,17 @@ create index ORGANES_Types
 
 -- View Section
 -- _____________ 
-create or replace view ACC_PRICE(id_organ, type_organ, price_organ, id_blood, type_blood, signe_blood)
+create or replace view ACC_BLOOD_PRICE(id_blood, type_blood, signe_blood)
      -- View goal : view accountable to view the price of the organ and the blood
      -- Author: "The Blood" team
-     as  select O.id , O.type, O.price, B.id, B.type, B.signe
-     from ORGANE O, BLOOD B;
+     as  select B.id, B.type, B.signe
+     from BLOOD B;
+
+create or replace view ACC_ORGANE_PRICE(id, price)
+     -- View goal : view accountable to view the price of the organ
+     -- Author: "The Blood" team
+     as  select O.id, O.price
+     from ORGANE O;
 
 
 create or replace view DEL_ORDER(first_name, last_name, order_id, street, number, postal_code, city, country)
@@ -541,14 +547,96 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
 --           end if;
 --      end;
 
--- Init Section
+-- Role section
 -- _____________
 
--- create table IF NOT EXISTS TYPE_DELIVERY (
---      id varchar(16) not null,
---      price float(4) not null check(price > 0),
---      estimated_days INT not null, -- TODO: Ajouter au schéma
---      constraint ID_TYPE_DELIVERY_ID primary key (id));
+-- create section
+create role IF NOT EXISTS CEO;
+create role IF NOT EXISTS HR;
+create role IF NOT EXISTS DOCTOR;
+create role IF NOT EXISTS ACCOUNTANT;
+create role IF NOT EXISTS ADMINISTRATIVE;
+create role IF NOT EXISTS CUSTOMERS;
+
+-- Grant section
+grant select, insert, update, delete on ADDRESS to CUSTOMERS;
+grant select, insert, update, delete on PERSON to CUSTOMERS;
+grant select, insert, update, delete on CUSTOMER to CUSTOMERS;
+grant select, insert, update, delete on ORDER_ to CUSTOMERS;
+grant select, insert, update, delete on DELIVERY to CUSTOMERS;
+grant select, insert, update, delete on DETAIL to CUSTOMERS;
+grant select on BLOOD to CUSTOMERS;
+grant select on ORGANE to CUSTOMERS;
+grant select on TRANSPLANTATION to CUSTOMERS;
+
+
+grant select, insert, update, delete on ADDRESS to CEO;
+grant select, insert, update, delete on ADDRESS to HR;
+
+grant select, insert, update, delete on PERSON to CEO;
+grant select, insert, update, delete on PERSON to HR;
+
+grant select, insert, update, delete on CUSTOMER to CEO;
+
+grant select, insert, update, delete on TYPE_DELIVERY to CEO;
+grant select, insert, update on TYPE_DELIVERY to ACCOUNTANT;
+
+grant select, insert, update, delete on DELIVERY to CEO;
+grant select, insert, update, delete on DELIVERY to ADMINISTRATIVE;
+
+grant select, insert, update, delete on ORDER_ to CEO;
+grant select, insert, update, delete on ORDER_ to ADMINISTRATIVE;
+
+grant select, insert, update, delete on STAFF to CEO;
+grant select, insert, update, delete on STAFF to HR;
+
+grant select, insert, update, delete on CEO to CEO;
+grant select, insert, update, delete on HR to CEO;
+grant select, insert, update, delete on ANAESTHESIST to CEO;
+grant select, insert, update, delete on NURSE to CEO;
+grant select, insert, update, delete on DOCTOR to CEO;
+grant select, insert, update, delete on ACCOUNTANT to CEO;
+grant select, insert, update, delete on STAFF to CEO;
+
+grant select, insert, update, delete on DOCTOR to HR;
+grant select, insert, update, delete on NURSE to HR;
+grant select, insert, update, delete on ANAESTHESIST to HR;
+grant select, insert, update, delete on ACCOUNTANT to HR;
+grant select, insert, update, delete on STAFF to HR;
+grant select, insert, update, delete on HR to HR;
+grant select on CEO to HR;
+
+grant select, insert, update, delete on DETAIL to ADMINISTRATIVE;
+grant select, insert, update, delete on DETAIL to CEO;
+
+grant select, insert, update, delete on BLOOD to ADMINISTRATIVE;
+grant select, insert, update, delete on BLOOD to CEO;
+grant select, insert, update, delete on BLOOD to ACCOUNTANT;
+
+grant select, insert, update, delete on DONATOR to ADMINISTRATIVE;
+grant select, insert, update, delete on DONATOR to CEO;
+grant select, insert, update, delete on DONATOR to ACCOUNTANT;
+
+grant select, insert, update, delete on ORGANE to ADMINISTRATIVE;
+grant select, insert, update, delete on ORGANE to CEO;
+grant select, insert, update, delete on ORGANE to ACCOUNTANT;
+
+grant select, insert, update, delete on TRANSPLANTATION to ADMINISTRATIVE;
+grant select, insert, update, delete on TRANSPLANTATION to CEO;
+grant select, insert, update, delete on TRANSPLANTATION to ACCOUNTANT;
+grant select on TRANSPLANTATION to HR;
+
+grant select, insert, update, delete on N_work_on to ADMINISTRATIVE;
+grant select, insert, update, delete on N_work_on to CEO;
+grant select on N_work_on to HR;
+
+grant select, insert, update, delete on ACC_PRICE to ACCOUNTANT;
+grant select, insert, update, delete on ACC_ORGANE_PRICE to ACCOUNTANT;
+
+grant select, insert, update, delete on DEL_ORDER to ADMINISTRATIVE;
+
+-- Init Section
+-- _____________
 
 insert into TYPE_DELIVERY (id, price, estimated_days) values ('normal', 5.0, 10);
 insert into TYPE_DELIVERY (id, price, estimated_days) values ('express', 10.0, 3);
