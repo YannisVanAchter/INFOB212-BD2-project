@@ -7,6 +7,7 @@ from menupersonnel.menuaccounting import main_accounting_menu
 from menupersonnel.menumédecin import main_anesthesiste_menu, main_infirmier_menu, main_medecin_menu
 from menupersonnel.RH import main_RH_menu
 from menupersonnel.menuPDG import main_PDG_menu
+from menuclient import main_menu_customer
 
 def main_login_menu(database: DataBase):
     """Affiche le menu permettant de se connecter
@@ -102,7 +103,7 @@ def logged_login_menu(db: DataBase, user: User):
         error_message = "Vous n'avez pas les permissions pour aller dans ce menu. Réessayez."
         if user_choice == 1:
             if is_customer:
-                pass # Envoyer vers le menu client
+                main_menu_customer(db, user)
             else:
                 become_customer_action(db, user)
         elif user_choice == 2:
