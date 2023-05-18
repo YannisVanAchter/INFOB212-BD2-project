@@ -37,7 +37,7 @@ create table IF NOT EXISTS PERSON (
      first_name varchar(64),
      email varchar(128) not null,
      phone_number varchar(32),
-     born_date date not null, -- check((DATE.NOW - PERSON.born_date) <= 18),
+     born_date date not null,
      password varchar(128) not null,
      Liv_id INT unsigned not null,
      constraint ID_PERSON_ID primary key (id),
@@ -151,7 +151,6 @@ create table IF NOT EXISTS ORGANE (
      Com_id INT unsigned not null,
      constraint ID_ORGANE_ID primary key (id),
      constraint FK_OrganeDonator foreign key (Com_id) references DONATOR(id));
-     -- constraint FK_TransplantationTransplantation foreign key (TRANSPLANTATION.id) references TRANSPLANTATION); -- ???
 
 create table IF NOT EXISTS TRANSPLANTATION (
      date_ date not null,
@@ -164,7 +163,7 @@ create table IF NOT EXISTS TRANSPLANTATION (
      constraint ID_TRANSPLANTATION_ID primary key (id),
      constraint SID_TRANS_ORGAN_ID unique (Con_id),
      constraint FK_TransplantationCustomer foreign key (Rec_id) references CUSTOMER(id),
-     constraint FK_TransplantationOrgane foreign key (Con_id) references ORGANE(id), -- TODO: have to be done with alter table
+     constraint FK_TransplantationOrgane foreign key (Con_id) references ORGANE(id),
      constraint FK_TransplantationDoctor foreign key (D_w_id) references DOCTOR(id),
      constraint FK_TransplantationAnaesthesist foreign key (A_w_id) references ANAESTHESIST(id));
 
@@ -192,6 +191,7 @@ create table IF NOT EXISTS N_work_on (
 -- Constraints Section - Checks
 -- ____________________________ 
 
+-- CANT BE CHECK, CHECK CANT USE OTHER TABLES NEEDS TO BE TRIGGER
 -- alter table ORGANE add constraint ID_ORGANE_CHK
 --      check(exists(select * from DETAIL
 --                   where DETAIL.ORGANE = id)); 
