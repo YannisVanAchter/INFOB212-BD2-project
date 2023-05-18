@@ -550,11 +550,25 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
 -- Role section
 -- _____________
 
+-- create section
 create role IF NOT EXISTS CEO;
 create role IF NOT EXISTS HR;
 create role IF NOT EXISTS DOCTOR;
 create role IF NOT EXISTS ACCOUNTANT;
 create role IF NOT EXISTS ADMINISTRATIVE;
+create role IF NOT EXISTS CUSTOMERS;
+
+-- Grant section
+grant select, insert, update, delete on ADDRESS to CUSTOMERS;
+grant select, insert, update, delete on PERSON to CUSTOMERS;
+grant select, insert, update, delete on CUSTOMER to CUSTOMERS;
+grant select, insert, update, delete on ORDER_ to CUSTOMERS;
+grant select, insert, update, delete on DELIVERY to CUSTOMERS;
+grant select, insert, update, delete on DETAIL to CUSTOMERS;
+grant select on BLOOD to CUSTOMERS;
+grant select on ORGANE to CUSTOMERS;
+grant select on TRANSPLANTATION to CUSTOMERS;
+
 
 grant select, insert, update, delete on ADDRESS to CEO;
 grant select, insert, update, delete on ADDRESS to HR;
@@ -578,12 +592,15 @@ grant select, insert, update, delete on STAFF to HR;
 
 grant select, insert, update, delete on CEO to CEO;
 grant select, insert, update, delete on HR to CEO;
+grant select, insert, update, delete on ANAESTHESIST to CEO;
+grant select, insert, update, delete on NURSE to CEO;
 grant select, insert, update, delete on DOCTOR to CEO;
 grant select, insert, update, delete on ACCOUNTANT to CEO;
 grant select, insert, update, delete on STAFF to CEO;
 
 grant select, insert, update, delete on DOCTOR to HR;
 grant select, insert, update, delete on NURSE to HR;
+grant select, insert, update, delete on ANAESTHESIST to HR;
 grant select, insert, update, delete on ACCOUNTANT to HR;
 grant select, insert, update, delete on STAFF to HR;
 grant select, insert, update, delete on HR to HR;
@@ -610,7 +627,7 @@ grant select, insert, update, delete on TRANSPLANTATION to ACCOUNTANT;
 
 grant select, insert, update, delete on N_work_on to ADMINISTRATIVE;
 grant select, insert, update, delete on N_work_on to CEO;
-grant select, insert, update, delete on N_work_on to HR;
+grant select on N_work_on to HR;
 
 grant select, insert, update, delete on ACC_PRICE to ACCOUNTANT;
 grant select, insert, update, delete on ACC_ORGANE_PRICE to ACCOUNTANT;
