@@ -3,10 +3,10 @@ from auth import User
 
 from module.database import DataBase
 from .actions import become_customer_action, login_action, register_action
-from ..menupersonnel.menuaccounting import main_accounting_menu
-from ..menupersonnel.menumédecin import main_anesthesiste_menu, main_infirmier_menu, main_medecin_menu
-from ..menupersonnel.RH import main_RH_menu
-from ..menupersonnel.menuPDG import main_PDG_menu
+from menupersonnel.menuaccounting import main_accounting_menu
+from menupersonnel.menumédecin import main_anesthesiste_menu, main_infirmier_menu, main_medecin_menu
+from menupersonnel.RH import main_RH_menu
+from menupersonnel.menuPDG import main_PDG_menu
 
 def main_login_menu(database: DataBase):
     """Affiche le menu permettant de se connecter

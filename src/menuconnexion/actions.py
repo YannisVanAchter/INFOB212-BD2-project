@@ -1,7 +1,6 @@
 from module import DataBase
 from auth import register, login, become_customer, User
 from menu import main_login_menu
-from menu import logged_login_menu
 
 def register_action(db: DataBase) -> bool:
     """Register a user and return wether we should log them in automatically or not."""

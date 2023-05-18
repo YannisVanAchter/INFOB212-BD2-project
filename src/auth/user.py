@@ -1,4 +1,4 @@
-from ..exception.usergroupinvalidexception import UserGroupInvalidException
+from exception.usergroupinvalidexception import UserGroupInvalidException
 class User:
     """Class représentant un utilisateur.
     
