@@ -56,14 +56,13 @@ create table IF NOT EXISTS CUSTOMER (
 create table IF NOT EXISTS TYPE_DELIVERY (
      id varchar(16) not null,
      price float(4) not null check(price > 0),
-     estimated_days INT not null, -- TODO: Ajouter au schéma
+     estimated_days INT not null,
      constraint ID_TYPE_DELIVERY_ID primary key (id));
 
 create table IF NOT EXISTS DELIVERY (
      id INT unsigned not null AUTO_INCREMENT,
      departure_date date not null,
      arrival_date date not null,
-     effective_arrival_date date not null, -- TODO: A ENLEVER
      recipent_last_name varchar(64) not null,
      recipent_first_name varchar(64) not null,
      Typ_id varchar(16) not null,
@@ -125,7 +124,6 @@ create table IF NOT EXISTS BLOOD (
      type varchar(2) not null check(type = "A" or type = "B" or type = "O" or type = "AB"),
      signe boolean not null,
      expiration_date date not null,
-     quantity float(4) not null,
      Giv_id INT unsigned,
      Nee_id INT unsigned,
      constraint ID_BLOOD_ID primary key (id),
@@ -193,24 +191,8 @@ create table IF NOT EXISTS N_work_on (
 -- Constraints Section - Checks
 -- ____________________________ 
 
--- CANT BE CHECK, CHECK CANT USE OTHER TABLES NEEDS TO BE TRIGGER
--- alter table ORGANE add constraint ID_ORGANE_CHK
---      check(exists(select * from DETAIL
---                   where DETAIL.ORGANE = id)); 
-
--- alter table BLOOD add constraint ID_BLOOD_CHK 
---      check(exists(select * from DETAIL
---                   where DETAIL.BLOOD = id)); 
-
--- alter table TRANSPLANTATION add constraint ID_TRANSPLANTATION_CHK
---      check(exists(select * from N_work_on
---                   where N_work_on.id = id));
-
 alter table BLOOD add
      constraint FK_BloodTransplantation foreign key (Nee_id) references TRANSPLANTATION(id);
-
--- alter table ORGANE add constraint LIST_ORGANES
---      check((ORGANE.type));
 
 -- Index Section
 -- _____________ 
