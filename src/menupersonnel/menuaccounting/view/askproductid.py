@@ -11,6 +11,10 @@ def ask_product_id() -> (int):
     Return:
     -------
         int: id of product
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     product_id = -1
     while product_id <= 0:

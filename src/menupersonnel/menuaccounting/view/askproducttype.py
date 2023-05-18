@@ -13,6 +13,10 @@ def ask_product_type(is_organe: bool = False) -> str:
     Return:
     -------
         str: type of product
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     product_type = ""
 

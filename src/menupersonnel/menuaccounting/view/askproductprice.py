@@ -9,6 +9,10 @@ def ask_product_price() -> (float):
     return:
     -------
         float: price input by user
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     price = -1
 

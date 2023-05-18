@@ -9,6 +9,10 @@ def ask_organ_conservation_method() -> (str):
     Return:
     -------
         str: organ conservation method input by user
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     temp = "not null"
     method = ""

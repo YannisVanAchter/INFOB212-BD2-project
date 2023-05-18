@@ -1,4 +1,8 @@
 # encoding uft-8
+"""Provide the main menu for the accountant"""
+__author__  = ["Yannis Van Achter"]
+__version__ = "1.5.0"
+__date__    = "2021-05-01"
 
 from datetime import date as Date
 import logging

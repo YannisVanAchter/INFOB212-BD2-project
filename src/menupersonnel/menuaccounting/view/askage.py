@@ -9,6 +9,10 @@ def ask_age_of_death() -> (float | int):
     Return:
     -------
         float: The age of death of the donor.
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     age = -1
     while not (0 < age < 150):

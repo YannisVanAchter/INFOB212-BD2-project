@@ -30,6 +30,10 @@ def ask_price(prompt: str = None) -> (float):
     Return:
     -------
         float: price input by user
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     if prompt is None:
         prompt = "Enter the price: "

@@ -15,6 +15,10 @@ def set_product_price(
         price (float): price of the product (strictly positive)
         product_id (int|str): id of the product (strictly positive if int and len <= 16 if str)
         table (str): the table to update (ORGANE, SANG, TYPE_LIVRAISON, TRANSPLATATION)
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     # simple function for clean code
     # more about lambda at: https://www.geeksforgeeks.org/python-lambda-anonymous-functions-filter-map-reduce/

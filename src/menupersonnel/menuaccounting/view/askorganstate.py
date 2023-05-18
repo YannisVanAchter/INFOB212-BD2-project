@@ -10,6 +10,10 @@ def ask_organ_state() -> (str):
     Return:
     -------
         str: organ state input by user
+        
+    Author:
+    -------
+        Yannis Van Achter
     """
     state = None
     while state not in ORGAN_STATE_LIST:
