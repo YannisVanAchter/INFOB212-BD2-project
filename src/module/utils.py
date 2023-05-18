@@ -63,17 +63,27 @@ def insert_into(database: DataBase, table: str, attributes: tuple[str], values: 
             return str(int(x)).lower()
         return str(x)
     
+    def value_type(x):
+        r = '%s'
+        if isinstance(x, (str, Date)):
+            r = '%s'
+        if isinstance(x, (int, float, bool)):
+            r = '%i'
+        return r
+    
     # convert all values to string
-    values = list(map(to_string, values))
+    value_typed = ["%s" for _ in range(len(values))]
+    # values = list(map(to_string, values))
     table = table.upper()
+    if table == "ORDER":
+        table += "_" # table 'ORDER' is also a key word in SQL we use '_' to the end to make the difference
     
     # create querry
-    querry = f"INSERT INTO {table} ({', '.join(attributes)}) VALUES ({', '.join(values)})"
+    querry = f"INSERT INTO {table} ({', '.join(attributes)}) VALUES ({', '.join(value_typed)});"
     
     # execute querry
     with database as db:
-        db.execute(querry)
-        inserted_id = db.last_row_id
+        inserted_id = db.execute_with_params(querry, values)
         
     return inserted_id
         
