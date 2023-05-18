@@ -624,6 +624,7 @@ grant select, insert, update, delete on ORGANE to ACCOUNTANT;
 grant select, insert, update, delete on TRANSPLANTATION to ADMINISTRATIVE;
 grant select, insert, update, delete on TRANSPLANTATION to CEO;
 grant select, insert, update, delete on TRANSPLANTATION to ACCOUNTANT;
+grant select on TRANSPLANTATION to HR;
 
 grant select, insert, update, delete on N_work_on to ADMINISTRATIVE;
 grant select, insert, update, delete on N_work_on to CEO;
