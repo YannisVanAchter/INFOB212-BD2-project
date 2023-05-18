@@ -7,7 +7,7 @@ import time
 from module.get import get_string, get_sql_user_querry, get_date
 from module.database import DataBase, ProgrammingError
 from module.utils import clear_terminal as cls, insert_into
-from constants import BLOOD_PRICE_FACTOR
+from constants import BLOOD_PRICE_FACTOR, ORGAN_DICO
 
 from .view import *
 from .controler import *
@@ -42,8 +42,7 @@ def main_accounting_menu(database: DataBase) -> (int):
         print("1: Update a existing product")
         print("2: Insert a new product")
         print("3: Research for accounting stuff")
-        print("4: personnal querry (sql)")
-        print("5: Exit")
+        print("4: Exit")
 
     while True:
         cls()
@@ -62,9 +61,6 @@ def main_accounting_menu(database: DataBase) -> (int):
                     resarch_menu(database)
                     continue
                 case "4":
-                    personnal_querry(database)
-                    continue
-                case "5":
                     cls()
                     return 0
                 case _:
@@ -250,10 +246,11 @@ def insert_blood(database: DataBase):
         int: id of the blood inserted
     """
     type: str = ask_product_type()
-    signe: bool = get_string("Enter the blood signe: (+/-)")
-    signe = signe == "+"
+    signe: str = get_string("Enter the blood signe: (+/-)").strip().lower()
+    signe: bool = signe == "+"
     expiration: Date = get_date("Enter the expiration date (YYYY-MM-DD): ", before=Date.today())
-    quantity: float | int = ask_blood_quantity()
+    # quantity: float | int = ask_blood_quantity() # TODO: delete 500ml by default
+    quantity: float | int = 500
 
     id = insert_into(
                     database=database, 
@@ -292,11 +289,25 @@ def insert_organ(database: DataBase, donator_id: int = None):
         "Enter the expiration date for transplantation (YYYY-MM-DD): ", before=Date.today()
     )
     expiration_date = get_date(
-        "Enter the expiration date (YYYY-MM-DD): ", before=Date.today(), end=expiration_date_transplantation
+        "Enter the expiration date (YYYY-MM-DD): ", before=expiration_date_transplantation
     )
     method_of_conservation = ask_organ_conservation_method()
     type = ask_product_type(True)
-    price = ask_price("Enter the organ selling price: ")
+    price = ORGAN_DICO[type][0]
+    if state == "very well":
+        pass
+    elif state == "well":
+        price *= 0.9
+    elif state == "good":
+        price *= 0.85
+    elif state == "bad":
+        price *= 0.8
+    elif state == "very bad":
+        price *= 0.7
+    elif state == "unknown":
+        price *= 0.5
+    else:
+        raise ValueError("state is not correct")
 
     # does not keep the id of row inserted because accountant does not need it
     insert_into(
@@ -569,35 +580,3 @@ def get_selling_price_of_each_command(database: DataBase):
         db.execute(querry)
         for operations in db.table:
             print(operations)
-
-
-def personnal_querry(database: DataBase):
-    """Allow user to do a personnal querry
-
-    Args:
-    -----
-        database (DataBase): database object connected for this user
-    """
-    while True:
-        querry = get_sql_user_querry("Enter your querry:\n")
-        try:
-            with database as db:
-                db.execute(querry)
-
-                if querry.lower().startswith("select"):
-                    show_result = (
-                        get_string("Do you want to see the result ? (y/n): ")
-                        .strip()
-                        .lower()
-                        .startswith("y")
-                    )
-
-                    if show_result:
-                        for row in db.table:
-                            print(row)
-
-            return None  # exit the loop/function
-
-        except ProgrammingError:
-            print("Syntax error in your querry")
-
