@@ -56,13 +56,14 @@ create table IF NOT EXISTS CUSTOMER (
 create table IF NOT EXISTS TYPE_DELIVERY (
      id varchar(16) not null,
      price float(4) not null check(price > 0),
+     estimated_days INT not null, -- TODO: Ajouter au schéma
      constraint ID_TYPE_DELIVERY_ID primary key (id));
 
 create table IF NOT EXISTS DELIVERY (
      id INT unsigned not null AUTO_INCREMENT,
      departure_date date not null,
      arrival_date date not null,
-     effective_arrival_date date not null,
+     effective_arrival_date date not null, -- TODO: A ENLEVER
      recipent_last_name varchar(64) not null,
      recipent_first_name varchar(64) not null,
      Typ_id varchar(16) not null,
@@ -129,6 +130,7 @@ create table IF NOT EXISTS BLOOD (
      Nee_id INT unsigned,
      constraint ID_BLOOD_ID primary key (id),
      constraint FK_BloodPerson foreign key (Giv_id) references PERSON(id));
+     -- Foreign key Nee_id -> Transplantaton in alter tables
      
 create table IF NOT EXISTS DONATOR (
      id INT unsigned not null AUTO_INCREMENT,
@@ -513,10 +515,10 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
 -- Init Section
 -- _____________
 
-insert into TYPE_DELIVERY values ('normal', 5);
-insert into TYPE_DELIVERY values ('express', 10);
-insert into TYPE_DELIVERY values ('international', 15);
-insert into TYPE_DELIVERY values ('main propre', 3);
+insert into TYPE_DELIVERY values ('normal', 5, 10);
+insert into TYPE_DELIVERY values ('express', 10, 3);
+insert into TYPE_DELIVERY values ('international', 15, 7);
+insert into TYPE_DELIVERY values ('main propre', 3, 1);
 
 -- Init for tests
 -- ______________
