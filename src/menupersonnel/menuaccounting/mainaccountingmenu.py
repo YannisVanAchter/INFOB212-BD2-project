@@ -428,11 +428,11 @@ def select_selling_quantity(database: DataBase):
     if include_start_date or include_end_date:
         querry += " WHERE "
     if include_start_date:
-        querry += f"TRANSPLANTATION.date >= {start_date}"
+        querry += f"TRANSPLANTATION.date_ >= {start_date}"
         if include_end_date:
             querry += " AND "
     if include_end_date:
-        querry += f"TRANSPLANTATION.date <= {end_date}"
+        querry += f"TRANSPLANTATION.date_ <= {end_date}"
     querry += ";"
 
     with database as db:

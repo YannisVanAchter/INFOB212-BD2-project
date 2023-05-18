@@ -3,7 +3,7 @@ from constants import *
 from module.utils import *
 from menuconnexion.menu import *
 from menupersonnel.menuaccounting.mainaccountingmenu import *
-from menupersonnel.menumédecin.mainmedecinmenu import *
+from menupersonnel.menumédecin.mainmedecinmenu import *  
 from menupersonnel.menumédecin.mainmenuanesthesiste import *
 from menupersonnel.menumédecin.menuinfirmier import *
 from menupersonnel.menupersonneladministratif import *
