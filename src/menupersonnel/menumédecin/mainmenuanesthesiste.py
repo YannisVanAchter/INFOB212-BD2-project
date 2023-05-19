@@ -118,7 +118,7 @@ def info_organe(database: DataBase):
     )
 
     organs_query = (
-        "SELECT state, method_of_preservation, type FROM ORGAN WHERE id = %s"
+        "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = %s"
     )
     database.execute_with_params(organs_query, [id_transplantation])
 
