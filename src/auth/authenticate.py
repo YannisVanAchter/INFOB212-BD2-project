@@ -20,6 +20,9 @@ def login(db: DataBase, email: str, password: str) -> (User | None):
 
     query = "SELECT password FROM PERSON WHERE email = %s;"
     db.execute_with_params(query, [email])
+    if len(db.tableArgs) == 0:
+        print("Invalid Email.")
+        return None
     passwordFromDb = db.tableArgs[0][0]
     userGroups = []
 
@@ -28,6 +31,7 @@ def login(db: DataBase, email: str, password: str) -> (User | None):
         db.execute_with_params(query, [email])
         userId = db.tableArgs[0][0]
     else:
+        print("Invalid credentials.")
         return None
 
     # Check if the user is a customer

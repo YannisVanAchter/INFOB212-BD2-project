@@ -126,32 +126,33 @@ def insert_newelements(db: DataBase):
     # Insert a new organ
     print("Do you want to add an organ?")
     organ = get_string("Yes or No ?").lower().strip()
-    if organ.startswith("n"):
-        return
-    organ_new = get_string("Which one ?")
-    organ_new_price = get_float("What is the price of your new organ ?")
-    organ_500ML = get_int(
-        "How much blood bag of 500 ml do we need for a transplantation of this new organ ? (It could be 0) "
-    )
+    if organ.startswith("y"):
+        organ_new = get_string("Which one ?")
+        organ_new_price = get_float("What is the price of your new organ ?")
+        organ_500ML = get_int(
+            "How much blood bag of 500 ml do we need for a transplantation of this new organ ? (It could be 0) "
+        )
 
-    if organ_new not in ORGAN_DICO:
-        ORGAN_DICO.update({organ_new: [organ_new_price, organ_500ML]})
-        insert_organ()
-    else:
-        print("This type of organ already exist ;)")
+        if organ_new not in ORGAN_DICO:
+            ORGAN_DICO.update({organ_new: [organ_new_price, organ_500ML]})
+            insert_organ()
+        else:
+            print("This type of organ already exist ;)")
 
     # Insert a new type of delivery
     print("Do you want to add a new type of delivery ?")
-    tp_delivery = get_string("Yes or No ?")
-    tp_delivery_id = get_string("Which one ?")
-    tp_delivery_new_price = get_float("What is its price ?")
-    if tp_delivery == "Yes":
-        insert_into(
-            database=db,
-            table="TYPE_DELIVERY",
-            attributes=("id", "price"),
-            values=(tp_delivery_id, tp_delivery_new_price),
-        )
+    tp_delivery = get_string("Yes or No ?").strip().lower()
+    if tp_delivery.startswith("y"):
+        tp_delivery_id = get_string("Which one ?")
+        tp_delivery_new_price = get_float("What is its price ?")
+        tp_delivery_estimated_days = get_int("How long do we estimate this method will take to be delivered?")
+        if tp_delivery == "Yes":
+            insert_into(
+                database=db,
+                table="TYPE_DELIVERY",
+                attributes=("id", "price", "estimated_days"),
+                values=(tp_delivery_id, tp_delivery_new_price, tp_delivery_estimated_days),
+            )
 
     else:
         return 0

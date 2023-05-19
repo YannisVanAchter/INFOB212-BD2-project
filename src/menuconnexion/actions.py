@@ -1,4 +1,4 @@
-from module import DataBase
+from module import DataBase, get_string
 from auth import register, login, become_customer, User
 
 def register_action(db: DataBase) -> bool:
@@ -77,13 +77,10 @@ def _birthDateValidation(birthDate: str) -> bool:
     return True
 
 def login_action(db: DataBase) -> User | None:
-    email = input("Quelle est votre adresse email ?")
-    password = input("Quel est votre mot de passe ?")
+    email = get_string("Quelle est votre adresse email ?")
+    password = get_string("Quel est votre mot de passe ?")
 
     user = login(db, email, password)
-    if user == None:
-        print("Invalid credentials.")
-        return None
     # Call next menu
     return user
 
