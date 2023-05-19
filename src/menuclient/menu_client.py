@@ -1,12 +1,12 @@
-from module import DataBase
-from module import get_int, get_string
+from module import get_int, get_string, DataBase
 from auth import User
 from constants import ORGAN_DICO, BLOOD_PRICE_FACTOR
-import math
-from typing import Union
-import time
 from module import insert_into
 from datetime import datetime, timedelta
+
+import math
+import time
+from typing import Union
 
 def main_menu_customer(db: DataBase, user: User = None):
     def print_menu():
@@ -35,11 +35,11 @@ def main_menu_customer(db: DataBase, user: User = None):
                 for id in blood[0]:
                     cart.append({"type": "blood", "undertype": blood[1], "id": id, "price": 250})
         elif choice == 3:
+            print("Here are all the items in your cart:")
             _print_shopping_cart(cart)
         elif choice == 4:
             order_confirmed = True
             confirm_order(db, cart, user)
-            print(cart)
         elif choice == 5:
             return
         else:
@@ -55,11 +55,29 @@ def confirm_order(db: DataBase, cart: list, user: User):
         attributes=("Typ_id", "Buy_id"),
         values=(delivery_id, user.id)
     )
+    price = 0.0
     for item in cart:
         if item["type"] == "organ":
-            pass
+            insert_into(
+                database=db,
+                table="DETAIL",
+                attributes=("ORGANE", "id"),
+                values=(item["id"], order_id)
+            )
+            price += item["price"]
         elif item["type"] == "blood":
-            pass
+            insert_into(
+                database=db,
+                table="DETAIL",
+                attributes=("BLOOD", "id"),
+                values=(item["id"], order_id)
+            )
+            price += BLOOD_PRICE_FACTOR
+
+    print("Order confirmed. Details:")
+    _print_shopping_cart(cart)
+
+    print(f"Total: {price}€")
 
 def create_delivery(db: DataBase, user: User) -> int:
     today_date = datetime.now()
@@ -127,7 +145,6 @@ def display_available_delivery_type(types: list[list]):
 
 
 def _print_shopping_cart(cart: list):
-    print("Here are all the items currently in your cart:")
     for item in cart:
         print(f"Type: {item['type']} | Undertype: {item['undertype']} | Price: {item['price']}")
     time.sleep(5)
