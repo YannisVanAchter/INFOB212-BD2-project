@@ -25,6 +25,6 @@ def ask_product_type(is_organe: bool = False) -> str:
             product_type = get_string("Enter the product type: ").lower().strip()
     else:
         while product_type not in BLOOD_TYPE:
-            product_type = get_string("Enter the product type: ").upper().strip()
+            product_type = get_string(f"Enter the product type: ({'/'.join(BLOOD_TYPE)})").upper().strip()
 
     return product_type

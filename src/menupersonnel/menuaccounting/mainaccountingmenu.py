@@ -266,13 +266,12 @@ def insert_blood(database: DataBase):
     expiration: Date = get_date(
         "Enter the expiration date (YYYY-MM-DD): ", before=Date.today()
     )
-    quantity: float | int = 500
 
     id = insert_into(
         database=database,
         table="BLOOD",
-        attributes=("type", "signe", "expiration_date", "quantity"),
-        values=(type, signe, expiration, quantity),
+        attributes=("type", "signe", "expiration_date"),
+        values=(type, signe, expiration),
     )
 
     logging.info("Blood inserted")
