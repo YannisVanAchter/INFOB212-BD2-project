@@ -11,7 +11,7 @@ from menupersonnel.RH import main_RH_menu
 from module.database import DataBase
 
 
-def main_PDG_menu(database: DataBase, user_id):
+def main_PDG_menu(database: DataBase, user: User):
     """
     Main function of the menu for the PDG.
 
@@ -23,7 +23,7 @@ def main_PDG_menu(database: DataBase, user_id):
 
     Args:
         db (DataBase): Data base connected for personnal administratif
-        user_id : the id of the CEO that we want to delete and which is connected
+        user : User object of the CEO
 
     Author:
     -------
@@ -56,11 +56,11 @@ def main_PDG_menu(database: DataBase, user_id):
             if menu_choice == 1:
                 main_accounting_menu(database)
             elif menu_choice == 2:
-                main_medecin_menu(database)
+                main_medecin_menu(database, user)
             elif menu_choice == 3:
-                main_anesthesiologist_menu(database)
+                main_anesthesiologist_menu(database, user)
             elif menu_choice == 4:
-                main_infirmier_menu(database)
+                main_infirmier_menu(database, user)
             elif menu_choice == 5:
                 main_persoadmin_menu(database)
             elif menu_choice == 6:
@@ -75,7 +75,7 @@ def main_PDG_menu(database: DataBase, user_id):
                 function_choice = get_int("What is your choice ?")
 
                 if function_choice == 1:
-                    suppression_PDG(database, user_id)
+                    suppression_PDG(database, user.id)
                 elif function_choice == 2:
                     insert_newelements(database)
                 else:
