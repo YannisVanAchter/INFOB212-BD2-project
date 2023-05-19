@@ -1,6 +1,7 @@
 # INFOB212-BD2-project
 
 ## How to install the sql requerements for python?
+Check you have installed python 3.11 or higher and use the following command
 ```bash
 $ python -m venv venv
 ...
@@ -22,6 +23,9 @@ $ docker-compose down
 $ docker-compose build 
 $ docker-compose up
 ```
+
+⚠️Use python 3.11 or higher⚠️
+
 
 Into another terminal use (please wait till the docker container has been created and started):
 ```bash	
