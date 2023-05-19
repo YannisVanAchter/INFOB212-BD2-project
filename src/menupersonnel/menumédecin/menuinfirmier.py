@@ -61,7 +61,7 @@ def seepeople(database: DataBase, id):
 
     print("Here are the people you will work with:")
 
-    for i in database.table:
+    for i in database.tableArgs:
         print("You work with this anesthesiologist:", i)
 
     database.disconnect()
@@ -73,7 +73,7 @@ def seepeople(database: DataBase, id):
 
     database.execute_with_params(doctor, [idT])
 
-    for num in database.table:
+    for num in database.tableArgs:
         print("You work with these doctors:", num)
 
     database.disconnect()
@@ -92,7 +92,7 @@ def seedate_operations(database: DataBase, id):
     dates = "SELECT date_ FROM TRANSPLANTATION WHERE id IN (SELECT id FROM N_work_on WHERE N_N_id = %s)"
     database.execute_with_params(dates, [id])
 
-    for date in database.table:
+    for date in database.tableArgs:
         print("You have operations on these dates:", date)
 
     database.disconnect()
@@ -116,7 +116,7 @@ def info_organe(database: DataBase):
     organs = "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = %s"
     database.execute_with_params(organs, [id_transplantation])
 
-    for state, preservation_method, organ_type in database.table:
+    for state, preservation_method, organ_type in database.tableArgs:
         print("Here are the organ's information:")
         print("Organ type:", organ_type)
         print("Organ state:", state)
@@ -143,7 +143,7 @@ def info_client(database: DataBase):
 
     database.execute_with_params(clients, [client])
 
-    for username, blood_type, blood_sign in database.table:
+    for username, blood_type, blood_sign in database.tableArgs:
         print("Here is the information about the patient:")
         print("Username:", username)
         print("Blood Type:", blood_type)
