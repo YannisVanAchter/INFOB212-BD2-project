@@ -1,9 +1,10 @@
 # encoding uft-8
 
 from module import DataBase, get_int, get_valid_id, get_string
+from auth import User
 
 
-def main_infirmier_menu(database: DataBase):
+def main_infirmier_menu(database: DataBase, user: User):
     """
     Allows a nurse to navigate through their patients, operations, and colleagues based on their requests.
     This function prints the results of the nurse's requests to the database.
@@ -12,7 +13,7 @@ def main_infirmier_menu(database: DataBase):
     """
 
     print("Nurse menu")
-    id = get_int("What is your nurse identifier?")  # Get the nurse's identifier
+    id = user.id  # Get the nurse's identifier
 
     while True:
         print("What would you like to do?")
@@ -47,14 +48,16 @@ def seepeople(database: DataBase, id):
     """
     database.connect()
 
-    idT = get_int(
-        "What is the identifier of the transplantation for which you want to see who you will work with?"
+    idT = get_valid_id(
+        db=database,
+        prompt="What is the identifier of the transplantation for which you want to see who you will work with?",
+        table_name="TRANSPLANTATION"
     )
 
     # Find the anesthesiologists who work with the nurse on the given date and based on the nurse's ID
-    anesthesiologist = "SELECT id, inami_number FROM ANESTHESIOLOGIST WHERE id IN (SELECT A_w_id FROM TRANSPLANTATION WHERE id = '%s')"
+    anesthesiologist = "SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id FROM TRANSPLANTATION WHERE id = %s)"
 
-    database.execute(anesthesiologist % idT)
+    database.execute_with_params(anesthesiologist, [idT])
 
     print("Here are the people you will work with:")
 
@@ -66,9 +69,9 @@ def seepeople(database: DataBase, id):
     database.connect()
 
     # Find the doctor who works with the nurse on the given date and based on the nurse's ID
-    doctor = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id FROM TRANSPLANTATION WHERE id = '%s')"
+    doctor = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id FROM TRANSPLANTATION WHERE id = %s)"
 
-    database.execute(doctor % idT)
+    database.execute_with_params(doctor, [idT])
 
     for num in database.table:
         print("You work with these doctors:", num)
@@ -87,7 +90,7 @@ def seedate_operations(database: DataBase, id):
     database.connect()
 
     dates = "SELECT date_ FROM TRANSPLANTATION WHERE id IN (SELECT id FROM N_work_on WHERE N_N_id = %s)"
-    database.execute(dates % (id))
+    database.execute_with_params(dates, [id])
 
     for date in database.table:
         print("You have operations on these dates:", date)
@@ -110,8 +113,8 @@ def info_organe(database: DataBase):
         )
     )
 
-    organs = "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = '%s'"
-    database.execute(organs % (id_transplantation))
+    organs = "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = %s"
+    database.execute_with_params(organs, [id_transplantation])
 
     for state, preservation_method, organ_type in database.table:
         print("Here are the organ's information:")
@@ -130,13 +133,15 @@ def info_client(database: DataBase):
     Authors: Eline Mota
 
     """
-    client = input(
-        "What is the ID of the patient for whom you want to retrieve information? "
+    client = get_valid_id(
+        db=database,
+        prompt="What is the ID of the patient for whom you want to retrieve information? ",
+        table_name="CUSTOMER"
     )
     database.connect()
-    clients = "SELECT Username, blood_type, blood_sign FROM CUSTOMER WHERE id = '%s'"
+    clients = "SELECT pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id = %s"
 
-    database.execute(clients % (client))
+    database.execute_with_params(clients, [client])
 
     for username, blood_type, blood_sign in database.table:
         print("Here is the information about the patient:")
