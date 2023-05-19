@@ -205,10 +205,15 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
             )
 
             for bag_id in range(nb_pochesblood_free):
+                print(selected_blood)
                 blood_id = selected_blood[bag_id][0]  # get id of the blood bag
-                db.execute_with_params(
-                    "UPDATE BLOOD SET Nee_id = %s WHERE id = %s;",
-                    [id_transplantation, blood_id],
+                print(id_transplantation)
+                print(blood_id)
+                print(type(id_transplantation))
+                print(type(blood_id))
+                db.execute(
+                    "UPDATE BLOOD B SET B.Nee_id = %s WHERE B.id = %s;" %
+                    (id_transplantation, blood_id)
                 )
             logging.info(
                 "Your transplantation is inserted with success, thank you for your visit bro <3"

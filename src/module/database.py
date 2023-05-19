@@ -284,7 +284,6 @@ class DataBase:
         finally:
             if self.auto_connect and not self.__is_connected:
                 self.disconnect()
-                pass
 
     def execute_with_params(self, query: str, argsTuple: tuple) -> (int):
         """Execute a query and returns its id if an insert was made. -1 otherwise.
