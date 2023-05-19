@@ -14,6 +14,7 @@ from menupersonnel.menuaccounting import main_accounting_menu
 # from menupersonnel.RH import main_RH_menu
 # from menupersonnel.menupersonneladministratif import main_persoadmin_menu
 from module.database import DataBase
+from menuconnexion import main_login_menu
 # from auth import login, register
 
 # function and class
@@ -32,32 +33,8 @@ def main():
                 database='db',
                 port=3306,
                 auto_connect=True,
-        ) as database:
-        # address = {
-        #     'street': 'Route',
-        #     'number': 1,
-        #     'postalCode': 6000, 
-        #     'city': "Paris", 
-        #     "land": "France",
-        # }
-        # register(database, "test@gmail.com", "test", "password", "12/12/2000", address, "A", "+")
-        # login(database, "test@gmail.com", "password")
-
-    #     # TODO: create test with it
-    #     database.execute(
-    #         "CREATE TABLE IF NOT EXISTS test(id INTEGER(64) unsigned AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))"
-    #         )
-
-    #     database.execute_many(
-    #         "INSERT INTO test (name) VALUES ( 'bla')",
-    #         "INSERT INTO test (name) VALUES ( 'blabla')",
-    #         "INSERT INTO test (name) VALUES ( 'blablabla')")
-    #     database.execute("SELECT * FROM test")
-
-    #     for row in database.table:
-    #         print(row)
-    # main_persoadmin_menu()
-        main_accounting_menu(database)
+        ) as db:
+        main_login_menu(db)
 
 
 if __name__ == "__main__":
