@@ -656,6 +656,8 @@ insert into CUSTOMER (id, blood_type, blood_sign, pseudo) values (1, 'A', 1, "An
 insert into ADDRESS (id, street, number, city, postal_code, land) values (2, 'Rue de la Loi', 16, 'Bruxelles', 1000, 'Belgique');
 insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (2, 'Van Achter', 'Yannis', "yannis.van.achter@test.gmail.com", "+32 470 00 00 00", "password", "1997-01-01", 2);
 insert into CUSTOMER (id, blood_type, blood_sign, pseudo) values (2, 'A', 1, "Yannis");
+insert into STAFF (id, salary, active, job_description) values (2, 2000, true, "CEO");
+insert into CEO (id) values (2);
 
 insert into ADDRESS (id, street, number, city, postal_code, land) values (3, 'Rue des Anges', 16, 'Bruxelles', 1000, 'Belgique');
 insert into PERSON (id, last_name, first_name, email, phone_number, password, born_date, Liv_id) values (3, 'Genot', 'Aurélie', "aurelie.genot@test.gmail.com", "+32 470 00 00 01", "password", "1997-05-07", 3);

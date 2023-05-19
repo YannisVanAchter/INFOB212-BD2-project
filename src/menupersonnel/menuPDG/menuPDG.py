@@ -125,7 +125,9 @@ def insert_newelements(db: DataBase):
 
     # Insert a new organ
     print("Do you want to add an organ?")
-    organ = get_string("Yes or No ?")
+    organ = get_string("Yes or No ?").lower().strip()
+    if organ.startswith("n"):
+        return
     organ_new = get_string("Which one ?")
     organ_new_price = get_float("What is the price of your new organ ?")
     organ_500ML = get_int(
