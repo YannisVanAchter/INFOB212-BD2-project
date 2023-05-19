@@ -50,29 +50,24 @@ def main_accounting_menu(database: DataBase) -> int:
 
     while True:
         cls()
-        try:
-            print_menu()
-            choice = get_string("Enter your choice: ").strip()
+        print_menu()
+        choice = get_string("Enter your choice: ").strip()
 
-            match choice:
-                case "1":
-                    update_menu(database)
-                    continue
-                case "2":
-                    insert_menu(database)
-                    continue
-                case "3":
-                    resarch_menu(database)
-                    continue
-                case "4":
-                    cls()
-                    return 0
-                case _:
-                    case_other()
-
-        except KeyboardInterrupt:
-            cls()
-            return 1
+        match choice:
+            case "1":
+                update_menu(database)
+                continue
+            case "2":
+                insert_menu(database)
+                continue
+            case "3":
+                resarch_menu(database)
+                continue
+            case "4":
+                cls()
+                return 0
+            case _:
+                case_other()
         time.sleep(1)
 
 

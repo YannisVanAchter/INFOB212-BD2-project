@@ -143,7 +143,7 @@ create table IF NOT EXISTS ORGANE (
      state char(32) not null,
      functionnal char not null,
      expiration_date date not null,
-     expiration_date_transplatation date,
+     expiration_date_transplantation date, -- TODO: Corriger faute de frappe dans schéma
      method_of_preservation varchar(64) not null,
      type varchar(64) not null,
      id INT unsigned not null AUTO_INCREMENT,
