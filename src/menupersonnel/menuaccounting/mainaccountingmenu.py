@@ -338,7 +338,7 @@ def insert_organ(database: DataBase, donator_id: int = None):
             "type",
             "price",
             "method_of_preservation",
-            "functional",
+            "functionnal",
             "Com_id",
         ),
         values=(
