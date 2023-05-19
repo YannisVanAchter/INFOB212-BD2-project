@@ -8,7 +8,7 @@ from datetime import date as Date
 import logging
 import time
 
-from module.get import get_string, get_date
+from module.get import get_int, get_string, get_date
 from module.database import DataBase
 from module.utils import clear_terminal as cls, insert_into
 from constants import BLOOD_PRICE_FACTOR, ORGAN_DICO
@@ -146,12 +146,16 @@ def update_type_delivery(database: DataBase):
             new_type_delivery_name = "normal"
             while new_type_delivery_name in used_id:
                 new_type_delivery_name = get_string("Enter the type of delivery: ")
+            
+            estimeted_day_of_delivery = -1
+            while estimeted_day_of_delivery <= 0:
+                estimeted_day_of_delivery = get_int("Enter the estimated day of delivery: ")
 
         insert_into(
             database=database,
             table="TYPE_DELIVERY",
-            attributes=("id", "price"),
-            values=(new_type_delivery_name, new_type_delivery_price),
+            attributes=("id", "price", "estimated_days"),
+            values=(new_type_delivery_name, new_type_delivery_price, estimeted_day_of_delivery),
         )
 
         logging.info("New type of delivery inserted")
@@ -161,22 +165,41 @@ def update_type_delivery(database: DataBase):
         "You are only allow to update price of product (you are currently updating TYPE_DELIVERY)"
     )
 
-    # on TYPE_DELIVERY the id is a string
+    # on TYPE_DELIVERY the id is a string so we can not use get_valid_id()
     product_id = "b" * 17
     with database as db:
         product_id = get_string("Enter the type of delivery: ")
-        db.execute(f"SELECT id FROM TYPE_DELIVERY WHERE id='{product_id}';")
-        while len(db.table) == 0:
+        db.execute_with_params("SELECT id FROM TYPE_DELIVERY WHERE id= %s;", [product_id])
+        while len(db.tableArgs) == 0:
             print("This type of delivery does not exist")
             product_id = get_string("Enter the type of delivery: ")
-            db.execute(f"SELECT id FROM TYPE_DELIVERY WHERE id='{product_id}';")
+            db.execute_with_params("SELECT id FROM TYPE_DELIVERY WHERE id= %s;", [product_id])
 
-    new_type_delivery_price = ask_product_price()
+    while True:
+        print("1: Update price\n2: Update estimated days")
+        choice = get_string("Enter your choice: ").strip().lower()
+        
+        if choice == "1":
+            new_type_delivery_price = ask_product_price()
 
-    set_product_price(database, new_type_delivery_price, product_id, "TYPE_DELIVERY")
+            set_product_price(database, new_type_delivery_price, product_id, "TYPE_DELIVERY")
 
-    logging.info("Product type delivery updated")
-
+            logging.info("Product type delivery updated")
+            return 
+        elif choice == "2":
+            estimeted_day_of_delivery = -1
+            while estimeted_day_of_delivery <= 0:
+                estimeted_day_of_delivery = get_int("Enter the estimated day of delivery: ")
+            
+            with database as db:
+                db.execute_with_params(
+                    "UPDATE TYPE_DELIVERY SET estimated_days=%s WHERE id=%s;",
+                    [estimeted_day_of_delivery, product_id]
+                )
+            logging.info("Product type delivery updated")
+            return 
+        else:
+            case_other()
 
 def insert_menu(database: DataBase):
     """Menu to insert new product in the database
