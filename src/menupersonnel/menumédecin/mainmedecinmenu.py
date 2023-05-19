@@ -3,9 +3,10 @@
 import logging
 
 from module import DataBase, get_int, get_valid_id
+from auth import User
 
 
-def main_medecin_menu(database: DataBase):
+def main_medecin_menu(database: DataBase, user: User):
     """
     Allows a medecin to navigate throughout his patients, his operations and his colleguas according to what he asks
     This function prints what the medecin has aksed for after making requests to the Database
@@ -14,7 +15,7 @@ def main_medecin_menu(database: DataBase):
     """
 
     logging.info("In médecin menu")
-    id = get_int("What is your doctors id: ")  # récupère l'identifiant du médecin
+    id = user.id
 
     while True:
         print("What would you like to do?")
@@ -59,7 +60,7 @@ def seepeople(database: DataBase, id):
     )
 
     # Find anesthesiologists who work with the doctor on the given date and according to the doctor's ID
-    anesthesiologist_query = "SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = '%s')"
+    anesthesiologist_query = "SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = %s)"
 
     database.execute_with_params(anesthesiologist_query, [idT])
 
@@ -77,7 +78,7 @@ def seepeople(database: DataBase, id):
     database.connect()
 
     # Find nurses who work with the doctor on the given date and according to the doctor's ID
-    nurse_query = "SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = '%s')"
+    nurse_query = "SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = %s)"
 
     database.execute_with_params(nurse_query, [idT])
 
@@ -97,7 +98,7 @@ def seedate_operations(database: DataBase, id):
     """
     database.connect()
 
-    dates = "SELECT date_ FROM TRANSPLANTATION WHERE D_w_id = '%s' "
+    dates = "SELECT date_ FROM TRANSPLANTATION WHERE D_w_id = %s"
     database.execute_with_params(dates, [id])
 
     for date in database.tableArgs:
@@ -122,7 +123,7 @@ def info_organe(database: DataBase):
     )
 
     organ_query = (
-        "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = '%s'"
+        "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = %s"
     )
     database.execute(organ_query % (id_transplantation))
 
@@ -150,7 +151,7 @@ def info_client(database: DataBase):
         "CUSTOMER",
     )
     database.connect()
-    clients = "SELECT Username, blood_type, blood_sign FROM CUSTOMER WHERE id = '%s'"
+    clients = "SELECT pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id = %s"
 
     database.execute(clients % (client))
 
