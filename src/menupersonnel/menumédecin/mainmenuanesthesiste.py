@@ -1,9 +1,10 @@
 import logging
 
 from module import DataBase, get_int, get_valid_id, get_string
+from auth import User
 
 
-def main_anesthesiologist_menu(database: DataBase):
+def main_anesthesiologist_menu(database: DataBase, user: User):
     """
     Allows a doctor to navigate through their patients, operations, and colleagues based on their requests.
     This function prints the results of the doctor's requests after querying the Database.
@@ -12,9 +13,7 @@ def main_anesthesiologist_menu(database: DataBase):
     """
 
     print("In the anesthesiologist menu")
-    id = get_valid_id(
-        database, "What is your anesthesiologist ID?", "ANAESTHESIST"
-    )  # Retrieve the anesthesiologist's ID
+    id = user.id
 
     while True:
         print("What would you like to do?")
@@ -45,7 +44,7 @@ def main_anesthesiologist_menu(database: DataBase):
             break
 
 
-def seepeople(database: DataBase, id):
+def seepeople(database: DataBase):
     """
     Allows an anesthesiologist to see the people they work with based on a specific date of an operation.
     This function prints the ID of the doctor and nurses they work with on a certain date.
@@ -54,29 +53,31 @@ def seepeople(database: DataBase, id):
     """
     database.connect()
 
-    idT = get_int(
-        "What is the ID of the transplantation for which you want to see who you will be working with?"
+    idT = get_valid_id(
+        db=database,
+        prompt="What is the ID of the transplantation for which you want to see who you will be working with?",
+        table_name="TRANSPLANTATION"
     )
 
     # Find the doctors who work with the anesthesiologist on the given date and according to the doctor's ID
-    doctors_query = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = '%s')"
+    doctors_query = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = %s)"
 
-    database.execute(doctors_query % (idT))
+    database.execute_with_params(doctors_query, [idT])
 
     print("Here are the people you will be working with:")
 
-    for i in database.table:
+    for i in database.tableArgs:
         print("You work with this doctor:", i)
     database.disconnect()
 
     database.connect()
 
     # Find the nurses who work with the anesthesiologist on the given date and according to the doctor's ID
-    nurses_query = "SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = '%s')"
+    nurses_query = "SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = %s)"
 
-    database.execute(nurses_query % (idT))
+    database.execute_with_params(nurses_query, [idT])
 
-    for num in database.table:
+    for num in database.tableArgs:
         print("You work with these nurses:", num)
 
     database.disconnect()
@@ -92,10 +93,10 @@ def seedate_operations(database: DataBase, id):
     """
     database.connect()
 
-    dates_query = "SELECT date_ FROM TRANSPLANTATION WHERE A_w_id = '%s' "
-    database.execute(dates_query % (id))
+    dates_query = "SELECT date_ FROM TRANSPLANTATION WHERE A_w_id = %s"
+    database.execute_with_params(dates_query, [id])
 
-    for date in database.table:
+    for date in database.tableArgs:
         print("You have operations on these dates:", date)
 
     database.disconnect()
@@ -110,18 +111,18 @@ def info_organe(database: DataBase):
     """
     database.connect()
 
-    id_transplantation = int(
-        input(
-            "Can you provide me with the ID of the transplantation for which you want to see the organs?"
-        )
+    id_transplantation = get_valid_id(
+        db=database,
+        prompt="Can you provide me with the ID of the transplantation for which you want to see the organs?",
+        table_name="TRANSPLANTATION"
     )
 
     organs_query = (
-        "SELECT state, method_of_preservation, type FROM ORGAN WHERE id = '%s'"
+        "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = %s"
     )
-    database.execute(organs_query % (id_transplantation))
+    database.execute_with_params(organs_query, [id_transplantation])
 
-    for state, preservation_method, organ_type in database.table:
+    for state, preservation_method, organ_type in database.tableArgs:
         print("Here is the information about the organ:")
         print("Type of organ to be transplanted:", organ_type)
         print("State of this organ:", state)
@@ -138,17 +139,19 @@ def info_client(database: DataBase):
     Authors: Eline Mota
 
     """
-    client = get_string(
-        "What is the ID of the patient for whom you want to get the information? "
+    client = get_valid_id(
+        db=database,
+        prompt="What is the ID of the patient for whom you want to get the information? ",
+        table_name="CUSTOMER"
     )
     database.connect()
     clients_query = (
-        "SELECT Username, blood_type, blood_sign FROM CUSTOMER WHERE id = '%s'"
+        "SELECT pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id = %s"
     )
 
-    database.execute(clients_query % (client))
+    database.execute_with_params(clients_query, [client])
 
-    for Username, blood_type, blood_sign in database.table:
+    for Username, blood_type, blood_sign in database.tableArgs:
         print("Here is the information about the client:")
         print("Username:", Username)
         print("Blood type:", blood_type)

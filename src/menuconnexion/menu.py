@@ -98,6 +98,7 @@ def logged_login_menu(db: DataBase, user: User):
         if is_ceo:
             print("7. Rejoindre le menu PDG")
 
+        # TODO: Add perso admin menu
 
         user_choice = get_int("Entrer le chiffre correspondant au menu que vous souhaitez")
         error_message = "Vous n'avez pas les permissions pour aller dans ce menu. Réessayez."
@@ -123,7 +124,7 @@ def logged_login_menu(db: DataBase, user: User):
                 print(error_message)
         elif user_choice == 5:
             if is_anaesthesist:
-                main_anesthesiologist_menu(db)
+                main_anesthesiologist_menu(db, user)
             else:
                 print(error_message)
         elif user_choice == 6:
@@ -133,6 +134,6 @@ def logged_login_menu(db: DataBase, user: User):
                 print(error_message)
         elif user_choice == 7:
             if is_ceo:
-                main_PDG_menu(db)
+                main_PDG_menu(db, user)
             else:
                 print(error_message)
