@@ -2,13 +2,13 @@ from module.get import *
 from constants import *
 from module.utils import *
 from menuconnexion.menu import *
-from menupersonnel.menuaccounting.mainaccountingmenu import *
-from menupersonnel.menumédecin.mainmedecinmenu import *
-from menupersonnel.menumédecin.mainmenuanesthesiste import *
-from menupersonnel.menumédecin.menuinfirmier import *
-from menupersonnel.menupersonneladministratif import *
-from menupersonnel.RH import *
-from module.database import *
+from menupersonnel.menuaccounting.mainaccountingmenu import main_accounting_menu, insert_organ
+from menupersonnel.menumédecin.mainmedecinmenu import main_medecin_menu
+from menupersonnel.menumédecin.mainmenuanesthesiste import main_anesthesiologist_menu
+from menupersonnel.menumédecin.menuinfirmier import main_infirmier_menu
+from menupersonnel.menupersonneladministratif import main_persoadmin_menu
+from menupersonnel.RH import main_RH_menu
+from module.database import DataBase
 
 
 def main_PDG_menu(database: DataBase, user_id):
@@ -58,7 +58,7 @@ def main_PDG_menu(database: DataBase, user_id):
             elif menu_choice == 2:
                 main_medecin_menu(database)
             elif menu_choice == 3:
-                main_anesthesiste_menu(database)
+                main_anesthesiologist_menu(database)
             elif menu_choice == 4:
                 main_infirmier_menu(database)
             elif menu_choice == 5:
