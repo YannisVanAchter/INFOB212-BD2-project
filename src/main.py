@@ -3,19 +3,10 @@
 # import
 import logging
 import sys
-import time
 
-# pip install -r requerements.txt
-# import mysql.connector as mysql
-
-# # local modules
-from menupersonnel.menuaccounting import main_accounting_menu
-# from menupersonnel.menumédecin import main_medecin_menu
-# from menupersonnel.RH import main_RH_menu
-# from menupersonnel.menupersonneladministratif import main_persoadmin_menu
+# local modules
 from module.database import DataBase
 from menuconnexion import main_login_menu
-# from auth import login, register
 
 # function and class
 def main():

@@ -8,7 +8,7 @@ from datetime import date as Date
 import logging
 import time
 
-from module.get import get_int, get_string, get_date
+from module.get import get_int, get_string, get_date, get_valid_id
 from module.database import DataBase
 from module.utils import clear_terminal as cls, insert_into
 from constants import BLOOD_PRICE_FACTOR, ORGAN_DICO
@@ -231,6 +231,8 @@ def insert_menu(database: DataBase):
                 )
                 if new_donator:
                     donator_id = insert_donator(database)
+                elif donator_id is None or donator_id < 0:
+                    donator_id = get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the donator: ", "DONATOR")
                 insert_organ(database, donator_id)
                 continue
             case "3":
@@ -242,6 +244,8 @@ def insert_menu(database: DataBase):
                 )
                 if new_blood:
                     blood_id = insert_blood(database)
+                elif blood_id is None or blood_id < 0:
+                    blood_id = get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the blood: ", "BLOOD")
                 donator_id = insert_donator(database, blood_id)
                 continue
             case "4":
