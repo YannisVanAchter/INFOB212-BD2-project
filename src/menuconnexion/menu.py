@@ -7,6 +7,7 @@ from menupersonnel.menuaccounting import main_accounting_menu
 from menupersonnel.menumédecin import main_anesthesiologist_menu, main_infirmier_menu, main_medecin_menu
 from menupersonnel.RH import main_RH_menu
 from menupersonnel.menuPDG import main_PDG_menu
+from menupersonnel.menupersonneladministratif import main_persoadmin_menu
 from menuclient import main_menu_customer
 
 def main_login_menu(database: DataBase):
@@ -97,7 +98,9 @@ def logged_login_menu(db: DataBase, user: User):
         if is_ceo:
             print("7. Rejoindre le menu PDG")
 
-        # TODO: Add perso admin menu
+        is_administrative_personnal = "STAFF" in user.userGroup
+        if is_administrative_personnal:
+            print("8. Rejoindre le menu personnel administratif")
 
         user_choice = get_int("Entrer le chiffre correspondant au menu que vous souhaitez")
         error_message = "Vous n'avez pas les permissions pour aller dans ce menu. Réessayez."
@@ -134,5 +137,10 @@ def logged_login_menu(db: DataBase, user: User):
         elif user_choice == 7:
             if is_ceo:
                 main_PDG_menu(db, user)
+            else:
+                print(error_message)
+        elif user_choice == 8:
+            if is_administrative_personnal:
+                main_persoadmin_menu(db)
             else:
                 print(error_message)
