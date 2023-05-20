@@ -317,8 +317,8 @@ class DataBase:
         logging.info(f"args: {argsTuple}")
         
         self.__cursorPrepared.execute(query, argsTuple)
-        logging.info(f"BLABLA: {self.__cursorPrepared}")
-        logging.info(f"BLABLA: {self.__cursorPrepared.with_rows}")
+        logging.debug(f"Query executed: {self.__cursorPrepared}")
+        logging.debug(f"Query has rows to fetch: {self.__cursorPrepared.with_rows}")
         if self.__cursorPrepared.with_rows:
             self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             if (not self.__db.is_connected()):
