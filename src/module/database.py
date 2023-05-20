@@ -11,6 +11,7 @@ __version__ = "1.1.0"
 __author__  = "Yannis Van Achter <discord:Yannis Van Achter#1444>"
 
 import time
+import logging
 
 from mysql.connector import connect
 from mysql.connector.connection import MySQLConnection
@@ -211,6 +212,8 @@ class DataBase:
                 self.__cursorPrepared = self.__db.cursor(prepared=True)
 
                 self.__is_connected = True
+                
+                logging.info("Connected to database")
 
                 return self.__db, self.__cursor
             
@@ -242,6 +245,7 @@ class DataBase:
         """
         toReturn = -1
         if self.auto_connect and not self.__is_connected:
+            logging.info("Auto connect in execute")
             self.connect()
             
         if not self.__is_connected:
@@ -250,6 +254,8 @@ class DataBase:
             )
             
         query = querry.strip()
+        
+        logging.info(f"try executing query: '{query}'")
         try:
             # create new cursor before next query to keep acces to last query
             self.__cursor.close()
@@ -277,6 +283,9 @@ class DataBase:
                         self.__db.commit()
                     self.__cursor.close()
                     self.__cursor = self.__db.cursor(buffered=True)
+            
+            logging.info(f"Query executed: '{query}'")
+            
             return toReturn
 
         except ProgrammingError as e:
@@ -299,9 +308,17 @@ class DataBase:
         """
         toReturn = -1
         query = query.strip()
+        
+        if self.auto_connect and (not self.__is_connected):
+            logging.info("Auto connect in execute with params")
+            self.connect()
+        
+        logging.info(f"try executing query: '{query}'")
+        logging.info(f"args: {argsTuple}")
+        
         self.__cursorPrepared.execute(query, argsTuple)
-        print(self.__cursorPrepared)
-        print(self.__cursorPrepared.with_rows)
+        logging.info(f"BLABLA: {self.__cursorPrepared}")
+        logging.info(f"BLABLA: {self.__cursorPrepared.with_rows}")
         if self.__cursorPrepared.with_rows:
             self.__fetchedPrepared = self.__cursorPrepared.fetchall()
             if (not self.__db.is_connected()):
@@ -318,6 +335,10 @@ class DataBase:
 
             self.__cursorPrepared.close()
             self.__cursorPrepared = self.__db.cursor(prepared=True)
+        
+        logging.info("Query executed: " + query)
+        logging.info("Args: " + str(argsTuple))
+        
         return toReturn
 
 
@@ -357,3 +378,5 @@ class DataBase:
         """
         self.__db.close()
         self.__is_connected = False
+        
+        logging.info("Disconnected from database")
