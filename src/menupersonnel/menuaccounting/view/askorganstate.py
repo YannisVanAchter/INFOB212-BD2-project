@@ -16,6 +16,7 @@ def ask_organ_state() -> (str):
         Yannis Van Achter
     """
     state = None
+    print("Organ state that are valid:", ", ".join(ORGAN_STATE_LIST))
     while state not in ORGAN_STATE_LIST:
         state = get_string("Enter the organ state: ").strip().lower()
     return state

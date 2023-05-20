@@ -202,6 +202,37 @@ def insert_menu(database: DataBase):
     Args:
         database (DataBase): database to insert product in, connected as accuntant user
     """
+    def before_insert_organe(database: DataBase):
+        donator_list = []
+        with database as db:
+            db.execute("SELECT id, gender, age_range FROM DONATOR")
+            donator_list = db.table
+        print("Here is the list of donator:")
+        print("ID of a donator: gender, age of death")
+        for id_donator, (id, gender, age_range) in enumerate(donator_list):
+            printed_gender = "f" if gender == "1" else "m"
+            print(f"{id - 1}: {printed_gender}, {age_range}")
+            
+        print("If you want to insert new donator, press: ctrl+c")
+        try:
+            return get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the donator: ", "DONATOR")
+        except KeyboardInterrupt:
+            return -1
+           
+    def before_insert_donator(database: DataBase):
+        blood_list = []
+        with database as db:
+            db.execute("SELECT id, type, signe, expiration_date FROM BLOOD")
+            blood_list = db.table
+        print("Here is the list of blood:")
+        print("ID of a blood: type, signe, expiration date")
+        for id_blood, (id, type, signe, expiration_date) in enumerate(blood_list):
+            print(f"{id - 1}: {type}, {signe}, {expiration_date}")
+        print("If you want to insert new blood, press: ctrl+c")
+        try:
+            return get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the blood: ", "BLOOD")
+        except KeyboardInterrupt:
+            return -1
 
     def print_menu():
         print("What do you want to insert ?")
@@ -227,7 +258,7 @@ def insert_menu(database: DataBase):
                 if new_donator:
                     donator_id = insert_donator(database)
                 elif donator_id is None or donator_id < 0:
-                    donator_id = get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the donator: ", "DONATOR")
+                    donator_id = before_insert_donator(database)
                 insert_organ(database, donator_id)
                 continue
             case "3":
@@ -240,7 +271,7 @@ def insert_menu(database: DataBase):
                 if new_blood:
                     blood_id = insert_blood(database)
                 elif blood_id is None or blood_id < 0:
-                    blood_id = get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the blood: ", "BLOOD")
+                    blood_id = before_insert_organe(database)
                 donator_id = insert_donator(database, blood_id)
                 continue
             case "4":
@@ -398,9 +429,10 @@ def resarch_menu(database: DataBase):
         print("What do you want to do search ?")
         print("1: Selling quantity")
         print("2: Product quantity (not selling)")
-        print("3: where are the clients")
-        print("4: get selling price of each command/client")
-        print("5: Back")
+        print("3: where are the clients (with order)")
+        print("4: where are the clients (with out order)")
+        print("5: get selling price of each command/client")
+        print("6: Back")
 
     while True:
         print_menu()
@@ -420,10 +452,13 @@ def resarch_menu(database: DataBase):
                 get_string("Press enter to continue")
                 return
             case "4":
+                find_where_are_the_clients(database, all=True)
+                get_string("Press enter to continue")
+            case "5":
                 get_selling_price_of_each_command(database)
                 get_string("Press enter to continue")
                 return
-            case "5":
+            case "6":
                 return
             case other:
                 case_other()
@@ -547,22 +582,66 @@ def select_product_not_sell(database: DataBase):
             print(row)
 
 
-def find_where_are_the_clients(database: DataBase):
+def find_where_are_the_clients(database: DataBase, all = False):
     """Find where are the clients and print there address
 
     Args:
     -----
         database (DataBase): database object connected for this user
+        all (bool): if True, print all clients, else print only clients that have order
     """
+    def set_len(string, length):
+        """Set the length of the string to length
+
+        Args:
+        -----
+            string (str): string to set the length
+            length (int): length of the string
+
+        Returns:
+        --------
+            str: string with length length
+        """
+        logging.debug(f"set_len({string}, {length}): current length: {len(string)}")
+        if len(string) > length:
+            return string[:length + 3] + '...'
+        return string + " " * (length - len(string))
+    
     querry = ""
     querry += "SELECT CUSTOMER.id AS 'Customer id', ADDRESS.street AS 'Street', ADDRESS.city AS 'City', ADDRESS.postal_code AS 'Postal code', ADDRESS.land AS 'Country'"
     querry += " FROM CUSTOMER, PERSON, ADDRESS WHERE CUSTOMER.id = PERSON.id AND PERSON.Liv_id = ADDRESS.id"
-    querry += " AND PERSON.id IN (SELECT ORDER_.Buy_id FROM ORDER_);"
+    if not all:
+        querry += " AND PERSON.id IN (SELECT ORDER_.Buy_id FROM ORDER_);"
+    else:
+        querry += ";"
+    
     with database as db:
         db.execute(querry)
-
-        for row in db.table:
-            print(row)
+        
+        grouped = dict()
+        
+        print("| id |      Street      |    City    | Postal code |  Country  |")
+        print("+----+------------------+------------+-------------+-----------+")
+        # as list of tuple: (id, street, city, postal_code, country)
+        # use destructuring  to get variable named id, street, city, postal_code and country
+        for (id, street, city, postal_code, country) in db.table:
+            id = set_len(str(id), 4)
+            street = set_len(str(street), 12)
+            city = set_len(str(city), 12)
+            postal_code = set_len(str(postal_code), 13)
+            country = set_len(str(country), 11)
+            print(f"|{id}|{street}|{city}|{postal_code}|{country}|")
+            
+            if country not in grouped.keys():
+                grouped[country] = 1
+            else:
+                grouped[country] += 1
+        
+        print(  "+----+------------------+------------+-------------+-----------+")
+        print("\n================================================================\n")
+        print("Here is the number of clients per country:")
+        for country, number in grouped.items():
+            print(f"{country}: {number}, pourcentage: {(number / len(grouped) * 100):.2f}%")
 
 
 def get_selling_price_of_each_command(database: DataBase):

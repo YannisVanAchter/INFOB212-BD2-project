@@ -21,6 +21,7 @@ def ask_product_type(is_organe: bool = False) -> str:
     product_type = ""
 
     if is_organe:
+        print("Organ type that are valid:", ", ".join(ORGAN_DICO.keys()))
         while product_type not in ORGAN_DICO.keys():
             product_type = get_string("Enter the product type: ").lower().strip()
     else:
