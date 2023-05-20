@@ -21,6 +21,7 @@ def main_RH_menu(db: DataBase):
     - Delete employee
 
     Args:
+    -----
         db (DataBase): Data base connected for HR
         
     Author:
@@ -84,7 +85,7 @@ def add_employee(db: DataBase):
         create_person(db)
 
     if existence == "yes":
-        id_person = get_valid_id(db, "Please enter the id of the person: ", "PERSON")
+        id_person = select_employe(db, "SELECT P.id, P.last_name, P.first_name FROM PERSON P WHERE P.id not in (SELECT S.id FROM STAFF S)", ["id", "last_name", "first_name"], "PERSON")
         create_employee(id_person, db)
 
     db.disconnect()
@@ -221,15 +222,13 @@ def modify_employee(db: DataBase):
     db.connect()
 
     id_employee = None
-    while id_employee == None:
-        id_employee = get_valid_id(
-            db, "Enter the id of the employee that you want to modify: ", "STAFF"
-        )
+    while id_employee is None:
+        id_employee = select_employe(db, "SELECT P.id, P.last_name, P.first_name, S.job_description FROM PERSON P, STAFF S WHERE P.id = S.id", ["id", "last name", "first name", "Job Description"], "PERSON")
 
     print("What do you want to do?")
-    choice = get_int(
-        "Type 1 if you want to modify the salary of the employee and 2 if you want to modify his description:"
-    )
+    print("Type 1 if you want to change the salary of the employee")
+    print("Type 2 if you want to change the description of the job of the employee")
+    choice = get_int("Your choice: ")
 
     if choice == 1:
         db.execute(f"SELECT salary from STAFF where id= {id_employee}")
@@ -271,10 +270,8 @@ def delete_employee(db: DataBase):
     db.connect()
 
     id_employee = None
-    while id_employee == None:
-        id_employee = get_valid_id(
-            db, "Enter the id of the employee that you want to delete: ", "STAFF"
-        )
+    while id_employee is None:
+        id_employee = select_employe(db, "SELECT P.id, P.last_name, P.first_name, S.job_description FROM PERSON P, STAFF S WHERE P.id = S.id", ["id", "last name", "first name", "Job Description"], "PERSON")
 
     id = (id_employee,)
     print("Are you sure to delete this employee? After that you cannot go back ")
@@ -315,8 +312,8 @@ def delete_employee(db: DataBase):
                 f"UPDATE STAFF SET salary = '0',job_description = 'nothing', active = false  WHERE id = {id_employee} "
             )
 
-            logging.debug(f"Id of medecin to delete: {id}")
-            print(f"list of medecin id: {medecins}")
+            logging.info(f"Id of medecin to delete: {id}")
+            logging.debug(f"list of medecin id: {medecins}")
 
         if (id not in ceo) and (id not in medecins):
             db.execute("SELECT id FROM ACCOUNTANT")
@@ -332,7 +329,7 @@ def delete_employee(db: DataBase):
             db.execute(f"DELETE FROM STAFF WHERE id = {id_employee} ")
 
             logging.info(f"Id of employee to delete: {id}")
-            logging.info(f"list of employee id: {accountants + HRpeople}")
+            logging.debug(f"list of employee id: {accountants + HRpeople}")
 
         print("Employee well deleted")
 
@@ -340,3 +337,76 @@ def delete_employee(db: DataBase):
         print("This employee will not be deleted")
 
     db.disconnect()
+
+def select_employe(database: DataBase, querry: str, information_selected: list[str], table: str) -> (int):
+    """Select an employee from the database
+
+    Args:
+    -----
+        database (DataBase): database to check id, 
+            connect with user that have SELECT grant permission on table_name
+        querry (str): querry to select a list of employee
+        information_selected (list[str]): list of information to print
+        table (str): name of the table to check id
+       
+    Raises:
+    -------
+        TypeError: if id_type is not int or str
+
+    Return:
+    -------
+        id : valid id
+        id = None : if id is not valid (not found in "mysql".table)
+        
+    Version:
+    --------
+        1.0.0
+    
+    Author:
+    -------
+        Yannis Van Achter
+    """
+    
+    def string_len(string, length):
+        """Return string with length characters
+
+        Args:
+        -----
+            string (str): string to check
+            length (int): length of the string
+
+        Return:
+        -------
+            string (str): string with length characters
+        """
+        if len(string) > length:
+            return string[:(length + 3)] + "..."
+        else:
+            return string + " " * (length - len(string))
+    
+    with database as db:
+        db.execute(querry)
+        information_list = db.table
+    
+    if len(information_list) == 0:
+        print("No employee found")
+        return 
+    
+    table_head = "| " + " | ".join(information_selected) + " |"
+    separator = "+-" + "-+-".join(["-"*len(i) for i in information_selected]) + "-+"
+    list_size = [len(i) for i in information_selected]
+    
+    print(table_head)
+    print(separator)
+    for information in information_list:
+        print("| " + " | ".join(
+            [string_len(str(string), list_size[i]) 
+                for i, string in enumerate(information)
+            ]
+            ) + " |")
+    print(separator)
+    
+    id = None
+    while id is None:
+        id = get_valid_id(db, "Enter the id of selected person: ", table)
+    return id
