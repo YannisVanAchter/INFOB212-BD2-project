@@ -7,7 +7,7 @@ def register_action(db: DataBase) -> bool:
     password = input("Enter the password you wish to create:")
     birthDate = input("Enter your date of birth (format: DD/MM/YYYY):")
     while not _birthDateValidation(birthDate):
-        birthDate = input("Birth date intered incorrect, please follow the format DD/MM/YYYY:")
+        birthDate = input("Birth date incorrect, please follow the format DD/MM/YYYY:")
     
     street = input("Enter the street you're living on (without the number):")
     number = input("Enter the number of your home")
@@ -73,8 +73,8 @@ def _birthDateValidation(birthDate: str) -> bool:
     return True
 
 def login_action(db: DataBase) -> User | None:
-    email = get_string("Quelle est votre adresse email ?")
-    password = get_string("Quel est votre mot de passe ?")
+    email = get_string("What is your email ?")
+    password = get_string("What is your password?")
 
     user = login(db, email, password)
     # Call next menu
@@ -83,19 +83,19 @@ def login_action(db: DataBase) -> User | None:
 def become_customer_action(db: DataBase, user: User):
     # def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):
 
-    nickname = input("Entrez votre pseudoynme.")
+    nickname = input("Enter your pseudo")
 
     bloodTypeValid = False
     while not bloodTypeValid:
-        bloodType = input("Entrez le type de votre groupe sanguin (A/B/AB/O)")
+        bloodType = input(" Enter your blood type (A/B/AB/O)")
         if bloodType in ["A", "B", "AB", "O"]:
             bloodTypeValid = True
         else:
-            print("Type invalide, réessayez")
+            print("Invalid, please try again")
 
     bloodSignValid = False
     while not bloodSignValid:
-        bloodSign = input("Entrer le signe de votre groupe sanguin (+/-)")
+        bloodSign = input("Enter the sign of your blood group (+/-)")
         if bloodSign in ["+", "-"]:
             bloodSignValid = True
             bloodSign = bloodSign == "+"
