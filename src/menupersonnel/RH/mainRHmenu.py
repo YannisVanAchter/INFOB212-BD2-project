@@ -7,6 +7,7 @@ import logging
 
 from module.database import DataBase
 from module.get import get_int, get_string, get_valid_id
+from module.utils import select_employe
 from auth.authenticate import register
 
 
@@ -85,7 +86,7 @@ def add_employee(db: DataBase):
         create_person(db)
 
     if existence == "yes":
-        id_person = select_employe(db, "SELECT P.id, P.last_name, P.first_name FROM PERSON P WHERE P.id not in (SELECT S.id FROM STAFF S)", ["id", "last_name", "first_name"], "PERSON")
+        id_person = select_employe(db, "SELECT ID, FIRST_NAME, LAST_NAME, SALARY, EMAIL, JOB_DESCRIPTION FROM RH;", ["id", "last_name", "first_name"], "PERSON")
         create_employee(id_person, db)
 
     db.disconnect()
@@ -337,76 +338,3 @@ def delete_employee(db: DataBase):
         print("This employee will not be deleted")
 
     db.disconnect()
-
-def select_employe(database: DataBase, querry: str, information_selected: list[str], table: str) -> (int):
-    """Select an employee from the database
-
-    Args:
-    -----
-        database (DataBase): database to check id, 
-            connect with user that have SELECT grant permission on table_name
-        querry (str): querry to select a list of employee
-        information_selected (list[str]): list of information to print
-        table (str): name of the table to check id
-       
-    Raises:
-    -------
-        TypeError: if id_type is not int or str
-
-    Return:
-    -------
-        id : valid id
-        id = None : if id is not valid (not found in "mysql".table)
-        
-    Version:
-    --------
-        1.0.0
-    
-    Author:
-    -------
-        Yannis Van Achter
-    """
-    
-    def string_len(string, length):
-        """Return string with length characters
-
-        Args:
-        -----
-            string (str): string to check
-            length (int): length of the string
-
-        Return:
-        -------
-            string (str): string with length characters
-        """
-        if len(string) > length:
-            return string[:(length + 3)] + "..."
-        else:
-            return string + " " * (length - len(string))
-    
-    with database as db:
-        db.execute(querry)
-        information_list = db.table
-    
-    if len(information_list) == 0:
-        print("No employee found")
-        return 
-    
-    table_head = "| " + " | ".join(information_selected) + " |"
-    separator = "+-" + "-+-".join(["-"*len(i) for i in information_selected]) + "-+"
-    list_size = [len(i) for i in information_selected]
-    
-    print(table_head)
-    print(separator)
-    for information in information_list:
-        print("| " + " | ".join(
-            [string_len(str(string), list_size[i]) 
-                for i, string in enumerate(information)
-            ]
-            ) + " |")
-    print(separator)
-    
-    id = None
-    while id is None:
-        id = get_valid_id(db, "Enter the id of selected person: ", table)
-    return id

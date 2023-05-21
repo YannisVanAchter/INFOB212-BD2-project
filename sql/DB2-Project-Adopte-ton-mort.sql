@@ -339,10 +339,10 @@ create or replace view DEL_ORDER(first_name, last_name, order_id, street, number
      D.At_id = A.id;
    
 
-create or replace view RH (SALARY, NAME, FIRST_NAME, EMAIL, PHONE, JOB_DESCRIPTION)
+create or replace view RH (ID, SALARY, FIRST_NAME, LAST_NAME, EMAIL, PHONE, JOB_DESCRIPTION)
      -- View goal : view RH, to view the staff, the wages, jobs
      -- Author: Louise DELPIERRE et Aline Boulanger 
-     as  select S.salary, P.first_name, P.last_name, P.email, P.phone_number, S.job_description
+     as  select S.id S.salary, P.first_name, P.last_name, P.email, P.phone_number, S.job_description
      from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTANT AC, HR H, ADDRESS AD
      where S.id = P.id 
      and S.id = N.id
