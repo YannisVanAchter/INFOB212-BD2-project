@@ -407,7 +407,7 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
 --      begin 
 --           if (new.ORGANE in (SELECT TANSPLANTATION.Con_id
 --                                                        FROM TRANSPLANTATION
---                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id);)
+--                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id))
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to sell is not available anymore';
@@ -422,7 +422,7 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
 --      begin 
 --           if (new.ORGANE in (SELECT TANSPLANTATION.Con_id
 --                                                        FROM TRANSPLANTATION
---                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id);)
+--                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id))
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to sell is not available anymore';
@@ -437,7 +437,7 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
 --      begin 
 --           if (new.ORGANE in (SELECT DETAIL.ORGANE
 --                               FROM DETAIL
---                               WHERE DETAIL.ORGANE is not null);)
+--                               WHERE DETAIL.ORGANE is not null))
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to transplant is not available anymore';
@@ -452,7 +452,7 @@ create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesi
 --      begin 
 --           if (new.ORGANE in ( SELECT DETAIL.ORGANE
 --                               FROM DETAIL
---                               WHERE DETAIL.ORGANE is not null);)
+--                               WHERE DETAIL.ORGANE is not null))
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to transplant is not available anymore';
