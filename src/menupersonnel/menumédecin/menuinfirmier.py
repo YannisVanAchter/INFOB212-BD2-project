@@ -48,12 +48,12 @@ def seepeople(database: DataBase, id):
     """
     database.connect()
     
-    #print("Here are the ids of your future transplantations, select one you want to see informations about")
+    print("Here are the ids of your future transplantations, select one you want to see informations about")
     
-    #qq = "Select id FROM TRANSPLANTATION WHERE D_w_id = %s"
-    #database.execute_with_params(qq, [id])
-    #for idd in database.tableArgs:
-        #print("Here are the different id you can select")
+    qq = "Select id FROM TRANSPLANTATION WHERE D_w_id = %s"
+    database.execute_with_params(qq, [id])
+    for idd in database.tableArgs:
+        print("Here are the different id you can select")
 
     idT = get_valid_id(
         db=database,
@@ -62,28 +62,28 @@ def seepeople(database: DataBase, id):
     )
 
     # Find the anesthesiologists who work with the nurse on the given date and based on the nurse's ID
-    anesthesiologist = "SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id FROM TRANSPLANTATION WHERE id = %s)"
-    #anesthesiologist_query = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = %s)))"
+    #anesthesiologist = "SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id FROM TRANSPLANTATION WHERE id = %s)"
+    anesthesiologist = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = %s)))"
 
     database.execute_with_params(anesthesiologist, [idT])
 
     print("Here are the people you will work with:")
 
-    for i in database.tableArgs:
-        print("You work with this anesthesiologist:", i)
+    for ln, fn, email, pn in database.tableArgs:
+        print("You work with this anesthesiologist:", ln, fn, email, pn)
 
     database.disconnect()
 
     database.connect()
 
     # Find the doctor who works with the nurse on the given date and based on the nurse's ID
-    doctor = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id FROM TRANSPLANTATION WHERE id = %s)"
-    #doctors_query = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = %s)))"
+    #doctor = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id FROM TRANSPLANTATION WHERE id = %s)"
+    doctor = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = %s)))"
 
     database.execute_with_params(doctor, [idT])
 
-    for num in database.tableArgs:
-        print("You work with these doctors:", num)
+    for ln, fn, email, pn in database.tableArgs:
+        print("You work with these doctors:", ln, fn, email, pn)
 
     database.disconnect()
 
