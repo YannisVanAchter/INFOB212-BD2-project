@@ -1,7 +1,7 @@
 from module.get import *
 from constants import *
 from module.utils import *
-from menuconnexion.menu import *
+
 
 
 def main_persoadmin_menu(db: DataBase):
@@ -48,7 +48,7 @@ def main_persoadmin_menu(db: DataBase):
                 )
 
             # Choice of the organe
-            print("List of organes: ", ORGAN_DICO.keys())
+            print("List of organes: ", ", ".join(ORGAN_DICO.keys()))
             organe_type_choice = get_string(
                 "You are there for a transplantation on which organe? "
             )
