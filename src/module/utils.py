@@ -175,6 +175,7 @@ def print_table(information_list: list[list], information_selected: list[str]):
     separator = "+-" + "-+-".join(["-"*len(i) for i in information_selected]) + "-+"
     list_size = [len(i) for i in information_selected]
     
+    print(separator)
     print(table_head)
     print(separator)
     for information in information_list:
