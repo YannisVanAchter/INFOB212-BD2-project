@@ -128,6 +128,31 @@ def select_and_print_choice(database: DataBase, querry: str, information_selecte
     return id
 
 def print_selection(database: DataBase, querry: str, information_selected: list[str]):
+    """Print the selection of the querry with information_selected as header of table
+
+    Args:
+    -----
+        database (DataBase): DataBase to ready to connect
+        querry (str): querry to select a list of data
+        information_selected (list[str]): list of information to print
+    """
+    with database as db:
+        db.execute(querry)
+        information_list = db.table
+    
+    if len(information_list) == 0:
+        print("No more information found")
+    else:
+        print_table(information_list, information_selected)
+        
+        
+def print_table(information_list: list[list], information_selected: list[str]):
+    """Print table with information_selected as header of table
+
+    Args:
+        information_list (list[list]): list of information to print
+        information_selected (list[str]): list of information to print in the header of table
+    """
     def string_len(string, length):
         """Return string with length characters
 
@@ -146,17 +171,11 @@ def print_selection(database: DataBase, querry: str, information_selected: list[
         else:
             return string + " " * (length - len(string))
     
-    with database as db:
-        db.execute(querry)
-        information_list = db.table
-    
-    if len(information_list) == 0:
-        print("No more information found")
-    
     table_head = "| " + " | ".join(information_selected) + " |"
     separator = "+-" + "-+-".join(["-"*len(i) for i in information_selected]) + "-+"
     list_size = [len(i) for i in information_selected]
     
+    print(separator)
     print(table_head)
     print(separator)
     for information in information_list:
