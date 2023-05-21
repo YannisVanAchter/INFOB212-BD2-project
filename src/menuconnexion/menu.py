@@ -154,7 +154,7 @@ def logged_login_menu(db: DataBase, user: User):
                 print(error_message)
         elif user_choice == 9:
             break
-        elif user_choice == 10
+        elif user_choice == 10:
             if is_customer:
                 sure = get_string("Are you sure you want to delete you account  ? (Yes/No)")
                 if sure == "Yes":
