@@ -54,14 +54,22 @@ def seepeople(database: DataBase, id):
     Author: Eline Mota
     """
     database.connect()
+    
+    #print("Here are the ids of your future transplantations, select one you want to see informations about")
+    
+    #qq = "Select id FROM TRANSPLANTATION WHERE D_w_id = %s"
+    #database.execute_with_params(qq, [id])
+    #for idd in database.tableArgs:
+        #print("Here are the different id you can select")
 
     idT = get_int(
         "What is the ID of the transplantation for which you want to see who you will be working with?"
     )
 
     # Find anesthesiologists who work with the doctor on the given date and according to the doctor's ID
+    
+    #anesthesiologist_query = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = %s)))"
     anesthesiologist_query = "SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = %s)"
-
     database.execute_with_params(anesthesiologist_query, [idT])
 
     print("Here are the people you will be working with:")
@@ -79,6 +87,9 @@ def seepeople(database: DataBase, id):
 
     # Find nurses who work with the doctor on the given date and according to the doctor's ID
     nurse_query = "SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = %s)"
+    #nurse_query = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM NURSE WHERE id IN (SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = %s))))"
+    
+    
 
     database.execute_with_params(nurse_query, [idT])
 
@@ -115,6 +126,13 @@ def info_organe(database: DataBase):
 
     """
     database.connect()
+    
+    #print("Here are the ids of your future transplantations, select one you want to see informations about the organ you're going to tranplant")
+    
+    #qq = "Select id FROM TRANSPLANTATION WHERE D_w_id = %s"
+    #database.execute_with_params(qq, [id])
+    #for idd in database.tableArgs:
+        #print("Here are the different id you can select")
 
     id_transplantation = get_valid_id(
         database,

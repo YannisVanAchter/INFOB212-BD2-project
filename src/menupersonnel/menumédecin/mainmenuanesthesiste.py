@@ -52,6 +52,13 @@ def seepeople(database: DataBase):
     Author: Eline Mota
     """
     database.connect()
+    
+    #print("Here are the ids of your future transplantations, select one you want to see informations about")
+    
+    #qq = "Select id FROM TRANSPLANTATION WHERE D_w_id = %s"
+    #database.execute_with_params(qq, [id])
+    #for idd in database.tableArgs:
+        #print("Here are the different id you can select")
 
     idT = get_valid_id(
         db=database,
@@ -61,6 +68,8 @@ def seepeople(database: DataBase):
 
     # Find the doctors who work with the anesthesiologist on the given date and according to the doctor's ID
     doctors_query = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = %s)"
+    #doctors_query = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = %s)))"
+    
 
     database.execute_with_params(doctors_query, [idT])
 
@@ -74,6 +83,7 @@ def seepeople(database: DataBase):
 
     # Find the nurses who work with the anesthesiologist on the given date and according to the doctor's ID
     nurses_query = "SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = %s)"
+    #nurse_query = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM NURSE WHERE id IN (SELECT N_N_id FROM N_work_on WHERE id IN (SELECT id FROM TRANSPLANTATION where id = %s))))"
 
     database.execute_with_params(nurses_query, [idT])
 
