@@ -83,6 +83,7 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
     -------
         Aline Boulanger
     """
+
     # Check if such an organe is available and assiciation faire en sous requetes
     db.execute_with_params(
         "SELECT O.id FROM ORGANE O WHERE O.type = %s and O.id not in(SELECT D.id FROM DETAIL D WHERE D.id = O.id) and O.id not in (SELECT T.Con_id FROM TRANSPLANTATION T WHERE T.Con_id = O.id);",
@@ -114,6 +115,7 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
 
     if len(organe_choice) != 0:
         print("We will assign you a doctor, an anaesthetist and a or 2 nurse(s)")
+
         # To get the doctors who are free
         db.execute_with_params(
             "SELECT D.inami_number, D.id FROM DOCTOR D WHERE D.id not in (SELECT T.D_w_id FROM TRANSPLANTATION T WHERE T.date_ = %s);",
@@ -204,6 +206,7 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
                 ),
             )
 
+            # Insert in the table BLOOD
             for bag_id in range(nb_pochesblood_free):
                 print(selected_blood)
                 blood_id = selected_blood[bag_id][0]  # get id of the blood bag
@@ -216,7 +219,7 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
                     (id_transplantation, blood_id)
                 )
             logging.info(
-                "Your transplantation is inserted with success, thank you for your visit bro <3"
+                "Your transplantation is inserted with success, thank you for your visit <3"
             )
 
         else:
