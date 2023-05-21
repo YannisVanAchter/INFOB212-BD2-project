@@ -162,5 +162,5 @@ def select_and_print_choice(database: DataBase, querry: str, information_selecte
     
     id = None
     while id is None:
-        id = get_valid_id(db, "Enter the id of selected person: ", table)
+        id = get_valid_id(db, "Enter the id: ", table)
     return id
