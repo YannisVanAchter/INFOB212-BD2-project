@@ -154,8 +154,13 @@ def logged_login_menu(db: DataBase, user: User):
                 print(error_message)
         elif user_choice == 9:
             break
-        elif user_choice == 10:
-            sure = get_string("Are you sure you want to delete you account  ? (Yes/No)")
-            if sure == "Yes":
-                remove_user(db, user)
-                break
+        elif user_choice == 10
+            if is_customer:
+                sure = get_string("Are you sure you want to delete you account  ? (Yes/No)")
+                if sure == "Yes":
+                    remove_user(db, user)
+                    break
+                else:
+                    print(error_message)
+        else:
+            print("Input does not correspond, try again")
