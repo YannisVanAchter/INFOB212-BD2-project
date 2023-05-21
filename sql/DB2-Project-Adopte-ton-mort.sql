@@ -118,32 +118,31 @@ create table IF NOT EXISTS HR (
      id INT unsigned not null,
      constraint ID_HR_STAFF_ID primary key (id),
      constraint FK_HRStaff foreign key (id) references STAFF(id));
+     
+create table IF NOT EXISTS DONATOR (
+     id INT unsigned not null AUTO_INCREMENT,
+     gender char not null,
+     age_range float(8) not null,
+     constraint ID_DONATOR_ID primary key (id));
 
 create table IF NOT EXISTS BLOOD (
      id INT unsigned not null AUTO_INCREMENT,
      type varchar(2) not null check(type = "A" or type = "B" or type = "O" or type = "AB"),
      signe boolean not null,
      expiration_date date not null,
-     Giv_id INT unsigned,
+     donator INT unsigned not null,
+     price float(32) not null check(price > 0),
      Nee_id INT unsigned,
      constraint ID_BLOOD_ID primary key (id),
-     constraint FK_BloodPerson foreign key (Giv_id) references PERSON(id));
+     constraint FK_BloodDonator foreign key (donator) references DONATOR(id)
      -- Foreign key Nee_id -> Transplantaton in alter tables
-     
-create table IF NOT EXISTS DONATOR (
-     id INT unsigned not null AUTO_INCREMENT,
-     Giv_id INT unsigned not null,
-     gender char not null,
-     age_range float(8) not null,
-     constraint ID_DONATOR_ID primary key (id),
-     constraint SID_DONAT_BLOOD_ID unique (Giv_id),
-     constraint FK_DonatorBlood foreign key (Giv_id) references BLOOD(id));
+);
 
 create table IF NOT EXISTS ORGANE (
      state char(32) not null,
      functionnal char not null,
      expiration_date date not null,
-     expiration_date_transplantation date, -- TODO: Corriger faute de frappe dans schéma
+     expiration_date_transplantation date,
      method_of_preservation varchar(64) not null,
      type varchar(64) not null,
      id INT unsigned not null AUTO_INCREMENT,
@@ -233,9 +232,6 @@ create unique index SID_DETAIL_IND
 create unique index ID_DONATOR_IND
      on DONATOR (id);
 
-create unique index SID_DONAT_BLOOD_IND
-     on DONATOR (Giv_id);
-
 create unique index ID_NURSE_STAFF_IND
      on NURSE (id);
 
@@ -275,8 +271,8 @@ create unique index ID_HR_STAFF_IND
 create unique index ID_BLOOD_IND
      on BLOOD (id);
 
-create index REF_BLOOD_PERSO_IND
-     on BLOOD (Giv_id);
+create index REF_BLOOD_DONATOR_IND
+     on BLOOD (donator);
 
 create index REF_BLOOD_TRANS_IND
      on BLOOD (Nee_id);
@@ -687,13 +683,13 @@ insert into PERSON (last_name, first_name, email, phone_number, password, born_d
 values ('Boulanger5', 'Aline5', "aline.boulanger@test5.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
 
 -- insert blood and organs
-insert into BLOOD (id, type, signe, expiration_date) values (1, 'A', True, '2020-01-01');
-insert into BLOOD (id, type, signe, expiration_date, Giv_id) values (2, 'A', True, '2030-01-01', 1);
-insert into BLOOD (id, type, signe, expiration_date, Giv_id) values (3, 'A', True, '2030-01-01', 2);
-insert into BLOOD (id, type, signe, expiration_date, Giv_id) values (4, 'A', True, '2030-01-01', 3);
-insert into BLOOD (id, type, signe, expiration_date, Giv_id) values (5, 'A', True, '2030-01-01', 4);
-insert into BLOOD (id, type, signe, expiration_date, Giv_id) values (6, 'A', True, '2030-01-01', 4);
-insert into DONATOR (id, Giv_id, gender, age_range) values (1, 1, False, 32);
+insert into DONATOR (id, gender, age_range) values (1, False, 32);
+insert into BLOOD (id, type, signe, expiration_date, price, donator) values (1, 'A', True, '2020-01-01', 250, 1);
+insert into BLOOD (id, type, signe, expiration_date, price, donator) values (2, 'A', True, '2030-01-01', 250, 1);
+insert into BLOOD (id, type, signe, expiration_date, price, donator) values (3, 'A', True, '2030-01-01', 250, 1);
+insert into BLOOD (id, type, signe, expiration_date, price, donator) values (4, 'A', True, '2030-01-01', 250, 1);
+insert into BLOOD (id, type, signe, expiration_date, price, donator) values (5, 'A', True, '2030-01-01', 250, 1);
+insert into BLOOD (id, type, signe, expiration_date, price, donator) values (6, 'A', True, '2030-01-01', 250, 1);
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
  values (1, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "heart", 2000000, 1);
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
