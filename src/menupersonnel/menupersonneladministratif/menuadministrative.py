@@ -1,6 +1,7 @@
 from module.get import *
 from constants import *
-from module.utils import *
+from module import *
+import logging
 
 
 
@@ -41,9 +42,10 @@ def main_persoadmin_menu(db: DataBase):
         if choice == 1:
             customer_id = None
             while customer_id == None:
-                customer_id = get_valid_id(
+                customer_id = select_and_print_choice(
                     db,
-                    "Enter the id of the user for which you want to book a transplant: ",
+                    "SELECT C.id, C.pseudo FROM CUSTOMER C",
+                    ["id", "pseudo"],
                     "CUSTOMER",
                 )
 
@@ -181,10 +183,45 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
             transplantation_price = salary_total
 
             # Check dans BLOOD
+            bloodtype_customer = None
+            bloodsign_customer = None 
+            db.execute(f"SELECT C.blood_type, C.blood_sign FROM CUSTOMER C WHERE C.id = {customer_id}")
+            bloodtype_customer = db.table[0][0]
+            bloodsign_customer = bool(int(db.table[0][1]))
+            print(bloodsign_customer, type(bloodsign_customer))
+            print(bloodtype_customer, type(bloodtype_customer))
+
+
+            querry = "SELECT B.id FROM BLOOD B WHERE B.Nee_id is null and B.expiration_date > %s and B.id not in (SELECT D.BLOOD FROM DETAIL D WHERE D.BLOOD is not null);"
+            
+            querry += " AND B.signe = %s AND ("
+
+            as_previous = False
+            if bloodtype_customer in ["AB", "A", "B", "O"]:
+                as_previous = True 
+                querry += "B.type = 'O'"
+            if bloodtype_customer in ["AB", "A"] :
+                if as_previous :
+                    querry += " OR "
+                as_previous = True 
+                querry += "B.type = 'A'"
+            if bloodtype_customer in ["AB", "B"] :
+                if as_previous :
+                    querry += " OR "
+                as_previous = True 
+                querry += "B.type = 'B'"
+            if bloodtype_customer in ["AB"] :
+                if as_previous :
+                    querry += " OR "
+                as_previous = True 
+                querry += "B.type = 'AB'"
+            querry += ")"
+
             db.execute_with_params(
-                "SELECT B.id FROM BLOOD B WHERE B.Nee_id is null and B.expiration_date > %s and B.id not in (SELECT D.BLOOD FROM DETAIL D WHERE D.BLOOD is not null);",
-                [date_choice],
+                querry,
+                [date_choice, bloodsign_customer],
             )
+
             selected_blood = db.tableArgs
             nb_pochesblood_free = ORGAN_DICO[organe_type_choice][1]
             if len(selected_blood) < nb_pochesblood_free:
@@ -226,3 +263,4 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
             print(
                 "Unfortunately, nobody is available for your transplantation so comme back later"
             )
+
