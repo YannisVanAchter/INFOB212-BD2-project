@@ -702,7 +702,9 @@ insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_tra
  values (5, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "ear", 2000000, 1);
  
  
- insert into TRANSPLANTATION(date_, Con_id, price, Rec_id, D_w_id, A_w_id)
- values('2021-01-01', 1, '45.6', 2, 4, 6);
+ insert into TRANSPLANTATION(id, date_, Con_id, price, Rec_id, D_w_id, A_w_id)
+ values(1, '2021-01-03', 1, '45.6', 2, 4, 6);
 insert into N_work_on(N_N_id, id)
  values(5, 1);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id) values ('A', True, '2020-01-01', 250, 1, 1);
+

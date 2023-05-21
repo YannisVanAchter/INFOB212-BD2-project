@@ -4,13 +4,13 @@ __author__  = ["Yannis Van Achter"]
 __version__ = "1.5.0"
 __date__    = "2021-05-01"
 
-from datetime import date as Date
+from datetime import date as Date, datetime
 import logging
 import time
 
 from module.get import get_int, get_string, get_date, get_valid_id
 from module.database import DataBase
-from module.utils import clear_terminal as cls, insert_into, print_selection
+from module.utils import clear_terminal as cls, insert_into, print_selection, print_table
 from constants import BLOOD_PRICE_FACTOR, ORGAN_DICO
 
 from .view import *
@@ -675,3 +675,270 @@ def get_selling_price_of_each_command(database: DataBase):
         db.execute(querry)
         for operations in db.table:
             print(operations)
+
+def get_annual_report(database: DataBase):
+    year = Date.today().year + 10
+    while year >= Date.today().year:
+        year = get_int("Enter the year of the report (in the past): ")
+    
+    result = get_result_for_year(database, year)
+           
+    logging.debug(f"Result: {result}")
+    # compute annual report
+    total_summed = 0
+    final = dict()
+    final["ORGANE"] = {k["type"] : [0, 0] for k in result["DETAIL"]["ORGANE"].values()}
+    for id, data in result["DETAIL"]["ORGANE"].items():
+        final["ORGANE"][data["type"]][0] += data["price"]
+        final["ORGANE"][data["type"]][1] += 1
+        total_summed += data["price"]
+    
+    final["BLOOD"] = {(k["type"], k["signe"] ): [0, 0] for k in result["DETAIL"]["BLOOD"].values()}
+    for id, data in result["DETAIL"]["BLOOD"].items():
+        final["BLOOD"][(data["type"], data["signe"])][0] += data["price"]
+        final["BLOOD"][(data["type"], data["signe"])][1] += 1
+        total_summed += data["price"]
+        
+    final["TRANSPLANTATION"] = {k : 0 for k in result["TRANSPLANTATION"].keys()}
+    for id, data in result["TRANSPLANTATION"].items():
+        final["TRANSPLANTATION"][id] += data["organ_price"] + data["total_blood_price"] + data["transplantation_price"]
+        total_summed += data["organ_price"] + data["total_blood_price"] + data["transplantation_price"]
+    
+    # print annual report
+    logging.debug(f"Final: {final}")
+    print("Annual report:")
+    print(f"Year: {year}")
+    print("==================================")
+    print("ORGANE:")
+    if final["ORGANE"] == {}:
+        print("No organe sold")
+    else:
+        print_table(
+            [ [k, v[0], v[1]] for k, v in final["ORGANE"].items()],
+            ["    Type    ", "  Price  ", "Quantity(n° of organe of this type)"]
+        )
+    
+    print("==================================")
+    print("BLOOD:")
+    if final["BLOOD"] == {}:
+        print("No blood sold")
+    else:
+        print_table(
+            [ [k[0], k[1], v[0], v[1]] for k, v in final["BLOOD"].items()],
+            ["  Type  ", " Signe ", "  Price  ", "Quantity (n°blood bag)"]
+        )
+    
+    print("==================================")
+    print("TRANSPLANTATION:")
+    if final["TRANSPLANTATION"] == {}:
+        print("No transplantation were performed")
+    else:
+        print_table(
+            [ [k, v] for k, v in final["TRANSPLANTATION"].items()],
+            [" Id ", "   Price   "]
+        )
+    
+    print("==================================")
+    print("TOTAL:", total_summed)
+    
+    month = get_int("Enter the month you want to calculate (from 1 to 12 include, 0 for each month): ")
+    if month == 0:
+        for m in range(1, 13):
+            get_monthly_report(database, year, m, result)
+    else:
+        get_monthly_report(database, year, month, result)
+        
+def get_result_for_year(database: DataBase, year: int):
+    start_date = Date(year, 1, 1)
+    end_date = Date(year, 12, 31)
+    
+    result = dict()
+    result["DETAIL"] = dict()
+    result["TRANSPLANTATION"] = dict()
+    
+    # organe sell annual report
+    querry_detail_organe = "SELECT O.id, O.type, O.price, DE.departure_date \
+    FROM DETAIL D, ORGANE O, ORDER_ OD, DELIVERY DE \
+    WHERE D.ORGANE = O.id \
+    AND D.id = OD.id \
+    AND OD.Typ_id = DE.id \
+    AND DE.departure_date >= %s \
+    AND DE.departure_date <= %s;"
+    
+    result["DETAIL"]["ORGANE"] = dict()
+    with database as db:
+        db.execute_with_params(querry_detail_organe, [start_date, end_date])
+        for id, type, price, date in db.tableArgs:
+            result["DETAIL"]["ORGANE"][id] = {"price": price, "date": date, "type": type}
+            
+    # blood sell annual report
+    querry_detail_blood = "SELECT BLOOD.id, BLOOD.type, BLOOD.signe, BLOOD.price, DELIVERY.departure_date \
+    FROM DETAIL, BLOOD, ORDER_, DELIVERY \
+    WHERE DETAIL.BLOOD = BLOOD.id \
+    AND DETAIL.id = ORDER_.id \
+    AND ORDER_.Typ_id = DELIVERY.id \
+    AND DELIVERY.departure_date >= %s \
+    AND DELIVERY.departure_date <= %s;"
+    
+    result["DETAIL"]["BLOOD"] = dict()
+    with database as db:
+        db.execute_with_params(querry_detail_blood, [start_date, end_date])
+        for id, type, signe, price, date in db.tableArgs:
+            result["DETAIL"]["BLOOD"][id] = {"price": price, "date": date, "type": type, "signe": signe}
+    
+    # transplantation annual report
+    querry_transplantation = "SELECT T.id, O.price, T.date_, T.price, SUM(B.price) \
+    FROM TRANSPLANTATION T, ORGANE O, BLOOD B \
+    WHERE T.Con_id = O.id \
+    AND T.id = B.Nee_id \
+    AND T.date_ >= %s \
+    AND T.date_ <= %s \
+    GROUP BY T.id; \
+    "
+    
+    with database as db:
+        db.execute_with_params(querry_transplantation, [start_date, end_date])
+        for id, organ_price, date, total_blood_price, transplantation_price in db.tableArgs:
+            result["TRANSPLANTATION"][id] = {"organ_price": organ_price, "date": date, "total_blood_price": total_blood_price, "transplantation_price": transplantation_price}
+    
+    return result
+    
+def get_monthly_report(database: DataBase, year: int, month: int, result_for_year: dict):
+    """Display repport for gived monthly 
+
+    Args:
+    -----
+        database (DataBase): database ready for connection
+        year (int): year of repport
+        month (int): month (between 1 and 12 include)
+        result_for_year (dict): result of annual report
+    
+    Author:
+    -------
+        Yannis Van Achter
+    """
+    
+    def get_monthly_report_for_organe(database: DataBase, year: int, month: int, result_for_year: dict[dict[dict]], total_summed: float = 0.0, final: dict = dict()):
+        """Display repport for gived monthly for organ
+
+        Args:
+        -----
+            database (DataBase): database ready for connection
+            year (int): year of repport
+            month (int): month (between 1 and 12 include)
+            result_for_year (dict): result of annual report
+        """
+        # compute month report
+        final["ORGANE"] = {k["type"] : [0, 0] for k in result_for_year["DETAIL"]["ORGANE"].values() if k["date"].month == month}
+        for id, data in result_for_year["DETAIL"]["ORGANE"].items():
+            if data["type"] not in final["ORGANE"]:
+                continue
+            final["ORGANE"][data["type"]][0] += data["price"]
+            final["ORGANE"][data["type"]][1] += 1
+            total_summed += data["price"]
+        return total_summed, final
+
+    def get_monthly_report_for_blood(database: DataBase, year: int, month: int, result_for_year: dict[dict[dict]], total_summed: float = 0.0, final: dict = dict()):
+        """Display repport for gived monthly for blood
+
+        Args:
+        -----
+            database (DataBase): database ready for connection
+            year (int): year of repport
+            month (int): month (between 1 and 12 include)
+            result_for_year (dict): result of annual report
+        """     
+        # compute month report
+        final["BLOOD"] = {(k["type"], k["signe"] ): [0, 0] for k in result_for_year["DETAIL"]["BLOOD"].values() if k["date"].month == month}
+        for id, data in result_for_year["DETAIL"]["BLOOD"].items():
+            if (data["type"], data["signe"]) not in final["BLOOD"].keys():
+                continue
+            final["BLOOD"][(data["type"], data["signe"])][0] += data["price"]
+            final["BLOOD"][(data["type"], data["signe"])][1] += 1
+            total_summed += data["price"]
+        return total_summed, final
+    
+    def get_monthly_report_for_transplantation(database: DataBase, year: int, month: int, result_for_year: dict[dict[dict]], total_summed: float = 0.0, final: dict = dict()):
+        """Display repport for gived monthly for transplantation
+        
+        Args:
+        -----
+            database (DataBase): database ready for connection
+            year (int): year of repport
+            month (int): month (between 1 and 12 include)
+            result_for_year (dict): result of annual report
+        """
+        # compute month report
+        final["TRANSPLANTATION"] = {k : 0 for k, v in result_for_year["TRANSPLANTATION"].items() if v["date"].month == month}
+        for id, data in result_for_year["TRANSPLANTATION"].items():
+            if id not in final["TRANSPLANTATION"].keys():
+                continue
+            final["TRANSPLANTATION"][id] += data["organ_price"] + data["total_blood_price"] + data["transplantation_price"]
+            total_summed += data["organ_price"] + data["total_blood_price"] + data["transplantation_price"]
+        return total_summed, final
+
+    if month == 1:
+        previus_month = 12
+        previous_year = year - 1
+        previous_result_for_year = get_result_for_year(database, previous_year)
+    else:
+        previus_month = month - 1
+        previous_year = year
+        previous_result_for_year = result_for_year
+    
+    final = dict()
+    total_summed = 0
+    total_summed_previous = 0
+    
+    # compute result 
+    total_summed_previous, _ = get_monthly_report_for_organe(database, previous_year, previus_month, previous_result_for_year, total_summed_previous, final)
+    total_summed, final = get_monthly_report_for_organe(database, year, month, result_for_year, total_summed, final)
+    
+    total_summed_previous, _ = get_monthly_report_for_blood(database, previous_year, previus_month, previous_result_for_year, total_summed_previous, final)
+    total_summed, final = get_monthly_report_for_blood(database, year, month, result_for_year, total_summed, final)
+    
+    total_summed_previous, _ = get_monthly_report_for_transplantation(database, previous_year, previus_month, previous_result_for_year, total_summed_previous, final)
+    total_summed, final = get_monthly_report_for_transplantation(database, year, month, result_for_year, total_summed, final)
+    
+    # print result
+    print("Monthly report:")
+    print(f"Year: {year}, month: {month}")
+    print("==================================")
+    print("ORGANE:")
+    if final["ORGANE"] == {}:
+        print("No organe sold")
+    else:
+        print_table(
+            [ [k, v[0], v[1]] for k, v in final["ORGANE"].items()],
+            ["    Type    ", "  Price  ", "Quantity(n° of organe of this type)"]
+        )
+    
+    print("==================================")
+    print("BLOOD:")
+    if final["BLOOD"] == {}:
+        print("No blood sold")
+    else:
+        print_table(
+            [ [k[0], k[1], v[0], v[1]] for k, v in final["BLOOD"].items()],
+            ["  Type  ", " Signe ", "  Price  ", "Quantity (n°blood bag)"]
+        )
+    
+    print("==================================")
+    print("TRANSPLANTATION:")
+    if final["TRANSPLANTATION"] == {}:
+        print("No transplantation were performed")
+    else:
+        print_table(
+            [ [k, v] for k, v in final["TRANSPLANTATION"].items()],
+            [" Id ", "   Price   "]
+        )
+    
+    print("==================================")
+    print("TOTAL:", total_summed)
+    print("TOTAL PREVIOUS:", total_summed_previous)
+    print("DIFFERENCE:", total_summed - total_summed_previous)
+    if total_summed_previous == 0:
+        print("DIFFERENCE IN %: 100%")
+    else:
+        print("DIFFERENCE IN %:", (total_summed - total_summed_previous) / total_summed_previous * 100)
+    
