@@ -342,10 +342,10 @@ create or replace view RH (ID, SALARY, FIRST_NAME, LAST_NAME, EMAIL, PHONE, JOB_
      from  STAFF S, PERSON P
      where S.id = P.id ;
 
-create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesiste, medecin)
+create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blood, anesthesiste_id, medecin_id, date_, id, customer_id)
      -- View goal: view information on the customer and the organ the doctor will have to transplant on him 
      -- Authors: Eline Mota
-     as select O.type, T.Rec_id, C.blood_type, C.blood_sign, A.id, D.id
+     as select O.type, O.id, C.pseudo, C.blood_type, C.blood_sign, A.id, D.id, T.date_, T.id, C.id
      from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR D
      where 
      T.Rec_id = C.id and 

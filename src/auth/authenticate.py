@@ -1,3 +1,5 @@
+import logging
+
 from auth import User
 from module import DataBase
 
@@ -101,13 +103,13 @@ def register(
         (address["street"], address["number"], address["postalCode"], address["city"], address["land"])
     )
 
-    print(addressId)
+    logging.debug(f"Address inserted id: {addressId}")
 
     args = ["email", "born_date", "password", "Liv_id"]
-    print(birthDate)
+    logging.debug(f"Birth date: {birthDate}")
     birthDateTemp = birthDate.split("/")
     birthDateTemp.reverse()
-    print(birthDateTemp)
+    logging.debug(f"Birth date: {birthDateTemp}")
     birthDateFormatted = "-".join(birthDateTemp)
     argsValue = [email, birthDateFormatted, password, addressId]
 
@@ -123,9 +125,8 @@ def register(
 
     argsForQuery = ", ".join(args)
     argsValueForQuery = ("%s," * len(argsValue))[:-1]
-    print(f"{argsForQuery=}\n{argsValueForQuery=}\n{argsValue=}")
+    logging.debug(f"{argsForQuery=}\n{argsValueForQuery=}\n{argsValue=}")
     query = f"INSERT INTO PERSON ({argsForQuery}) VALUES ({argsValueForQuery});"
-    print(query)
 
     personId = db.execute_with_params(query, tuple(argsValue))
 

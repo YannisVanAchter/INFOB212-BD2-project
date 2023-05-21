@@ -1,21 +1,23 @@
-from module import DataBase, get_string
+from datetime import datetime
+
+from module import DataBase, get_string, get_int
 from auth import register, login, become_customer, User
 
 def register_action(db: DataBase) -> bool:
     """Register a user and return wether we should log them in automatically or not."""
-    email = input("Enter your email address:")
-    password = input("Enter the password you wish to create:")
-    birthDate = input("Enter your date of birth (format: DD/MM/YYYY):")
-    while not _birthDateValidation(birthDate):
-        birthDate = input("Birth date incorrect, please follow the format DD/MM/YYYY:")
+    email = get_string("Enter your email address: ")
+    password = get_string("Enter the password you wish to create: ")
+    birthDate = get_string("Enter your date of birth (format: DD/MM/YYYY): ")
+    while not _birthDateValidation(birthDate, True):
+        birthDate = get_string("Birth date incorrect, please follow the format DD/MM/YYYY: ")
     
-    street = input("Enter the street you're living on (without the number):")
-    number = input("Enter the number of your home")
-    postalCode = input("Enter your postal code:")
+    street = get_string("Enter the street you're living on (without the number): ")
+    number = get_int("Enter the number of your home: ")
+    postalCode = get_string("Enter your postal code: ")
     while not _intValidation(postalCode):
-        postalCode = input("Postal code invalid, please try again:")
-    city = input("Enter your city:")
-    land = input("Enter your country:")
+        postalCode = get_string("Postal code invalid, please try again: ")
+    city = get_string("Enter your city: ")
+    land = get_string("Enter your country: ")
 
     address = {
         "street": street,
@@ -25,22 +27,22 @@ def register_action(db: DataBase) -> bool:
         "land": land
     }
 
-    lastName = input("Enter your last name:")
-    firstName = input("Enter your first name:")
-    phoneNumber = input("Enter your phone number (optional, leave blank if you don't wish to share):")
+    lastName = get_string("Enter your last name: ")
+    firstName = get_string("Enter your first name: ")
+    phoneNumber = get_string("Enter your phone number (optional, leave blank if you don't wish to share): ")
     if len(phoneNumber) == 0:
         phoneNumber = None
 
-    isRegisteringAsCustomer = input("Do you wish to register for a client account now? (y/n)")
+    isRegisteringAsCustomer = get_string("Do you wish to register for a client account now? (y/n): ").lower().strip()
 
-    if isRegisteringAsCustomer == "y":
-        nickname = input("Enter your customer nickname:")
-        bloodType = input("Enter your blood type (A, B, AB, O):")
+    if isRegisteringAsCustomer.startswith("y"):
+        nickname = get_string("Enter your customer nickname:").strip()
+        bloodType = get_string("Enter your blood type (A, B, AB, O):").strip().upper()
         while bloodType not in ["A", "B", "AB", "O"]:
-            bloodType = input("Blood type invalid, try again:")
-        bloodSign = input("Enter your blood sign (+,-):")
+            bloodType = get_string("Blood type invalid, try again:").strip().upper()
+        bloodSign = get_string("Enter your blood sign (+,-):").strip()
         while not bloodSign in ["+", "-"]:
-            bloodSign = input("Blood sign invalid, try again:")
+            bloodSign = get_string("Blood sign invalid, try again:").strip()
         
         registerCustomer = {
             "nickname": nickname,
@@ -59,20 +61,32 @@ def _intValidation(integer: str) -> bool:
         return False
     return True
 
-def _birthDateValidation(birthDate: str) -> bool:
-    birthDateSplit = birthDate.split("/")
-    if len(birthDateSplit) != 3:
-        return False
-    if len(birthDateSplit[0]) != 2 or len(birthDateSplit[1]) != 2 or len(birthDateSplit[2]) != 4:
-        return False
-    for i in range(3):
-        try:
-            int(birthDateSplit[i])
-        except ValueError:
-            return False
-    return True
+def _birthDateValidation(birthDate: str, check_minor: bool = False) -> bool:
+    def is_minor(date_of_birth):
+        # get current date
+        current_date = datetime.now().date()
 
-def login_action(db: DataBase) -> User | None:
+        # convert string to date
+        date_of_birth = datetime.strptime(date_of_birth, '%d/%m/%Y').date()
+
+        age = current_date.year - date_of_birth.year
+
+        # Check is minor or not
+        if age < 18:
+            return True
+        else:
+            return False
+    
+    try:
+        datetime.strptime(birthDate, '%d/%m/%Y') # check validity of fomat string
+        if (check_minor) and (is_minor(birthDate)):
+            return False
+        
+        return True
+    except ValueError:
+        return False
+
+def login_action(db: DataBase) -> (User | None):
     email = get_string("What is your email ?")
     password = get_string("What is your password?")
 
@@ -81,13 +95,22 @@ def login_action(db: DataBase) -> User | None:
     return user
 
 def become_customer_action(db: DataBase, user: User):
-    # def become_customer(db: DataBase, personId: int, nickname: str, bloodType: str, bloodSign: str):
+    """Become customer in database
 
-    nickname = input("Enter your pseudo")
+    Args:
+    -----
+        db (DataBase): DB ready to be connected
+        user (User): Current user
+        
+    Modifie:
+    --------
+        User.addUserGroup("CUSTOMER")
+    """
+    nickname = get_string("Enter your pseudo").strip()
 
     bloodTypeValid = False
     while not bloodTypeValid:
-        bloodType = input(" Enter your blood type (A/B/AB/O)")
+        bloodType = get_string(" Enter your blood type (A/B/AB/O)").upper().strip()
         if bloodType in ["A", "B", "AB", "O"]:
             bloodTypeValid = True
         else:
@@ -95,10 +118,12 @@ def become_customer_action(db: DataBase, user: User):
 
     bloodSignValid = False
     while not bloodSignValid:
-        bloodSign = input("Enter the sign of your blood group (+/-)")
+        bloodSign = input("Enter the sign of your blood group (+/-)").strip()
         if bloodSign in ["+", "-"]:
             bloodSignValid = True
             bloodSign = bloodSign == "+"
+        else:
+            print("Invelid, please try again")
     
     become_customer(db, user.id, nickname, bloodType, bloodSign)
     user.addUserGroup("CUSTOMER")

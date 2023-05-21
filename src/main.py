@@ -6,6 +6,7 @@ import sys
 
 # local modules
 from module.database import DataBase
+from module.utils import clear_terminal
 from menuconnexion import main_login_menu
 
 # function and class
@@ -45,4 +46,9 @@ if __name__ == "__main__":
             filename='./app.log',
             format='%(asctime)s %(levelname)s: %(message)s'
         )
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        clear_terminal()
+        print("Hope to see you soon 🙂")
+        sys.exit(0)

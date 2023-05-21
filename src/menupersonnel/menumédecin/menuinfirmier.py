@@ -1,6 +1,9 @@
 # encoding uft-8
 
-from module import DataBase, get_int, get_valid_id, get_string
+from datetime import date
+import logging
+
+from module import DataBase, get_int, get_string, select_and_print_choice, print_table, print_selection
 from auth import User
 
 
@@ -14,6 +17,20 @@ def main_infirmier_menu(database: DataBase, user: User):
 
     print("Nurse menu")
     id = user.id  # Get the nurse's identifier
+    if "CEO" in user.userGroup:
+        other = True
+        if "NURSE" in user.userGroup:
+            other = get_string("Do you want to connect to another nurse? (y/n)").lower().strip().startswith("y")
+        
+        if other:
+            print("Select the medecin you want to connect:")
+            id = select_and_print_choice(
+                database,
+                "SELECT P.id, P.last_name, P.first_name, P.email, P.phone_number FROM PERSON P, STAFF S WHERE P.id = S.id AND S.active = True AND P.id IN (SELECT id FROM NURSE)",
+                [" ID ", "   Last name   ", "   First name   ", "          Email          ", "     Phone number     "],
+                "NURSE"
+            )
+               
 
     while True:
         print("What would you like to do?")
@@ -25,16 +42,16 @@ def main_infirmier_menu(database: DataBase, user: User):
             "Press 5 or any other key to stop requesting information from the database"
         )
 
-        choice = get_int("Choice: ")
+        choice = get_string("Choice: ").strip()
 
-        if choice == 1:
+        if choice == "1":
             seepeople(database, id)
-        elif choice == 2:
+        elif choice == "2":
             seedate_operations(database, id)
-        elif choice == 3:
-            info_organe(database)
-        elif choice == 4:
-            info_client(database)
+        elif choice == "3":
+            info_organe(database, id)
+        elif choice == "4":
+            info_client(database, id)
         else:
             break
 
@@ -49,43 +66,26 @@ def seepeople(database: DataBase, id):
     database.connect()
     
     print("Here are the ids of your future transplantations, select one you want to see informations about")
-    
-    qq = "Select id FROM TRANSPLANTATION WHERE D_w_id = %s"
-    database.execute_with_params(qq, [id])
-    for idd in database.tableArgs:
-        print("Here are the different id you can select")
-
-    idT = get_valid_id(
-        db=database,
-        prompt="What is the identifier of the transplantation for which you want to see who you will work with?",
-        table_name="TRANSPLANTATION"
+    idT = select_and_print_choice(
+        database,
+        f"SELECT id, client, type_blood, signe_blood, date_ FROM MEDECIN WHERE date_ >= '{date.today()}' AND id in (SELECT id FROM N_work_on WHERE N_N_id = {id})",
+        [" ID ", "  Customers pseudo  ", "Customer blood type", "Customer blood singe", "   Date   "],
+        "TRANSPLANTATION"
     )
-
-    # Find the anesthesiologists who work with the nurse on the given date and based on the nurse's ID
-    #anesthesiologist = "SELECT id, inami_number FROM ANAESTHESIST WHERE id IN (SELECT A_w_id FROM TRANSPLANTATION WHERE id = %s)"
-    anesthesiologist = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM ANAESTHESIST WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = %s)))"
-
-    database.execute_with_params(anesthesiologist, [idT])
-
-    print("Here are the people you will work with:")
-
-    for ln, fn, email, pn in database.tableArgs:
-        print("You work with this anesthesiologist:", ln, fn, email, pn)
-
-    database.disconnect()
-
-    database.connect()
-
-    # Find the doctor who works with the nurse on the given date and based on the nurse's ID
-    #doctor = "SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id FROM TRANSPLANTATION WHERE id = %s)"
-    doctor = "SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (select id FROM STAFF WHERE id IN (SELECT id FROM DOCTOR WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = %s)))"
-
-    database.execute_with_params(doctor, [idT])
-
-    for ln, fn, email, pn in database.tableArgs:
-        print("You work with these doctors:", ln, fn, email, pn)
-
-    database.disconnect()
+    
+    print("Anesthesiologists: ")
+    print_selection(
+        database,
+        f"SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (SELECT A_w_id from TRANSPLANTATION WHERE id = {idT})",
+        ["   Last name   ", "   First name   ", "          Email          ", "     Phone number     "],
+    )
+    
+    print("Here are the doctors you will be working with:")
+    print_selection(
+        database,
+        f"SELECT last_name, first_name, email, phone_number FROM PERSON WHERE id IN (SELECT D_w_id from TRANSPLANTATION WHERE id = {idT})",
+        ["    Last name    ", "    First name    ", "        Email        ", "    Phone number    "]
+    )
 
 
 def seedate_operations(database: DataBase, id):
@@ -94,47 +94,37 @@ def seedate_operations(database: DataBase, id):
     This function prints the different dates of his futures operations
 
     Author: Eline Mota
-
     """
-    database.connect()
-
-    dates = "SELECT date_ FROM TRANSPLANTATION WHERE id IN (SELECT id FROM N_work_on WHERE N_N_id = %s)"
-    database.execute_with_params(dates, [id])
-
-    for date in database.tableArgs:
-        print("You have operations on these dates:", date)
-
-    database.disconnect()
+    print_selection(
+        database,
+        f"SELECT id, client, type_blood, signe_blood, date_ FROM MEDECIN WHERE date_ >= '{date.today()}' AND id in (SELECT id FROM N_work_on WHERE  N_N_id = {id})",
+        ["  id  ", "    Client    ", "Blood type", "Blood signe", "    Date    "]
+    )
 
 
-def info_organe(database: DataBase):
+def info_organe(database: DataBase, id):
     """
     This function allows a doctor to see the state, the method of preservation, and the type of an organ by printing it
 
     Author: Eline Mota
 
     """
-    database.connect()
-
-    id_transplantation = int(
-        input(
-            "Can you provide the identifier of the transplantation for which you want to see the organs?"
-        )
+    print("Enter the id of organe you want information about")
+    id_organe = select_and_print_choice(
+        database,
+        f"SELECT id, client, organe, organe_id, date_ FROM MEDECIN WHERE date_ >= '{date.today()}' AND id in (SELECT id FROM N_work_on WHERE N_N_id = {id})",
+        ["  ID  ", "    Client    ", "    Organe type    ", "Organe ID", "    Date    "],
+        "ORGANE",
+    )
+    
+    print_selection(
+        database,
+        f"SELECT state, method_of_preservation, type FROM ORGANE WHERE id = {id_organe}",
+        ["    State    ", "        Method of preservation        ", "        Type        "]
     )
 
-    organs = "SELECT state, method_of_preservation, type FROM ORGANE WHERE id = %s"
-    database.execute_with_params(organs, [id_transplantation])
 
-    for state, preservation_method, organ_type in database.tableArgs:
-        print("Here are the organ's information:")
-        print("Organ type:", organ_type)
-        print("Organ state:", state)
-        print("Preservation method:", preservation_method)
-
-    database.disconnect()
-
-
-def info_client(database: DataBase):
+def info_client(database: DataBase, id):
     """
     This function allows a doctor to see the username, blood type, and blood sign of a patient on whom they will operate.
     This function will print the username, blood type, and blood sign of a given patient based on their ID.
@@ -142,18 +132,17 @@ def info_client(database: DataBase):
     Authors: Eline Mota
 
     """
-    client = get_valid_id(
-        db=database,
-        prompt="What is the ID of the patient for whom you want to retrieve information? ",
-        table_name="CUSTOMER"
+    print("Enter the id of client you want information about.")
+    client = select_and_print_choice(
+        database,
+        f"SELECT client, customer_id, organe FROM MEDECIN WHERE date_ >= '{date.today()}' AND id in (SELECT id FROM N_work_on WHERE N_N_id = {id})",
+        ["    Client    ", "ID Client", "    Organe    "],
+        "ORGANE"
     )
-    database.connect()
-    clients = "SELECT pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id = %s"
-
-    database.execute_with_params(clients, [client])
-
-    for username, blood_type, blood_sign in database.tableArgs:
-        print("Here is the information about the patient:")
-        print("Username:", username)
-        print("Blood Type:", blood_type)
-        print("Blood Sign:", blood_sign)
+    
+    print_selection(
+        database,
+        f"SELECT pseudo, blood_type, blood_sign FROM CUSTOMER WHERE id = {client}",
+        ["  Pseudo  ", "Blood type", "Blood sign"]
+    )
+    

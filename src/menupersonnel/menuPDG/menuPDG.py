@@ -103,6 +103,15 @@ def suppression_PDG(db: DataBase, user_id):
     """
     db.connect()
 
+    db.execute("SELECT * FROM CEO;")
+    if len(db.table) == 1:
+        new_ceo = select_and_print_choice(
+            db,
+            "SELECT P.first_name, P.last_name, S.job_description FROM PERSON P, STAFF S, CEO C WHERE P.id = S.id AND S.id != C.id",
+            ["  First Name  ", " Last Name ", "  Job Description  "],
+            "STAFF")
+        insert_into(db, "CEO", ("id"), (new_ceo))
+
     db.execute_with_params("DELETE FROM CEO C, STAFF S WHERE C.id = %s", [user_id])
 
 
@@ -138,6 +147,7 @@ def insert_newelements(db: DataBase):
             insert_organ()
         else:
             print("This type of organ already exist ;)")
+        return
 
     # Insert a new type of delivery
     print("Do you want to add a new type of delivery ?")
@@ -154,5 +164,3 @@ def insert_newelements(db: DataBase):
                 values=(tp_delivery_id, tp_delivery_new_price, tp_delivery_estimated_days),
             )
 
-    else:
-        return 0

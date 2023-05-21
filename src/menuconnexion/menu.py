@@ -1,5 +1,5 @@
-from module import get_int
-from auth import User
+from module import get_int, get_string
+from auth import User, remove_user
 
 from module.database import DataBase
 from .actions import become_customer_action, login_action, register_action
@@ -25,6 +25,7 @@ def main_login_menu(database: DataBase):
     print("Welcome to Adopte ton mort. What do you wish to do?")
     print("1. Login")
     print("2. Register")
+    print("3. Exit")
 
     input_valid = False
     while not input_valid:
@@ -38,6 +39,9 @@ def main_login_menu(database: DataBase):
             register_action(database)
             print("Registration confirmed. Please login.")
             user = _try_login(database)
+        elif choice == 3:
+            input_valid = True
+            user = None
         else:
             print("Your selection is invalid, try again.")
     if user != None:
@@ -100,8 +104,13 @@ def logged_login_menu(db: DataBase, user: User):
         is_administrative_personnal = "STAFF" in user.userGroup
         if is_administrative_personnal:
             print("8. Go to the staff's menu")
+            
+        print("9. Exit of application")
+        
+        if is_customer:
+            print("10. delete my customer account")
 
-        user_choice = get_int("Enter the number corresponding to what you want to do.")
+        user_choice = get_int("Enter the number corresponding to what you want to do: ")
         error_message = "You don't have sufficient privileges to go to this menu. Please try again."
         if user_choice == 1:
             if is_customer:
@@ -143,3 +152,10 @@ def logged_login_menu(db: DataBase, user: User):
                 main_persoadmin_menu(db)
             else:
                 print(error_message)
+        elif user_choice == 9:
+            break
+        elif user_choice == 10:
+            sure = get_string("Are you sure you want to delete you account  ? (Yes/No)")
+            if sure == "Yes":
+                remove_user(db, user)
+                break
