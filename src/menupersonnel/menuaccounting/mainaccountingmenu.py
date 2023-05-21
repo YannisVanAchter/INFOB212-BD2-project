@@ -10,7 +10,7 @@ import time
 
 from module.get import get_int, get_string, get_date, get_valid_id
 from module.database import DataBase
-from module.utils import clear_terminal as cls, insert_into
+from module.utils import clear_terminal as cls, insert_into, print_selection
 from constants import BLOOD_PRICE_FACTOR, ORGAN_DICO
 
 from .view import *
@@ -202,37 +202,9 @@ def insert_menu(database: DataBase):
     Args:
         database (DataBase): database to insert product in, connected as accuntant user
     """
-    def before_insert_organe(database: DataBase):
-        donator_list = []
-        with database as db:
-            db.execute("SELECT id, gender, age_range FROM DONATOR")
-            donator_list = db.table
-        print("Here is the list of donator:")
-        print("ID of a donator: gender, age of death")
-        for id_donator, (id, gender, age_range) in enumerate(donator_list):
-            printed_gender = "f" if gender == "1" else "m"
-            print(f"{id - 1}: {printed_gender}, {age_range}")
-            
-        print("If you want to insert new donator, press: ctrl+c")
-        try:
-            return get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the donator: ", "DONATOR")
-        except KeyboardInterrupt:
-            return -1
-           
-    def before_insert_donator(database: DataBase):
-        blood_list = []
-        with database as db:
-            db.execute("SELECT id, type, signe, expiration_date FROM BLOOD")
-            blood_list = db.table
-        print("Here is the list of blood:")
-        print("ID of a blood: type, signe, expiration date")
-        for id_blood, (id, type, signe, expiration_date) in enumerate(blood_list):
-            print(f"{id - 1}: {type}, {signe}, {expiration_date}")
-        print("If you want to insert new blood, press: ctrl+c")
-        try:
-            return get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the blood: ", "BLOOD")
-        except KeyboardInterrupt:
-            return -1
+    def before_insert(database: DataBase):
+        print_selection(database, "SELECT id, gender, age_range FROM DONATOR;", [" id ", "  gender  ", "  age  "])
+        return get_valid_id(database, "Current stored id is invalid, please enter an id\nEnter the id of the donator: ", "DONATOR")
 
     def print_menu():
         print("What do you want to insert ?")
@@ -246,7 +218,17 @@ def insert_menu(database: DataBase):
 
         match table:
             case "1":
-                blood_id = insert_blood(database)
+                new_donator = (
+                    get_string("Is this a new donator (y/n): ")
+                    .strip()
+                    .lower()
+                    .startswith("y")
+                )
+                if new_donator:
+                    donator_id = insert_donator(database)
+                elif donator_id is None or donator_id < 0:
+                    donator_id = before_insert(database)
+                blood_id = insert_blood(database, donator_id)
                 continue
             case "2":
                 new_donator = (
@@ -258,20 +240,10 @@ def insert_menu(database: DataBase):
                 if new_donator:
                     donator_id = insert_donator(database)
                 elif donator_id is None or donator_id < 0:
-                    donator_id = before_insert_donator(database)
+                    donator_id = before_insert(database)
                 insert_organ(database, donator_id)
                 continue
             case "3":
-                new_blood = (
-                    get_string("Is this a new blood (y/n): ")
-                    .strip()
-                    .lower()
-                    .startswith("y")
-                )
-                if new_blood:
-                    blood_id = insert_blood(database)
-                elif blood_id is None or blood_id < 0:
-                    blood_id = before_insert_organe(database)
                 donator_id = insert_donator(database, blood_id)
                 continue
             case "4":
@@ -280,7 +252,7 @@ def insert_menu(database: DataBase):
                 case_other()
 
 
-def insert_blood(database: DataBase):
+def insert_blood(database: DataBase, donator_id: int = None):
     """Insert blood in the database
 
     Args:
@@ -291,18 +263,24 @@ def insert_blood(database: DataBase):
     -------
         int: id of the blood inserted
     """
+    if donator_id is None or donator_id < 0:
+        print("To insert some blood, you need to insert a donator first")
+        donator_id = insert_donator(database)
+        print("Back to organ insertion")
+    
     type: str = ask_product_type()
     signe: str = get_string("Enter the blood signe: (+/-)").strip().lower()
     signe: bool = signe == "+"
     expiration: Date = get_date(
         "Enter the expiration date (YYYY-MM-DD): ", before=Date.today()
     )
+    price = BLOOD_PRICE_FACTOR
 
     id = insert_into(
         database=database,
         table="BLOOD",
-        attributes=("type", "signe", "expiration_date"),
-        values=(type, signe, expiration),
+        attributes=("type", "signe", "expiration_date", "price", "donator"),
+        values=(type, signe, expiration, price, donator_id),
     )
 
     logging.info("Blood inserted")
@@ -386,7 +364,7 @@ def insert_organ(database: DataBase, donator_id: int = None):
     logging.info("Organ inserted")
 
 
-def insert_donator(database: DataBase, blood_id: int = None):
+def insert_donator(database: DataBase):
     """Insert donator in the database
 
     Args:
@@ -396,19 +374,14 @@ def insert_donator(database: DataBase, blood_id: int = None):
         int: id of the donator inserted
     """
 
-    if blood_id is None or blood_id < 0:
-        print("To insert donator, you have to insert a blood first")
-        blood_id = insert_blood(database)
-        print("Back in insert donator")
-
     gender = get_string("Gender of the donator (m/f): ").strip().lower().startswith("f")
     age_of_death = ask_age_of_death()
 
     donator_id = insert_into(
         database=database,
         table="DONATOR",
-        attributes=("Giv_id", "gender", "age_range"),
-        values=(blood_id, gender, age_of_death),
+        attributes=( "gender", "age_range"),
+        values=(gender, age_of_death),
     )
 
     logging.info("Donator inserted")
@@ -432,7 +405,8 @@ def resarch_menu(database: DataBase):
         print("3: where are the clients (with order)")
         print("4: where are the clients (with out order)")
         print("5: get selling price of each command/client")
-        print("6: Back")
+        print("6: annual report with mentual intermediate report")
+        print("7: Back")
 
     while True:
         print_menu()
@@ -459,6 +433,9 @@ def resarch_menu(database: DataBase):
                 get_string("Press enter to continue")
                 return
             case "6":
+                get_annual_report(database)
+                get_string("Press enter to continue")
+            case "7":
                 return
             case other:
                 case_other()
