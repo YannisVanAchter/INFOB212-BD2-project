@@ -6,8 +6,8 @@ import random
 import logging
 
 from module.database import DataBase
-from module.get import get_int, get_string, get_valid_id
-from module.utils import select_employe
+from module.get import get_int, get_string
+from module.utils import select_and_print_choice as select_employe
 from auth.authenticate import register
 
 
