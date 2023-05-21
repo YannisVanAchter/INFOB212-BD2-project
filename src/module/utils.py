@@ -120,7 +120,14 @@ def select_and_print_choice(database: DataBase, querry: str, information_selecte
     -------
         Yannis Van Achter
     """
+    print_selection(database, querry, information_selected)
     
+    id = None
+    while id is None:
+        id = get_valid_id(database, "Enter the id: ", table)
+    return id
+
+def print_selection(database: DataBase, querry: str, information_selected: list[str]):
     def string_len(string, length):
         """Return string with length characters
 
@@ -134,7 +141,8 @@ def select_and_print_choice(database: DataBase, querry: str, information_selecte
             string (str): string with length characters
         """
         if len(string) > length:
-            return string[:(length + 3)] + "..."
+            string = string[:length]
+            return string[:-3] + "..."
         else:
             return string + " " * (length - len(string))
     
@@ -143,8 +151,7 @@ def select_and_print_choice(database: DataBase, querry: str, information_selecte
         information_list = db.table
     
     if len(information_list) == 0:
-        print("No information found")
-        return 
+        print("No more information found")
     
     table_head = "| " + " | ".join(information_selected) + " |"
     separator = "+-" + "-+-".join(["-"*len(i) for i in information_selected]) + "-+"
@@ -159,8 +166,3 @@ def select_and_print_choice(database: DataBase, querry: str, information_selecte
             ]
             ) + " |")
     print(separator)
-    
-    id = None
-    while id is None:
-        id = get_valid_id(db, "Enter the id: ", table)
-    return id
