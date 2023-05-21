@@ -62,8 +62,8 @@ def register(
         password: str, 
         birthDate: str, 
         address: dict, 
-        lastName: str = None, 
-        firstName: str = None, 
+        lastName: str, 
+        firstName: str, 
         phoneNumber: str = None, 
         registerCustomer: dict = None
     ) -> (User | int | None):
@@ -80,8 +80,8 @@ def register(
             postalCode: Postal code of the address (int)
             city: City of the address (str)
             land: Land of the address (str)
-        lastName: Last name of the client (str, optional)
-        firstName: Frist name of the client (str, optional)
+        lastName: Last name of the client (str)
+        firstName: Frist name of the client (str)
         phoneNumber: Phone number of the client (str, optional)
         registerCustomer: Customer information dict if user wish to create a customer account drectly (dict, optional)
             nickname: Nickname for the customer (str, optional)

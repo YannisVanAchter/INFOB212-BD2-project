@@ -25,12 +25,8 @@ def register_action(db: DataBase) -> bool:
         "land": land
     }
 
-    lastName = input("Enter your last name (optional, leave blank if you don't wish to share):")
-    if len(lastName) == 0:
-        lastName = None
-    firstName = input("Enter your first name (optional, leave blank if you don't wish to share):")
-    if len(firstName) == 0:
-        firstName = None
+    lastName = input("Enter your last name:")
+    firstName = input("Enter your first name:")
     phoneNumber = input("Enter your phone number (optional, leave blank if you don't wish to share):")
     if len(phoneNumber) == 0:
         phoneNumber = None
