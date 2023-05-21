@@ -59,7 +59,6 @@ def logged_login_menu(db: DataBase, user: User):
 
     allow user to:
     --------------
-        - Modifier son profil
         - Accéder aux autres menus dépendamment de ses permissions
 
     Args:
