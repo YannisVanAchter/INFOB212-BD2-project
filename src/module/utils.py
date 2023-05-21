@@ -1,9 +1,10 @@
 # encoding uft-8
 import logging
 import os
-from datetime import datetime as DateTime, date as Date
+from datetime import date as Date
 
 from module.database import DataBase
+from module.get import get_valid_id
 
 
 def clear_terminal():
@@ -89,3 +90,79 @@ def insert_into(database: DataBase, table: str, attributes: tuple[str], values: 
     return inserted_id
         
     
+def select_and_print_choice(database: DataBase, querry: str, information_selected: list[str], table: str) -> (int):
+    """Use querry to select the expected information
+    and print it with information_selected as header of table
+    Allow user to input an id and return it if it is valid (id from table)
+
+    Args:
+    -----
+        database (DataBase): database to check id, 
+            connect with user that have SELECT grant permission on table_name
+        querry (str): querry to select a list of employee
+        information_selected (list[str]): list of information to print
+        table (str): name of the table to check id
+       
+    Raises:
+    -------
+        TypeError: if id_type is not int or str
+
+    Return:
+    -------
+        id : valid id
+        id = None : if id is not valid (not found in "mysql".table)
+        
+    Version:
+    --------
+        1.0.0
+    
+    Author:
+    -------
+        Yannis Van Achter
+    """
+    print_selection(database, querry, information_selected)
+    
+    id = None
+    while id is None:
+        id = get_valid_id(database, "Enter the id: ", table)
+    return id
+
+def print_selection(database: DataBase, querry: str, information_selected: list[str]):
+    def string_len(string, length):
+        """Return string with length characters
+
+        Args:
+        -----
+            string (str): string to check
+            length (int): length of the string
+
+        Return:
+        -------
+            string (str): string with length characters
+        """
+        if len(string) > length:
+            string = string[:length]
+            return string[:-3] + "..."
+        else:
+            return string + " " * (length - len(string))
+    
+    with database as db:
+        db.execute(querry)
+        information_list = db.table
+    
+    if len(information_list) == 0:
+        print("No more information found")
+    
+    table_head = "| " + " | ".join(information_selected) + " |"
+    separator = "+-" + "-+-".join(["-"*len(i) for i in information_selected]) + "-+"
+    list_size = [len(i) for i in information_selected]
+    
+    print(table_head)
+    print(separator)
+    for information in information_list:
+        print("| " + " | ".join(
+            [string_len(str(string), list_size[i]) 
+                for i, string in enumerate(information)
+            ]
+            ) + " |")
+    print(separator)

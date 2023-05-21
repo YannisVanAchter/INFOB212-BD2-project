@@ -1,7 +1,8 @@
 from module.get import *
 from constants import *
-from module.utils import *
-from menuconnexion.menu import *
+from module import *
+import logging
+
 
 
 def main_persoadmin_menu(db: DataBase):
@@ -41,14 +42,19 @@ def main_persoadmin_menu(db: DataBase):
         if choice == 1:
             customer_id = None
             while customer_id == None:
-                customer_id = get_valid_id(
+                customer_id = select_and_print_choice(
                     db,
-                    "Enter the id of the user for which you want to book a transplant: ",
+                    "SELECT C.id, C.pseudo FROM CUSTOMER C",
+                    ["id", "pseudo"],
                     "CUSTOMER",
                 )
 
             # Choice of the organe
-            print("List of organes: ", ORGAN_DICO.keys())
+            db.execute("SELECT O.type FROM ORGANE O WHERE O.id not in (SELECT D.ORGANE FROM DETAIL D WHERE D.ORGANE is not null) AND O.id not in (SELECT T.Con_id FROM TRANSPLANTATION T) GROUP BY O.type;")
+            logging.debug(db.table)
+            organes_available_list = [i[0] for i in db.table if (i[0] in ORGAN_DICO.keys())]
+            logging.debug(organes_available_list)
+            print("List of organes available : ", ", ".join(organes_available_list))
             organe_type_choice = get_string(
                 "You are there for a transplantation on which organe? "
             )
@@ -83,6 +89,7 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
     -------
         Aline Boulanger
     """
+
     # Check if such an organe is available and assiciation faire en sous requetes
     db.execute_with_params(
         "SELECT O.id FROM ORGANE O WHERE O.type = %s and O.id not in(SELECT D.id FROM DETAIL D WHERE D.id = O.id) and O.id not in (SELECT T.Con_id FROM TRANSPLANTATION T WHERE T.Con_id = O.id);",
@@ -114,6 +121,7 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
 
     if len(organe_choice) != 0:
         print("We will assign you a doctor, an anaesthetist and a or 2 nurse(s)")
+
         # To get the doctors who are free
         db.execute_with_params(
             "SELECT D.inami_number, D.id FROM DOCTOR D WHERE D.id not in (SELECT T.D_w_id FROM TRANSPLANTATION T WHERE T.date_ = %s);",
@@ -179,10 +187,45 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
             transplantation_price = salary_total
 
             # Check dans BLOOD
+            bloodtype_customer = None
+            bloodsign_customer = None 
+            db.execute(f"SELECT C.blood_type, C.blood_sign FROM CUSTOMER C WHERE C.id = {customer_id}")
+            bloodtype_customer = db.table[0][0]
+            bloodsign_customer = db.table[0][1]
+            logging.debug(bloodsign_customer, type(bloodsign_customer))
+            logging.debug(bloodtype_customer, type(bloodtype_customer))
+
+
+            querry = "SELECT B.id FROM BLOOD B WHERE B.Nee_id is null and B.expiration_date > %s and B.id not in (SELECT D.BLOOD FROM DETAIL D WHERE D.BLOOD is not null)"
+            
+            querry += " AND B.signe = %s AND ("
+
+            as_previous = False
+            if bloodtype_customer in ["AB", "A", "B", "O"]:
+                as_previous = True 
+                querry += "B.type = 'O'"
+            if bloodtype_customer in ["AB", "A"] :
+                if as_previous :
+                    querry += " OR "
+                as_previous = True 
+                querry += "B.type = 'A'"
+            if bloodtype_customer in ["AB", "B"] :
+                if as_previous :
+                    querry += " OR "
+                as_previous = True 
+                querry += "B.type = 'B'"
+            if bloodtype_customer in ["AB"] :
+                if as_previous :
+                    querry += " OR "
+                as_previous = True 
+                querry += "B.type = 'AB'"
+            querry += ");"
+
             db.execute_with_params(
-                "SELECT B.id FROM BLOOD B WHERE B.Nee_id is null and B.expiration_date > %s and B.id not in (SELECT D.BLOOD FROM DETAIL D WHERE D.BLOOD is not null);",
-                [date_choice],
+                querry,
+                [date_choice, bloodsign_customer],
             )
+
             selected_blood = db.tableArgs
             nb_pochesblood_free = ORGAN_DICO[organe_type_choice][1]
             if len(selected_blood) < nb_pochesblood_free:
@@ -204,22 +247,24 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
                 ),
             )
 
+            # Insert in the table BLOOD
             for bag_id in range(nb_pochesblood_free):
-                print(selected_blood)
-                blood_id = selected_blood[bag_id][0]  # get id of the blood bag
-                print(id_transplantation)
-                print(blood_id)
-                print(type(id_transplantation))
-                print(type(blood_id))
+                logging.debug(selected_blood)
+                blood_id = selected_blood[bag_id][0]  # to get the id of the blood bag
+                logging.debug(id_transplantation)
+                logging.debug(blood_id)
+                logging.debug(type(id_transplantation))
+                logging.debug(type(blood_id))
                 db.execute(
                     "UPDATE BLOOD B SET B.Nee_id = %s WHERE B.id = %s;" %
                     (id_transplantation, blood_id)
                 )
-            logging.info(
-                "Your transplantation is inserted with success, thank you for your visit bro <3"
+            print(
+                "Your transplantation is inserted with success, thank you for your visit <3"
             )
 
         else:
             print(
                 "Unfortunately, nobody is available for your transplantation so comme back later"
             )
+
