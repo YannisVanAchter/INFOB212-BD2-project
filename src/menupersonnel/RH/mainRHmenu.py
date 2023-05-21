@@ -65,7 +65,8 @@ def add_employee(db: DataBase):
     Use the function create_person() and the function create_employee(id)
 
     Args:
-    db (DataBase): Data base connected for HR
+    -----
+        db (DataBase): Data base connected for HR
         
     Author:
     -------
@@ -86,8 +87,20 @@ def add_employee(db: DataBase):
         create_person(db)
 
     if existence == "yes":
-        id_person = select_employe(db, "SELECT ID, FIRST_NAME, LAST_NAME, SALARY, EMAIL, JOB_DESCRIPTION FROM RH;", ["id", "last_name", "first_name"], "PERSON")
-        create_employee(id_person, db)
+        id_person = select_employe(
+            db,
+            "SELECT P.id, P.last_name, P.first_name FROM PERSON P WHERE P.id not in (SELECT S.id FROM STAFF S)", 
+            ["id", "last_name", "first_name"], 
+            "PERSON"
+        )
+        if id_person is None:
+            print("There is no person who has not already an account PERSON")
+            existence = "no"
+            update_person = get_string("Do you want to create a new person? Enter yes or no (if no, we will cancel the creation of the person/staff member): ").lower().strip()
+            if update_person.startswith("y"):
+                create_person(db)
+        else:
+            create_employee(id_person, db)
 
     db.disconnect()
 
@@ -99,7 +112,8 @@ def create_person(db: DataBase):
     Call the function create_employee(id) with the id created
 
     Args:
-    db (DataBase) : Data base connected for HR
+    -----
+        db (DataBase) : Data base connected for HR
         
     Author:
     -------
@@ -150,8 +164,9 @@ def create_employee(id, db: DataBase):
     To add the role of employee to a person who has already created an account in the company
 
     Args:
-    id : the id of the person that has already had an account in the company
-    db (DataBase): Data base connected for HR
+    -----
+        id : the id of the person that has already had an account in the company
+        db (DataBase): Data base connected for HR
         
     Author:
     -------
@@ -188,21 +203,21 @@ def create_employee(id, db: DataBase):
     if category == 0:
         inami = get_string("Enter the INAMI number of the person:")
         db.execute_with_params(
-            "INSERT INTO ANAESTHESIST (id,inami_number) VALUES (%s, %s)", (id, inami)
+            "INSERT INTO ANAESTHESIST (id,inami_number) VALUES (%s, %s)", [id, inami]
         )
     if category == 1:
-        db.execute_with_params("INSERT INTO NURSE (id) VALUES (%s)", (id))
+        db.execute_with_params("INSERT INTO NURSE (id) VALUES (%s)", [id])
     if category == 2:
         inami = get_string("Enter the INAMI number of the person:")
         db.execute_with_params(
-            "INSERT INTO DOCTOR (id,inami_number) VALUES (%s, %s)", (id, inami)
+            "INSERT INTO DOCTOR (id,inami_number) VALUES (%s, %s)", [id, inami]
         )
     if category == 3:
-        db.execute_with_params("INSERT INTO ACCOUNTANT (id) VALUES (%s)", (id))
+        db.execute_with_params("INSERT INTO ACCOUNTANT (id) VALUES (%s)", [id])
     if category == 4:
-        db.execute_with_params("INSERT INTO HR (id) VALUES (%s)", (id))
+        db.execute_with_params("INSERT INTO HR (id) VALUES (%s)", [id])
     if category == 5:
-        db.execute_with_params("INSERT INTO CEO (id) VALUES (%s)", (id))
+        db.execute_with_params("INSERT INTO CEO (id) VALUES (%s)", [id])
 
     logging.info("Employee well created \n ")
 
@@ -214,6 +229,7 @@ def modify_employee(db: DataBase):
     To modify an actual employee (to change his description or his salary)
 
     Args:
+    -----
     db (DataBase): Data base connected for HR
         
     Author:
@@ -224,7 +240,11 @@ def modify_employee(db: DataBase):
 
     id_employee = None
     while id_employee is None:
-        id_employee = select_employe(db, "SELECT P.id, P.last_name, P.first_name, S.job_description FROM PERSON P, STAFF S WHERE P.id = S.id", ["id", "last name", "first name", "Job Description"], "PERSON")
+        id_employee = select_employe(
+            db, 
+            "SELECT ID, FIRST_NAME, LAST_NAME, SALARY, EMAIL, JOB_DESCRIPTION FROM RH;", 
+            [" id ", "  last name  ", "  first name  ", "Salary", "     Email     ", "   Job Description   "],
+            "STAFF")
 
     print("What do you want to do?")
     print("Type 1 if you want to change the salary of the employee")
@@ -233,16 +253,16 @@ def modify_employee(db: DataBase):
 
     if choice == 1:
         db.execute(f"SELECT salary from STAFF where id= {id_employee}")
-        actual_salary = db.table
-        print("This is the actual salary of the employee: %s", actual_salary)
+        actual_salary = int(db.table[0][0])
+        print("This is the actual salary of the employee: %s" % actual_salary)
         new_salary = get_int("Enter the new salary: ")
         db.execute_with_params(
             "UPDATE STAFF SET salary = %s WHERE id = %s", [new_salary, id_employee]
         )
     elif choice == 2:
         db.execute(f"SELECT job_description from STAFF where id = {id_employee}")
-        actual_description = db.table
-        print("This is the actual description of the employee: %s", actual_description)
+        actual_description = db.table[0][0]
+        print("This is the actual description of the employee: %s" % actual_description)
         new_description = get_string("Enter the new description: ")
         db.execute_with_params(
             "UPDATE STAFF SET job_description = %s WHERE id = %s; ",
@@ -262,6 +282,7 @@ def delete_employee(db: DataBase):
     To delete an employee (delete his data from STAFF, after that the person has to delete herself her account PERSON)
 
     Args:
+    -----
     db (DataBase): Data base connected for HR
         
     Author:

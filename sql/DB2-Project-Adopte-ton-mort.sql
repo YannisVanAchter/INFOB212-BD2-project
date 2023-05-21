@@ -342,16 +342,9 @@ create or replace view DEL_ORDER(first_name, last_name, order_id, street, number
 create or replace view RH (ID, SALARY, FIRST_NAME, LAST_NAME, EMAIL, PHONE, JOB_DESCRIPTION)
      -- View goal : view RH, to view the staff, the wages, jobs
      -- Author: Louise DELPIERRE et Aline Boulanger 
-     as  select S.id S.salary, P.first_name, P.last_name, P.email, P.phone_number, S.job_description
-     from  STAFF S, PERSON P, DOCTOR D, NURSE N, ANAESTHESIST A, CEO C, ACCOUNTANT AC, HR H, ADDRESS AD
-     where S.id = P.id 
-     and S.id = N.id
-     and S.id = A.id
-     and S.id = C.id
-     and S.id = AC.id
-     and S.id = H.id
-     and S.id = D.id
-     and P.id = AD.id;
+     as select S.id, S.salary, P.first_name, P.last_name, P.email, P.phone_number, S.job_description
+     from  STAFF S, PERSON P
+     where S.id = P.id ;
 
 create or replace view MEDECIN (organe, client, type_sang, signe_sang, anesthesiste, medecin)
      -- View goal: view information on the customer and the organ the doctor will have to transplant on him 
@@ -683,6 +676,15 @@ insert into PERSON (id, last_name, first_name, email, phone_number, password, bo
 values (7, "Mota", "Eline", "mota.eline@test.gmail.com", "+32 032 83 92 78", "password", "1997-05-07", 6);
 insert into STAFF (id, salary, active, job_description) values (7, 2000, true, "General accountant");
 insert into ACCOUNTANT (id) values (7);
+
+insert into PERSON (last_name, first_name, email, phone_number, password, born_date, Liv_id) 
+values ('Boulanger2', 'Aline2', "aline.boulanger@test2.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
+insert into PERSON (last_name, first_name, email, phone_number, password, born_date, Liv_id) 
+values ('Boulanger3', 'Aline3', "aline.boulanger@test3.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
+insert into PERSON (last_name, first_name, email, phone_number, password, born_date, Liv_id) 
+values ('Boulanger4', 'Aline4', "aline.boulanger@test4.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
+insert into PERSON (last_name, first_name, email, phone_number, password, born_date, Liv_id) 
+values ('Boulanger5', 'Aline5', "aline.boulanger@test5.gmail.com", "+32 903 22 20 01", "password", "1997-05-07", 5);
 
 -- insert blood and organs
 insert into BLOOD (id, type, signe, expiration_date) values (1, 'A', True, '2020-01-01');
