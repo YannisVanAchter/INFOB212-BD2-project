@@ -160,7 +160,9 @@ def logged_login_menu(db: DataBase, user: User):
                 if sure == "Yes":
                     remove_user(db, user)
                     break
-                else:
-                    print(error_message)
+                elif sure not in ("Yes", "No"):
+                    print("Your account has not been deleted, please try again.\nMake sure you have enter: 'Yes' or 'No'")
+            else:
+                print(error_message)
         else:
             print("Input does not correspond, try again")
