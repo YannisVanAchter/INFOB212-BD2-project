@@ -363,7 +363,8 @@ create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blo
 --      before insert on DELIVERY
 --      for each row
 --      begin
---           SELECT expiration_date INTO expiration 
+--           DECLARE expiration DATE;
+--           SELECT expiration_date INTO INTO expiration 
 --                FROM ORGANE 
 --                WHERE ORGANE.id IN (SELECT DETAIL.organe 
 --                                    FROM DETAIL 
@@ -384,6 +385,7 @@ create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blo
 --      before update on DELIVERY
 --      for each row
 --      begin
+--           DECLARE expiration DATE;
 --           SELECT expiration_date INTO expiration 
 --                FROM ORGANE 
 --                WHERE ORGANE.id IN (SELECT DETAIL.organe 
@@ -405,9 +407,9 @@ create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blo
 --      before insert on DETAIL
 --      for each row 
 --      begin 
---           if (new.ORGANE in (SELECT TANSPLANTATION.Con_id
+--           if (new.ORGANE IS NOT NULL AND new.ORGANE in (SELECT TANSPLANTATION.Con_id
 --                                                        FROM TRANSPLANTATION
---                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id))
+--                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id);)
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to sell is not available anymore';
@@ -420,9 +422,9 @@ create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blo
 --      before update on DETAIL
 --      for each row 
 --      begin 
---           if (new.ORGANE in (SELECT TANSPLANTATION.Con_id
+--           if (new.ORGANE IS NOT NULL AND new.ORGANE in (SELECT TANSPLANTATION.Con_id
 --                                                        FROM TRANSPLANTATION
---                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id))
+--                                                        WHERE TANSPLANTATION.Con_id = ORGANE.id);)
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to sell is not available anymore';
@@ -435,9 +437,9 @@ create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blo
 --      before insert on TRANSPLANTATION
 --      for each row 
 --      begin 
---           if (new.ORGANE in (SELECT DETAIL.ORGANE
+--           if (new.Con_id IS NOT NULL AND new.Con_id in (SELECT DETAIL.ORGANE
 --                               FROM DETAIL
---                               WHERE DETAIL.ORGANE is not null))
+--                               WHERE DETAIL.ORGANE is not null);)
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to transplant is not available anymore';
@@ -450,9 +452,9 @@ create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blo
 --      before update on TRANSPLANTATION
 --      for each row 
 --      begin 
---           if (new.ORGANE in ( SELECT DETAIL.ORGANE
+--           if (new.Con_id IS NOT NULL AND new.Con_id in ( SELECT DETAIL.ORGANE
 --                               FROM DETAIL
---                               WHERE DETAIL.ORGANE is not null))
+--                               WHERE DETAIL.ORGANE is not null);)
 --           then 
 --                signal sqlstate '45000'
 --                set message_text = 'The organ that you want to transplant is not available anymore';
@@ -492,6 +494,7 @@ create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blo
 --   before update on DOCTOR 
 --   for each row
 --      begin
+--           DECLARE transplantation_in_future INT;
 --           SELECT count(date_) into transplantation_in_future
 --                FROM TRANSPLATATION 
 --                WHERE TANSPLANTATION.D_w_id = new.id and TANSPLANTATION.date_ > CURRENT_DATE()

@@ -137,4 +137,7 @@ dmypy.json
 
 # test file for python
 *.test.py
+
+# random file 
 sql/trigger.sql
+*.zip
