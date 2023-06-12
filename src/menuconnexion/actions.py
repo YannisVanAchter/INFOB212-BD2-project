@@ -94,6 +94,15 @@ def login_action(db: DataBase) -> (User | None):
     # Call next menu
     return user
 
+def modify_profile_action(db: DataBase, user: User):
+    first_name = get_string("First name (If you don't wish to modify it leave blank)")
+    last_name = get_string("Last name (If you don't wish to modify it leave blank)")
+    email = get_string("Email (If you don't wish to modify it leave blank)")
+    phone_number = get_string("Phone number (If you don't wish to modify it leave blank)")
+    password = get_string("Password (If you don't wish to modify it leave blank)")
+    # Handle the address
+    pass
+
 def become_customer_action(db: DataBase, user: User):
     """Become customer in database
 

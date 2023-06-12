@@ -2,7 +2,7 @@ from module import get_int, get_string
 from auth import User, remove_user
 
 from module.database import DataBase
-from .actions import become_customer_action, login_action, register_action
+from .actions import become_customer_action, login_action, register_action, modify_profile_action
 from menupersonnel.menuaccounting import main_accounting_menu
 from menupersonnel.menumédecin import main_anesthesiologist_menu, main_infirmier_menu, main_medecin_menu
 from menupersonnel.RH import main_RH_menu
@@ -64,6 +64,7 @@ def logged_login_menu(db: DataBase, user: User):
     allow user to:
     --------------
         - Accéder aux autres menus dépendamment de ses permissions
+        - Modifier son profil
 
     Args:
     -----
@@ -71,6 +72,7 @@ def logged_login_menu(db: DataBase, user: User):
     
     """
     while True:
+        print("0. Update your profile")
         is_customer = "CUSTOMER" in user.userGroup
         if is_customer:
             print("1. Got to the customer menu")
@@ -112,7 +114,9 @@ def logged_login_menu(db: DataBase, user: User):
 
         user_choice = get_int("Enter the number corresponding to what you want to do: ")
         error_message = "You don't have sufficient privileges to go to this menu. Please try again."
-        if user_choice == 1:
+        if user_choice == 0:
+            modify_profile_action(db, user)
+        elif user_choice == 1:
             if is_customer:
                 main_menu_customer(db, user)
             else:
