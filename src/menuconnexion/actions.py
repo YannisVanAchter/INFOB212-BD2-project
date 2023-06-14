@@ -95,24 +95,34 @@ def login_action(db: DataBase) -> (User | None):
     return user
 
 def modify_profile_action(db: DataBase, user: User):
-    first_name = get_string("First name (If you don't wish to modify it leave blank):")
-    last_name = get_string("Last name (If you don't wish to modify it leave blank):")
-    email = get_string("Email (If you don't wish to modify it leave blank):")
-    phone_number = get_string("Phone number (If you don't wish to modify it leave blank):")
-    password = get_string("Password (If you don't wish to modify it leave blank):")
+    first_name = _returnNoneIfBlank(get_string("First name (If you don't wish to modify it leave blank):"))
+    last_name = _returnNoneIfBlank(get_string("Last name (If you don't wish to modify it leave blank):"))
+    email = _returnNoneIfBlank(get_string("Email (If you don't wish to modify it leave blank):"))
+    phone_number = _returnNoneIfBlank(get_string("Phone number (If you don't wish to modify it leave blank):"))
+    password = _returnNoneIfBlank(get_string("Password (If you don't wish to modify it leave blank):"))
     # Handle the address
     if get_string("Do you wish to change your address? (y/n)").strip().lower().startswith("y"):
-        street = get_string("Street (If you don't wish to modify it leave blank):")
-        number = get_int("Number (If you don't wish to modify it leave blank):")
-        postal_code = get_string("Postal Code (If you don't wish to modify it leave blank):")
-        city = get_string("City (If you don't wish to modify it leave blank):")
-        land = get_string("Land (If you don't wish to modify it leave blank):")
+        street = _returnNoneIfBlank(get_string("Street (If you don't wish to modify it leave blank):"))
+        number = _returnNoneIfBlank(get_int("Number (If you don't wish to modify it leave blank):"))
+        postal_code = _returnNoneIfBlank(get_string("Postal Code (If you don't wish to modify it leave blank):"))
+        city = _returnNoneIfBlank(get_string("City (If you don't wish to modify it leave blank):"))
+        land = _returnNoneIfBlank(get_string("Land (If you don't wish to modify it leave blank):"))
 
     if "CUSTOMER" in user.userGroup:
-        blood_type = get_string("Blood Type (If you don't wish to modify it leave blank) (A/B/AB/O):")
-        blood_sign = get_string("Blood Sign (If you don't wish to modify it leave blank) (+/-):")
-        pseudo = get_string("Pseudo (If you don't wish to modify it leave blank):")
-    pass
+        blood_type = _returnNoneIfBlank(get_string("Blood Type (If you don't wish to modify it leave blank) (A/B/AB/O):"))
+        blood_sign = _returnNoneIfBlank(get_string("Blood Sign (If you don't wish to modify it leave blank) (+/-):"))
+        pseudo = _returnNoneIfBlank(get_string("Pseudo (If you don't wish to modify it leave blank):"))
+
+    update_profile_in_db(db, user, first_name, last_name, email, phone_number, password, street, number, postal_code, city, land, blood_type, blood_sign, pseudo)
+
+def update_profile_in_db(db: DataBase, user: User, **kwargs):
+    print(kwargs)
+
+def _returnNoneIfBlank(inp: str):
+    if inp == "":
+        return None
+    else:
+        return inp
 
 def become_customer_action(db: DataBase, user: User):
     """Become customer in database
