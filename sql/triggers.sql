@@ -108,15 +108,15 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT_UPDATE
 create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_INSERT
      -- Trigger goal: Checks if the blood is available before accept to sell it
      -- Author: Aurélie Genot
-     before insert on DETAIL
-     for each row
-     begin
-          if (new.BLOOD is not null and new.BLOOD in (SELECT BLOOD.id FROM BLOOD WHERE BLOOD.Nee_id = new.BLOOD))
-          then
-               signal sqlstate '45000'
-               set message_text = 'The blood that you want to sell is not available anymore';
-          end if;
-     end;
+    before insert on DETAIL
+    for each row
+    begin
+        if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE id = new.BLOOD))
+        then
+            signal sqlstate '45000'
+            set message_text = 'The blood that you want to sell is not available anymore';
+        end if;
+    end;
 
 create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_UPDATE
      -- Trigger goal: Checks if the blood is available before accept to sell it
@@ -124,7 +124,7 @@ create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_UPDATE
      before update on DETAIL
      for each row
      begin
-          if (new.BLOOD is not null and new.BLOOD in (SELECT BLOOD.id FROM BLOOD WHERE BLOOD.Nee_id = new.BLOOD))
+          if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE id = new.BLOOD))
           then
                signal sqlstate '45000'
                set message_text = 'The blood that you want to sell is not available anymore';
