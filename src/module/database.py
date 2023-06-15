@@ -78,8 +78,8 @@ class DataBase:
         self.host = host
         self.database = database
         self.port = port
+        self.time_out = kwargs.pop("connect_timeout", 999999)
         self.config = kwargs
-        self.__has_one_querry = False
         self.__is_connected = False
         self.auto_connect = auto_connect
         self.__fetched = []
@@ -202,7 +202,7 @@ class DataBase:
                     database=self.database,
                     host=self.host,
                     port=self.port,
-                    connect_timeout=999999,
+                    connect_timeout=self.time_out,
                     **self.config
                 )
                 if not self.__db.is_connected():
@@ -380,3 +380,26 @@ class DataBase:
         self.__is_connected = False
         
         logging.info("Disconnected from database")
+
+def __init():
+    """Init of trigger in db"""
+    import os.path as pt
+    trigger_path = "../sql/triggers.sql"
+    if not pt.exists(trigger_path):
+        print("Trigger file not found")
+    if not pt.isfile(trigger_path) and trigger_path.endswith(".sql"):
+        print("Trigger file is not a SQL file")
+        
+    with open(trigger_path, "r") as f:
+        trigger = f.read()
+        with DataBase(
+            host='localhost',
+            user="root", 
+            password="password", 
+            database="db", 
+            port=3306, 
+            auto_connect=True
+        ) as db:
+            db.execute(trigger, multi=True)
+            
+__init()
