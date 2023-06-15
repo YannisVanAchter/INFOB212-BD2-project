@@ -213,11 +213,6 @@ def update_profile_in_db(db: DataBase, user: User, person: dict = None, address:
         if db.table[0][0] > 1:
             address_already_used = True
 
-    #     street varchar(128) not null,
-    #  number numeric(8) not null,
-    #  postal_code numeric(16) not null,
-    #  city varchar(128) not null,
-    #  land varchar(128) not null,
         if address_already_used:
             # Retrieve current address and copy it
             query_retrieve_address = f"SELECT street, number, postal_code, city, land FROM ADDRESS WHERE id = {address_id}"
