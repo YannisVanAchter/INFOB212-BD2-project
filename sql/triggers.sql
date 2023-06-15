@@ -111,7 +111,7 @@ create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_INSERT
     before insert on DETAIL
     for each row
     begin
-        if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE id = new.BLOOD))
+        if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE Nee_id is not null))
         then
             signal sqlstate '45000'
             set message_text = 'The blood that you want to sell is not available anymore';
@@ -124,7 +124,7 @@ create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_UPDATE
      before update on DETAIL
      for each row
      begin
-          if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE id = new.BLOOD))
+          if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE Nee_id is not null))
           then
                signal sqlstate '45000'
                set message_text = 'The blood that you want to sell is not available anymore';
