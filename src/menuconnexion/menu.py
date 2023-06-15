@@ -73,6 +73,7 @@ def logged_login_menu(db: DataBase, user: User):
     """
     while True:
         print("0. Update your profile")
+        
         is_customer = "CUSTOMER" in user.userGroup
         if is_customer:
             print("1. Got to the customer menu")

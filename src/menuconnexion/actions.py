@@ -105,10 +105,10 @@ def modify_profile_action(db: DataBase, user: User):
     if modify_address:
         street = _returnNoneIfBlank(get_string("Street (If you don't wish to modify it leave blank):"))
         number = _returnNoneIfBlank(get_string("Number (If you don't wish to modify it leave blank):"))
-        if number != None:
+        if number is not None:
             number = int(number)
         postal_code = _returnNoneIfBlank(get_string("Postal Code (If you don't wish to modify it leave blank):"))
-        if postal_code != None:
+        if postal_code is not None:
             postal_code = int(postal_code)
         city = _returnNoneIfBlank(get_string("City (If you don't wish to modify it leave blank):"))
         land = _returnNoneIfBlank(get_string("Land (If you don't wish to modify it leave blank):"))
@@ -116,12 +116,12 @@ def modify_profile_action(db: DataBase, user: User):
     is_customer = "CUSTOMER" in user.userGroup
     if is_customer:
         blood_type = _returnNoneIfBlank(get_string("Blood Type (If you don't wish to modify it leave blank) (A/B/AB/O):"))
-        if blood_type != None:
+        if blood_type is not None:
             if blood_type not in ["A", "B", "AB", "O"]:
                 print("Blood type invalid, blood type won't be modified")
                 blood_type = None
-        blood_sign = _returnNoneIfBlank(get_string("Blood Sign (If you don't wish to modify it leave blank) (+/-):"))
-        if blood_sign := None:
+        blood_sign = _returnNoneIfBlank(get_string("Blood Sign (If you don't wish to modify it leave blank) (+/-):").strip())
+        if blood_sign is not None:
             if blood_sign == "+":
                 blood_sign = True
             else:
@@ -135,6 +135,9 @@ def modify_profile_action(db: DataBase, user: User):
         "phone_number": phone_number,
         "password": password
     }
+    
+    address = None
+    customer = None
 
     if modify_address:
         address = {
@@ -176,9 +179,10 @@ def update_profile_in_db(db: DataBase, user: User, person: dict = None, address:
         column_query_strs = []
         for column in edited_person_columns:
             column_query_strs.append(f"{column} = %s")
-
-        update_query_person = f"UPDATE PERSON SET {', '.join(column_query_strs)} WHERE id = {user.id}"
-        db.execute_with_params(update_query_person, edited_person_values)
+            
+        if len(column_query_strs) != 0:
+            update_query_person = f"UPDATE PERSON SET {', '.join(column_query_strs)} WHERE id = {user.id}"
+            db.execute_with_params(update_query_person, edited_person_values)
 
     # To put in a function to remove redundant code
     if customer != None:
@@ -193,45 +197,51 @@ def update_profile_in_db(db: DataBase, user: User, person: dict = None, address:
         for column in edited_customer_columns:
             column_query_strs.append(f"{column} = %s")
 
-    update_query_customer = f"UPDATE CUSTOMER SET {', '.join(column_query_strs)} WHERE id = {user.id}"
-    db.execute_with_params(update_query_customer, edited_customer_values)
+        if len(column_query_strs) != 0:
+            update_query_customer = f"UPDATE CUSTOMER SET {', '.join(column_query_strs)} WHERE id = {user.id}"
+            db.execute_with_params(update_query_customer, edited_customer_values)
 
     if address != None:
         # Get the id of the address of this person
-        address_id_query = f"SELECT id FROM ADDRESS WHERE id = (SELECT Liv_id FROM PERSON WHERE id = {user.id});"
+        address_id_query = f"SELECT id, street, number, postal_code, city, land FROM ADDRESS WHERE id IN (SELECT Liv_id FROM PERSON WHERE id = {user.id});"
         db.execute(address_id_query)
         address_id = db.table[0][0]
-        address_already_used = False
-
-        id_exist_in_delivery = f"SELECT COUNT(*) FROM DELIVERY WHERE At_id = {address_id}"
-        db.execute(id_exist_in_delivery)
-        if db.table[0][0] > 0:
+        address_already_used = False # more than one person (another one than current user)
+        current_address = {
+            "street": db.table[0][1],
+            "number": db.table[0][2],
+            "postal_code": db.table[0][3],
+            "city": db.table[0][4],
+            "land": db.table[0][5],
+        }
+        
+        # check address is not already used by another person or a delivery
+        nb_use_of_address_query = f"SELECT * FROM ADDRESS WHERE id = {address_id} AND ({address_id} IN (SELECT Liv_id FROM PERSON WHERE id != {user.id}) OR {address_id} IN (SELECT At_id FROM DELIVERY));"
+        db.execute(nb_use_of_address_query)
+        if len(db.table) != 0:
             address_already_used = True
-
-        id_exist_in_other_person = f"SELECT COUNT(*) FROM PERSON WHERE Liv_id = {address_id}"
-        db.execute(id_exist_in_other_person)
-        if db.table[0][0] > 1:
-            address_already_used = True
-
-        if address_already_used:
-            # Retrieve current address and copy it
-            query_retrieve_address = f"SELECT street, number, postal_code, city, land FROM ADDRESS WHERE id = {address_id}"
-            db.execute(query_retrieve_address)
-            current_address = {
-                "street": db.table[0][0],
-                "number": db.table[0][1],
-                "postal_code": db.table[0][2],
-                "city": db.table[0][3],
-                "land": db.table[0][4]
-            }
-
-            for key in address.keys():
-                if address[key] != None:
-                    current_address[key] = address[key]
             
-            new_id = insert_into(db, "ADDRESS", current_address.keys(), (current_address["street"], current_address["number"], current_address["postal_code"], current_address["city"], current_address["land"]))
-            update_address_query = f"UPDATE PERSON SET Liv_id = {new_id} WHERE id = {user.id}"
-            db.execute(update_address_query)
+        if address_already_used:
+            for column, value in address.items():
+                if value is None:
+                    address[column] = current_address[column]
+                    
+            new_address_id = insert_into(db, "ADDRESS", address.keys(), address.values())
+            
+            db.execute(f"UPDATE PERSON SET Liv_id = {new_address_id} WHERE id = {user.id};")
+            
+        else:
+            edited_address_values = []
+            column_query_strs = []
+            for column, value in address.items():
+                if value is not None:
+                    column_query_strs.append(f"{column} = %s")
+                    edited_address_values.append(value)
+            
+                
+            if len(column_query_strs) != 0:
+                update_query_address = f"UPDATE ADDRESS SET {', '.join(column_query_strs)} WHERE id = {address_id}"
+                db.execute_with_params(update_query_address, edited_address_values)
 
 
 def _returnNoneIfBlank(inp: str):
