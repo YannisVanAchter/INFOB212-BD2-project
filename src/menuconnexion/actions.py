@@ -169,33 +169,25 @@ def update_profile_in_db(db: DataBase, user: User, person: dict = None, address:
     """
     
     if person != None:
-        edited_person_columns = []
         edited_person_values = []
-        for key in person.keys():
-            if person[key] != None:
-                edited_person_columns.append(key)
-                edited_person_values.append(person[key])
-        
         column_query_strs = []
-        for column in edited_person_columns:
-            column_query_strs.append(f"{column} = %s")
-            
+        for column, value in person.items():
+            if value is not None:
+                column_query_strs.append(f"{column} = %s")
+                edited_person_values.append(value)
+                    
         if len(column_query_strs) != 0:
             update_query_person = f"UPDATE PERSON SET {', '.join(column_query_strs)} WHERE id = {user.id}"
             db.execute_with_params(update_query_person, edited_person_values)
 
     # To put in a function to remove redundant code
     if customer != None:
-        edited_customer_columns = []
         edited_customer_values = []
-        for key in customer.keys():
-            if customer[key] != None:
-                edited_customer_columns.append(key)
-                edited_customer_values.append(person[key])
-        
         column_query_strs = []
-        for column in edited_customer_columns:
-            column_query_strs.append(f"{column} = %s")
+        for column, value in customer.items():
+            if value is not None:
+                column_query_strs.append(f"{column} = %s")
+                edited_customer_values.append(value)
 
         if len(column_query_strs) != 0:
             update_query_customer = f"UPDATE CUSTOMER SET {', '.join(column_query_strs)} WHERE id = {user.id}"
