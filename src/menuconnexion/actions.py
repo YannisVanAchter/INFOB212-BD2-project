@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from module import DataBase, get_string, get_int
+from module import DataBase, get_string, get_int, insert_into
 from auth import register, login, become_customer, User
 
 def register_action(db: DataBase) -> bool:
@@ -101,22 +101,143 @@ def modify_profile_action(db: DataBase, user: User):
     phone_number = _returnNoneIfBlank(get_string("Phone number (If you don't wish to modify it leave blank):"))
     password = _returnNoneIfBlank(get_string("Password (If you don't wish to modify it leave blank):"))
     # Handle the address
-    if get_string("Do you wish to change your address? (y/n)").strip().lower().startswith("y"):
+    modify_address = get_string("Do you wish to change your address? (y/n)").strip().lower().startswith("y")
+    if modify_address:
         street = _returnNoneIfBlank(get_string("Street (If you don't wish to modify it leave blank):"))
-        number = _returnNoneIfBlank(get_int("Number (If you don't wish to modify it leave blank):"))
+        number = _returnNoneIfBlank(get_string("Number (If you don't wish to modify it leave blank):"))
+        if number != None:
+            number = int(number)
         postal_code = _returnNoneIfBlank(get_string("Postal Code (If you don't wish to modify it leave blank):"))
+        if postal_code != None:
+            postal_code = int(postal_code)
         city = _returnNoneIfBlank(get_string("City (If you don't wish to modify it leave blank):"))
         land = _returnNoneIfBlank(get_string("Land (If you don't wish to modify it leave blank):"))
 
-    if "CUSTOMER" in user.userGroup:
+    is_customer = "CUSTOMER" in user.userGroup
+    if is_customer:
         blood_type = _returnNoneIfBlank(get_string("Blood Type (If you don't wish to modify it leave blank) (A/B/AB/O):"))
+        if blood_type != None:
+            if blood_type not in ["A", "B", "AB", "O"]:
+                print("Blood type invalid, blood type won't be modified")
+                blood_type = None
         blood_sign = _returnNoneIfBlank(get_string("Blood Sign (If you don't wish to modify it leave blank) (+/-):"))
+        if blood_sign := None:
+            if blood_sign == "+":
+                blood_sign = True
+            else:
+                blood_sign = False
         pseudo = _returnNoneIfBlank(get_string("Pseudo (If you don't wish to modify it leave blank):"))
 
-    update_profile_in_db(db, user, first_name, last_name, email, phone_number, password, street, number, postal_code, city, land, blood_type, blood_sign, pseudo)
+    person = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "phone_number": phone_number,
+        "password": password
+    }
 
-def update_profile_in_db(db: DataBase, user: User, **kwargs):
-    print(kwargs)
+    if modify_address:
+        address = {
+            "street": street,
+            "number": number,
+            "postal_code": postal_code,
+            "city": city,
+            "land": land
+        }
+
+    if is_customer:
+        customer = {
+            "blood_type": blood_type,
+            "blood_sign": blood_sign,
+            "pseudo": pseudo
+        }
+
+    update_profile_in_db(db, user, person, address, customer)
+
+def update_profile_in_db(db: DataBase, user: User, person: dict = None, address: dict = None, customer: dict = None):
+    """
+    Parameters
+    ----------
+    db: The database object (DataBase)
+    user: The user object of the user being modified to modify(User)
+    person: A dict containing the person's information to modify (optional)
+    address: A dict containing the address's information to modify (optional)
+    customer: A dict containing the customer's information to modify (optional)
+    """
+    
+    if person != None:
+        edited_person_columns = []
+        edited_person_values = []
+        for key in person.keys():
+            if person[key] != None:
+                edited_person_columns.append(key)
+                edited_person_values.append(person[key])
+        
+        column_query_strs = []
+        for column in edited_person_columns:
+            column_query_strs.append(f"{column} = %s")
+
+        update_query_person = f"UPDATE PERSON SET {', '.join(column_query_strs)} WHERE id = {user.id}"
+        db.execute_with_params(update_query_person, edited_person_values)
+
+    # To put in a function to remove redundant code
+    if customer != None:
+        edited_customer_columns = []
+        edited_customer_values = []
+        for key in customer.keys():
+            if customer[key] != None:
+                edited_customer_columns.append(key)
+                edited_customer_values.append(person[key])
+        
+        column_query_strs = []
+        for column in edited_customer_columns:
+            column_query_strs.append(f"{column} = %s")
+
+    update_query_customer = f"UPDATE CUSTOMER SET {', '.join(column_query_strs)} WHERE id = {user.id}"
+    db.execute_with_params(update_query_customer, edited_customer_values)
+
+    if address != None:
+        # Get the id of the address of this person
+        address_id_query = f"SELECT id FROM ADDRESS WHERE id = (SELECT Liv_id FROM PERSON WHERE id = {user.id});"
+        db.execute(address_id_query)
+        address_id = db.table[0][0]
+        address_already_used = False
+
+        id_exist_in_delivery = f"SELECT COUNT(*) FROM DELIVERY WHERE At_id = {address_id}"
+        db.execute(id_exist_in_delivery)
+        if db.table[0][0] > 0:
+            address_already_used = True
+
+        id_exist_in_other_person = f"SELECT COUNT(*) FROM PERSON WHERE Liv_id = {address_id}"
+        db.execute(id_exist_in_other_person)
+        if db.table[0][0] > 1:
+            address_already_used = True
+
+    #     street varchar(128) not null,
+    #  number numeric(8) not null,
+    #  postal_code numeric(16) not null,
+    #  city varchar(128) not null,
+    #  land varchar(128) not null,
+        if address_already_used:
+            # Retrieve current address and copy it
+            query_retrieve_address = f"SELECT street, number, postal_code, city, land FROM ADDRESS WHERE id = {address_id}"
+            db.execute(query_retrieve_address)
+            current_address = {
+                "street": db.table[0][0],
+                "number": db.table[0][1],
+                "postal_code": db.table[0][2],
+                "city": db.table[0][3],
+                "land": db.table[0][4]
+            }
+
+            for key in address.keys():
+                if address[key] != None:
+                    current_address[key] = address[key]
+            
+            new_id = insert_into(db, "ADDRESS", current_address.keys(), (current_address["street"], current_address["number"], current_address["postal_code"], current_address["city"], current_address["land"]))
+            update_address_query = f"UPDATE PERSON SET Liv_id = {new_id} WHERE id = {user.id}"
+            db.execute(update_address_query)
+
 
 def _returnNoneIfBlank(inp: str):
     if inp == "":
