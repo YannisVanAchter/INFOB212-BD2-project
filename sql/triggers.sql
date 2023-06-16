@@ -51,9 +51,12 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_SELL_INSERT
      before insert on DETAIL
      for each row
      begin
-          if (new.ORGANE IS NOT NULL AND new.ORGANE in (SELECT Con_id
+          if (new.ORGANE IS NOT NULL AND (new.ORGANE in (SELECT Con_id
                                                        FROM TRANSPLANTATION
-                                                       WHERE Con_id = new.ORGANE))
+                                                       WHERE Con_id = new.ORGANE)) OR (new.ORGANE in 
+                                                            (SELECT ORGANE
+                                                            FROM DETAIL 
+                                                            WHERE ORGANE = new.ORGANE)))
           then
                signal sqlstate '45000'
                set message_text = 'The organ that you want to sell is not available anymore';
@@ -66,9 +69,12 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_SELL_UPDATE
      before update on DETAIL
      for each row
      begin
-          if (new.ORGANE IS NOT NULL AND new.ORGANE in (SELECT Con_id
+          if (new.ORGANE IS NOT NULL AND (new.ORGANE in (SELECT Con_id
                                                        FROM TRANSPLANTATION
-                                                       WHERE Con_id = new.ORGANE))
+                                                       WHERE Con_id = new.ORGANE)) OR (new.ORGANE in 
+                                                            (SELECT ORGANE
+                                                            FROM DETAIL 
+                                                            WHERE ORGANE = new.ORGANE)))
           then
                signal sqlstate '45000'
                set message_text = 'The organ that you want to sell is not available anymore';
@@ -81,9 +87,12 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT_INSERT
      before insert on TRANSPLANTATION
      for each row
      begin
-          if (new.Con_id IS NOT NULL AND new.Con_id in (SELECT DETAIL.ORGANE
-                              FROM DETAIL
-                              WHERE DETAIL.ORGANE = new.Con_id))
+          if (new.Con_id IS NOT NULL AND (new.Con_id in (SELECT ORGANE
+                                                       FROM DETAIL
+                                                       WHERE ORGANE = new.Con_id) OR new.Con_id in 
+                                                            (SELECT Con_id
+                                                            FROM TRANSPLANTATION
+                                                            WHERE Con_id = new.Con_id)))
           then
                signal sqlstate '45000'
                set message_text = 'The organ that you want to transplant is not available anymore';
@@ -96,9 +105,12 @@ create trigger TRG_CHECK_AVAILABILITY_ORGAN_TO_TRANSPLANT_UPDATE
      before update on TRANSPLANTATION
      for each row
      begin
-          if (new.Con_id IS NOT NULL AND new.Con_id in ( SELECT DETAIL.ORGANE
-                              FROM DETAIL
-                              WHERE DETAIL.ORGANE = new.Con_id))
+          if (new.Con_id IS NOT NULL AND (new.Con_id in (SELECT ORGANE
+                                                       FROM DETAIL
+                                                       WHERE ORGANE = new.Con_id) OR new.Con_id in 
+                                                            (SELECT Con_id
+                                                            FROM TRANSPLANTATION
+                                                            WHERE Con_id = new.Con_id)))
           then
                signal sqlstate '45000'
                set message_text = 'The organ that you want to transplant is not available anymore';
@@ -111,11 +123,17 @@ create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_INSERT
     before insert on DETAIL
     for each row
     begin
-        if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE Nee_id is not null))
-        then
-            signal sqlstate '45000'
-            set message_text = 'The blood that you want to sell is not available anymore';
-        end if;
+          if (new.BLOOD is not null and (new.BLOOD in 
+               (SELECT id 
+               FROM BLOOD 
+               WHERE Nee_id is not null) OR new.BLOOD in 
+                    (SELECT BLOOD
+                    FROM DETAIL
+                    WHERE BLOOD = new.BLOOD)))
+          then
+               signal sqlstate '45000'
+               set message_text = 'The blood that you want to sell is not available anymore';
+          end if;
     end;
 
 create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_UPDATE
@@ -124,10 +142,32 @@ create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_SELL_UPDATE
      before update on DETAIL
      for each row
      begin
-          if (new.BLOOD is not null and new.BLOOD in (SELECT id FROM BLOOD WHERE Nee_id is not null))
+          if (new.BLOOD is not null and (new.BLOOD in 
+               (SELECT id 
+               FROM BLOOD 
+               WHERE Nee_id is not null) OR new.BLOOD in 
+                    (SELECT BLOOD
+                    FROM DETAIL
+                    WHERE BLOOD = new.BLOOD)))
           then
                signal sqlstate '45000'
                set message_text = 'The blood that you want to sell is not available anymore';
+          end if;
+     end;
+
+create trigger TRG_CHECK_AVAILABILITY_BLOOD_TO_TRANSPLANT_INSERT
+     -- Trigger goal: Checks if the blood is available before accept to use it during tranplant
+     -- Author: Youlan Collard
+     before update on BLOOD
+     for each row
+     begin
+          if (old.Nee_id is null and new.Nee_id is not null and (
+               new.id in (SELECT BLOOD 
+                         FROM DETAIL
+                         WHERE BLOOD = new.id)))
+          then
+               signal sqlstate '45000'
+               set message_text = 'The blood that you wish to transplant is not available';
           end if;
      end;
    
