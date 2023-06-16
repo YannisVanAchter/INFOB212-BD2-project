@@ -152,7 +152,11 @@ def remove_user(db: DataBase, userId: int) -> bool:
     if len(db.tableArgs) > 0:
         return False
     
-    queryUpdate = "UPDATE PERSON SET last_name = 'Anonymized',first_name = 'Anonymized' email = 'Anonymized', phone_number = 'Anonymized', born_date = '1970-01-01', Liv_id = 1 WHERE id = %s;"
+    queryUpdate = "UPDATE PERSON SET last_name = 'Anonymized',first_name = 'Anonymized', email = 'Anonymized', phone_number = 'Anonymized', born_date = '1970-01-01', Liv_id = 1 WHERE id = %s;"
     db.execute_with_params(queryUpdate, [userId])
+    
+    queryUpdate = "UPDATE CUSTOMER SET pseudo = 'Anonymized' WHERE id = %s;"
+    with db as d:
+        d.execute_with_params(queryUpdate, [userId])
 
     return True

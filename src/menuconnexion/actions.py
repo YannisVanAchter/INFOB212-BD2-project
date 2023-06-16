@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from module import DataBase, get_string, get_int, insert_into
+from module import DataBase, get_string, get_int, insert_into, print_selection
 from auth import register, login, become_customer, User
 
 def register_action(db: DataBase) -> bool:
@@ -95,6 +95,11 @@ def login_action(db: DataBase) -> (User | None):
     return user
 
 def modify_profile_action(db: DataBase, user: User):
+    print("Your information: ")
+    print_selection(db, 
+                    f"SELECT P.first_name, P.last_name, P.email, P.phone_number, P.password FROM PERSON P WHERE P.id = {user.id}", 
+                    ["  First name  ", "  Last name  ", "            Email            ", "   Phone number   ", "  Password  "]
+        )
     first_name = _returnNoneIfBlank(get_string("First name (If you don't wish to modify it leave blank):"))
     last_name = _returnNoneIfBlank(get_string("Last name (If you don't wish to modify it leave blank):"))
     email = _returnNoneIfBlank(get_string("Email (If you don't wish to modify it leave blank):"))
@@ -103,6 +108,10 @@ def modify_profile_action(db: DataBase, user: User):
     # Handle the address
     modify_address = get_string("Do you wish to change your address? (y/n)").strip().lower().startswith("y")
     if modify_address:
+        print_selection(db, 
+                        f"SELECT A.street, A.number, A.postal_code, A.city, A.land FROM ADDRESS A, PERSON P WHERE A.id = P.Liv_id AND P.id = {user.id}",
+                        ["        Street        ", "Number", "Postal code", "     City     ", "   Land   "]
+            )
         street = _returnNoneIfBlank(get_string("Street (If you don't wish to modify it leave blank):"))
         number = _returnNoneIfBlank(get_string("Number (If you don't wish to modify it leave blank):"))
         if number is not None:
@@ -115,6 +124,11 @@ def modify_profile_action(db: DataBase, user: User):
 
     is_customer = "CUSTOMER" in user.userGroup
     if is_customer:
+        print_selection(db,
+                        f"SELECT C.pseudo, C.blood_type, C.blood_sign FROM CUSTOMER C WHERE C.id = {user.id}",
+                        ["    Pseudo    ", "Blood type", "Blood sign"]
+            )
+        
         blood_type = _returnNoneIfBlank(get_string("Blood Type (If you don't wish to modify it leave blank) (A/B/AB/O):"))
         if blood_type is not None:
             if blood_type not in ["A", "B", "AB", "O"]:

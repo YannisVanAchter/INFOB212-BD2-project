@@ -1,3 +1,5 @@
+import time
+
 from module import get_int, get_string, clear_terminal
 from auth import User, remove_user
 
@@ -22,30 +24,30 @@ def main_login_menu(database: DataBase):
     -----
         database (DataBase): Data base connected for this user (the accountent)
     """
-    print("Welcome to Adopte ton mort. What do you wish to do?")
-    print("1. Login")
-    print("2. Register")
-    print("3. Exit")
+    def display_menu():
+        print("Welcome to Adopte ton mort. What do you wish to do?")
+        print("1. Login")
+        print("2. Register")
+        print("3. Exit")
 
     input_valid = False
+    user = None
     while not input_valid:
-        # utiliser un get_string(...).strip().lower() pour éviter les erreurs de frappe -> lower inutile (chiffre) et strip déjà fait par le cast int
+        display_menu()
         choice = get_int("")
         if choice == 1:
-            input_valid = True
             user = _try_login(database)
+            logged_login_menu(database, user)
         elif choice == 2:
-            input_valid = True
             register_action(database)
             print("Registration confirmed. Please login.")
             user = _try_login(database)
+            logged_login_menu(database, user)
         elif choice == 3:
             input_valid = True
-            user = None
         else:
             print("Your selection is invalid, try again.")
-    if user != None:
-        logged_login_menu(database, user)
+    
 
 def _try_login(database: DataBase) -> User:
     user = login_action(database)
@@ -159,15 +161,16 @@ def logged_login_menu(db: DataBase, user: User):
             else:
                 print(error_message)
         elif user_choice == 9:
-            break
+            return
         elif user_choice == 10:
             if is_customer:
                 sure = get_string("Are you sure you want to delete you account  ? (Yes/No)")
                 if sure == "Yes":
-                    remove_user(db, user)
-                    break
+                    remove_user(db, user.id)
+                    return
                 elif sure not in ("Yes", "No"):
                     print("Your account has not been deleted, please try again.\nMake sure you have enter: 'Yes' or 'No'")
+                    time.sleep(0.5)
             else:
                 print(error_message)
         else:

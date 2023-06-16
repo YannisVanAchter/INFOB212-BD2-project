@@ -1,0 +1,21 @@
+
+=> Nouveaux utilisateurs
+    Yannis VA
+
+=> Voir ses info perso
+
+=> Passer commande 
+
+=> Passer transplantation (DELETE)
+
+=> Suppression Pol Benats
+
+(Connection avec CEO)
+
+=> Présentation du bilan comptable
+
+=> Nouveaux utilisateurs client
+
+=> Présenation menu employé (GRH)
+    -> Création d'un nouvel employé (à partir d'un client)
+    -> Augmentation salariale

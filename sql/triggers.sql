@@ -1,4 +1,4 @@
--- To Execute in Datagrip, for some reason they work there but doesn't when added to the sql file sent to the Docker container
+-- Read separately from definition file (error otherwise)
 
 create trigger TRG_DELIVERY_DATES_EXPIRATION_CONTROL_INSERT
      -- Trigger goal: Check if the date of delivery is before the date expiration of the organe
