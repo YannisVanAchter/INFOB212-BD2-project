@@ -1,4 +1,4 @@
-from module import get_int, get_string
+from module import get_int, get_string, clear_terminal
 from auth import User, remove_user
 
 from module.database import DataBase
@@ -72,6 +72,7 @@ def logged_login_menu(db: DataBase, user: User):
     
     """
     while True:
+        clear_terminal()
         print("0. Update your profile")
         
         is_customer = "CUSTOMER" in user.userGroup
