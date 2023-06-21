@@ -28,6 +28,13 @@ $ docker-compose up
 
 
 Into another terminal use (please wait till the docker container has been created and started):
+- On first run app running
+```bash
+$ cd src
+src $ python setup.py
+src $ python main.py
+```
+- After first run app running
 ```bash	
 $ cd src
 src $ python main.py

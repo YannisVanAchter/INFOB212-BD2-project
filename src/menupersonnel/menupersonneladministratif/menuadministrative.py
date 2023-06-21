@@ -105,7 +105,7 @@ def insert_transplantation(db: DataBase, organe_type_choice, customer_id):
     # To get the date of the operation
     if len(organe_choice) != 0:
         while True:
-            date_choice = get_date("Enter a date for your operation")
+            date_choice = get_date("Enter a date for your operation (YYYY-MM-DD): ")
             db.execute("SELECT T.date_ FROM TRANSPLANTATION T;")
             date_table = db.table
 
