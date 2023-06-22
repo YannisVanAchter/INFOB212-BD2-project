@@ -310,7 +310,7 @@ create index ORGANES_Types
 
 -- View Section
 -- _____________ 
-create or replace view ACC_BLOOD_PRICE(id_blood, type_blood, signe_blood)
+create or replace view ACC_BLOOD_PRICE(id_blood, type_blood, signe_blood, price)
      -- View goal : view accountable to view the price of the organ and the blood
      -- Author: "The Blood" team
      as  select B.id, B.type, B.signe, B.price
