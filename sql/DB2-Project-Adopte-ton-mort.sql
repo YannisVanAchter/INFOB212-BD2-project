@@ -506,6 +506,54 @@ insert into BLOOD (id, type, signe, expiration_date, price, donator) values (3, 
 insert into BLOOD (id, type, signe, expiration_date, price, donator) values (4, 'A', True, '2030-01-01', 250, 1);
 insert into BLOOD (id, type, signe, expiration_date, price, donator) values (5, 'A', True, '2030-01-01', 250, 1);
 insert into BLOOD (id, type, signe, expiration_date, price, donator) values (6, 'A', True, '2030-01-01', 250, 1);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+INSERT INTO db.BLOOD (type, signe, expiration_date, donator, price)
+ VALUES ("A", 0, "2024-02-02", 1, 250);
+
+
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
  values (1, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "heart", 2000000, 1);
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
@@ -516,11 +564,92 @@ insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_tra
  values (4, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "liver", 2000000, 1);
 insert into ORGANE (id, state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
  values (5, "very well", True, "2024-05-04", "2023-11-10", "Dry at ambiant temperature", "ear", 2000000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+insert into db.ORGANE (state, functionnal, expiration_date, expiration_date_transplantation, method_of_preservation, type, price, Com_id)
+ VALUES ("very well", 1, "2023-09-12", "2023-12-12", "Dry at ambiant temperature", "heart", 200000, 1);
+
  
- 
- insert into TRANSPLANTATION(id, date_, Con_id, price, Rec_id, D_w_id, A_w_id)
+insert into TRANSPLANTATION(id, date_, Con_id, price, Rec_id, D_w_id, A_w_id)
  values(1, '2021-01-03', 1, '45.6', 2, 4, 6);
 insert into N_work_on(N_N_id, id)
  values(5, 1);
 insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id) values ('A', True, '2020-01-01', 250, 1, 1);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id) values ('A', True, '2020-01-01', 250, 1, 1);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id) values ('A', True, '2020-01-01', 250, 1, 1);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id) values ('A', True, '2020-01-01', 250, 1, 1);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id) values ('A', True, '2020-01-01', 250, 1, 1);
+
+insert into TRANSPLANTATION(id, date_, Con_id, price, Rec_id, D_w_id, A_w_id)
+ values(2, '2023-09-03', 2, '45.6', 2, 4, 6);
+insert into N_work_on(N_N_id, id)
+ values(5, 2);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id)
+ values ('A', True, '2024-01-01', 250, 1, 2);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id)
+ values ('A', True, '2024-01-01', 250, 1, 2);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id)
+ values ('A', True, '2024-01-01', 250, 1, 2);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id)
+ values ('A', True, '2024-01-01', 250, 1, 2);
+insert into BLOOD (type, signe, expiration_date, price, donator, Nee_id)
+ values ('A', True, '2024-01-01', 250, 1, 2);
 
