@@ -311,7 +311,7 @@ create index ORGANES_Types
 -- View Section
 -- _____________ 
 create or replace view ACC_BLOOD_PRICE(id_blood, type_blood, signe_blood, price)
-     -- View goal : view accountable to view the price of the organ and the blood
+     -- View goal : view accountable to view the price of the blood
      -- Author: "The Blood" team
      as  select B.id, B.type, B.signe, B.price
      from BLOOD B;
@@ -321,7 +321,6 @@ create or replace view ACC_ORGANE_PRICE(id, price)
      -- Author: "The Blood" team
      as  select O.id, O.price
      from ORGANE O;
-
 
 create or replace view DEL_ORDER(first_name, last_name, order_id, street, number, postal_code, city, country)
      -- View goal : view deliverers to view information for the delivery
@@ -334,7 +333,6 @@ create or replace view DEL_ORDER(first_name, last_name, order_id, street, number
      TD.id != "main propre" and
      D.At_id = A.id;
    
-
 create or replace view RH (ID, SALARY, FIRST_NAME, LAST_NAME, EMAIL, PHONE, JOB_DESCRIPTION)
      -- View goal : view RH, to view the staff, the wages, jobs
      -- Author: Louise Delpierre et Aline Boulanger 
@@ -343,7 +341,7 @@ create or replace view RH (ID, SALARY, FIRST_NAME, LAST_NAME, EMAIL, PHONE, JOB_
      where S.id = P.id ;
 
 create or replace view MEDECIN (organe, organe_id, client, type_blood, signe_blood, anesthesiste_id, medecin_id, date_, id, customer_id)
-     -- View goal: view information on the customer and the organ the doctor will have to transplant on him 
+     -- View goal: view doctors to see information on the customer and the organ the doctor will have to transplant on him 
      -- Authors: Eline Mota
      as select O.type, O.id, C.pseudo, C.blood_type, C.blood_sign, A.id, D.id, T.date_, T.id, C.id
      from ORGANE O, TRANSPLANTATION T, CUSTOMER C, ANAESTHESIST A, DOCTOR D
