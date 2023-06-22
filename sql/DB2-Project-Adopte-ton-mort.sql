@@ -313,7 +313,7 @@ create index ORGANES_Types
 create or replace view ACC_BLOOD_PRICE(id_blood, type_blood, signe_blood)
      -- View goal : view accountable to view the price of the organ and the blood
      -- Author: "The Blood" team
-     as  select B.id, B.type, B.signe
+     as  select B.id, B.type, B.signe, B.price
      from BLOOD B;
 
 create or replace view ACC_ORGANE_PRICE(id, price)
@@ -337,7 +337,7 @@ create or replace view DEL_ORDER(first_name, last_name, order_id, street, number
 
 create or replace view RH (ID, SALARY, FIRST_NAME, LAST_NAME, EMAIL, PHONE, JOB_DESCRIPTION)
      -- View goal : view RH, to view the staff, the wages, jobs
-     -- Author: Louise DELPIERRE et Aline Boulanger 
+     -- Author: Louise Delpierre et Aline Boulanger 
      as select S.id, S.salary, P.first_name, P.last_name, P.email, P.phone_number, S.job_description
      from  STAFF S, PERSON P
      where S.id = P.id ;
