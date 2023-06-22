@@ -22,7 +22,7 @@ def main_persoadmin_menu(db: DataBase):
         
     Author:
     -------
-        Aline Boulanger
+        Aline Boulanger & Louise Delpierre
     """
 
     db.connect()

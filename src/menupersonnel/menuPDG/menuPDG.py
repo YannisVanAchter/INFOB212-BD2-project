@@ -27,7 +27,7 @@ def main_PDG_menu(database: DataBase, user: User):
 
     Author:
     -------
-        Louise Delpierre
+        Louise Delpierre & Aline Boulanger 
     """
 
     def print_menu():
