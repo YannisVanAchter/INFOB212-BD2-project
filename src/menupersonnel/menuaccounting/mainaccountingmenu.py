@@ -710,7 +710,7 @@ def get_selling_price_of_each_command(database: DataBase):
 
 def get_annual_report(database: DataBase):
     year = Date.today().year + 10
-    while year >= Date.today().year:
+    while year > Date.today().year:
         year = get_int("Enter the year of the report (in the past): ")
 
     result = get_result_for_year(database, year)
